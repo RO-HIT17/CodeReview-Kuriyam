@@ -48,7 +48,7 @@ def send_to_ollama(code: str):
 
         7. **Performance & Readability Enhancements**:
         - Recommend ways to make the code faster or more understandable. 
-        
+        - Also provide refactored code snippets in final suggestions.
 
         Return your response in a structured format like:
 

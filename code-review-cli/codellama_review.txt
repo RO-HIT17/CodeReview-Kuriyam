@@ -1,44 +1,21 @@
 
 🔧 Optimization:
-The `has_duplicates` function can be optimized by using a set instead of iterating through the list twice. The code can be refactored as follows:
-```python
-def has_duplicates(arr):
-    return len(set(arr)) < len(arr)
-```
-This approach has a time complexity of O(n), where n is the length of the input array, instead of the quadratic time complexity of the original function.
+The `is_prime` function can be optimized by using the Sieve of Eratosthenes algorithm, which has a time complexity of O(n log log n) and space complexity of O(n). This would significantly reduce the runtime of the program for large inputs.
 
 🚫 Bad Practices:
-The `has_duplicates` function contains an inner loop that iterates over all elements in the list after the current element. This can lead to a performance issue when dealing with very large arrays. A better approach would be to use a set instead of iterating through the entire array.
+The `is_prime` function uses hardcoded values for the range of numbers to check, which makes it difficult to use the function for other purposes. A better approach would be to pass in the range as an argument to the function.
 
 🔐 Security:
-The function does not have any security vulnerabilities as far as I can see. However, it is important to note that hardcoding credentials or using unsanitized user input can lead to security issues. It is always a good practice to use secure coding practices and sanitize all user input.
+The `get_primes` function does not sanitize the input list, which means that any user-supplied data could potentially cause a security vulnerability if it contains malicious inputs. The function should be modified to use a safer approach for handling user-supplied data.
 
 🎨 Style:
-The function follows the PEP 8 guidelines for naming variables, but there are a few minor style suggestions that could improve readability:
+The `is_prime` function uses a mix of camelCase and snake_case conventions, which could be harmful in terms of readability. It is recommended to stick to one convention throughout the codebase.
 
-* Use more descriptive variable names, such as `num_list` instead of `arr`.
-* Use consistent spacing and line length. For example, after each comma in a list or tuple, there should be one space and no newline before the next item.
+❗ Logic Issues:
+The `get_primes` function returns an empty list if no primes are found in the input list, but it should instead return a list containing all the numbers in the input list that are not prime. This would ensure that the output is always correct and consistent.
 
-🎨 Style:
-The function has some logic issues that could lead to bugs or maintenance problems:
+⏱️ Complexity:
+The time complexity of the `get_primes` function is O(n^2), which means that the runtime grows quadratically with the size of the input list. A more efficient approach could be to use the Sieve of Eratosthenes algorithm, which has a time complexity of O(n log log n) and space complexity of O(n).
 
-* The function does not handle empty arrays correctly. It will return `False` for an empty array, but it should return `True` instead.
-* The function does not handle input arrays with duplicate elements correctly. For example, if the input is `[1, 2, 3, 4, 5, 6, 7, 8, 9]`, it will return `False` when there are duplicates in the array, but it should return `True`.
-* The function does not handle unhandled inputs correctly. For example, if the input is a string instead of an array, it will raise a `TypeError`, which is not handled properly. It would be better to use try-except blocks to handle such cases.
-
-🎨 Style:
-The function has some time and space complexity issues that could be improved:
-
-* The original implementation has a time complexity of O(n^2), where n is the length of the input array, due to the inner loop iterating over all elements in the list after the current element. This can lead to performance issues for very large arrays. A better approach would be to use a set instead of iterating through the entire array.
-* The original implementation has a space complexity of O(n), where n is the length of the input array, due to the need to store all elements in the list. This can lead to memory issues for very large arrays. A better approach would be to use an iterator instead of storing all elements in the list.
-
-🎨 Style:
-The final suggestions are to:
-
-* Use more descriptive variable names, such as `num_list` instead of `arr`.
-* Use consistent spacing and line length. For example, after each comma in a list or tuple, there should be one space and no newline before the next item.
-* Handle empty arrays correctly.
-* Handle input arrays with duplicate elements correctly.
-* Handle unhandled inputs correctly.
-* Improve time and space complexity by using a set instead of iterating through the entire array.
-* Use an iterator instead of storing all elements in the list to improve memory usage.
+✅ Final Suggestions:
+The `is_prime` function can be optimized by using the Sieve of Eratosthenes algorithm, which would significantly reduce the runtime of the program for large inputs. The function should also be modified to use a safer approach for handling user-supplied data, and should be renamed to reflect its new purpose. The `get_primes` function should be renamed to reflect its new purpose and should return a list containing all the numbers in the input list that are not prime.
