@@ -3,7 +3,7 @@ import requests
 
 
 OLLAMA_URL = "http://localhost:11434/api/generate"
-MODEL_NAME = "codellama"  
+MODEL_NAME = "starcoder2"  
 
 def read_file(file_path):
     """
