@@ -1,0 +1,10 @@
+
+        ```
+
+        - Replace the triple backticks (```) with your review.
+
+        """
+        return 'Replace me'
+
+    def get_reviewed_code(self):
+        return self._response['reviewed-code']

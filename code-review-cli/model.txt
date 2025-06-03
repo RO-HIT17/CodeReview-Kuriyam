@@ -1,4 +1,4 @@
 Models
-starcoder - Lightweight Wrong output
+starcoder - Lightweight Wrong output (highly inconsistent) so all 3B params arent usable
 codellama - perfect but slow
 deepcoder - slow

@@ -1,0 +1,38 @@
+
+🔧 Optimization:
+
+* The `is_prime` function can be optimized by using the Sieve of Eratosthenes algorithm instead of iterating over all numbers up to the given number. This would significantly reduce the time complexity of the function.
+* Similarly, the `get_primes` function can be optimized by using a more efficient algorithm such as the Sieve of Sundaram or the Sieve of Atkin to find prime numbers in a list.
+
+🚫 Bad Practices:
+
+* The `is_prime` function is not handling negative numbers correctly. It should return False for negative numbers instead of raising an error.
+* The `get_primes` function is not handling empty lists correctly. It should raise a ValueError if the input list is empty.
+
+🔐 Security:
+
+* There are no security vulnerabilities in this code.
+
+🎨 Style:
+
+* The variable names in the `is_prime` function can be more descriptive, for example, `i` could be renamed to `divisor`.
+* The variable names in the `get_primes` function can be more descriptive, for example, `nums` could be renamed to `numbers`.
+
+❗ Logic Issues:
+
+* The `is_prime` function is not handling 1 correctly. It should return False for 1 instead of raising an error.
+* The `get_primes` function is not handling the case where the input list contains only one element correctly. It should return an empty list in this case instead of returning a list with the single element.
+
+⏱️ Complexity:
+
+* The time complexity of the `is_prime` function is O(n) because it iterates over all numbers up to the given number.
+* The space complexity of the `is_prime` function is O(1) because it only uses a single variable for iteration.
+* The time complexity of the `get_primes` function is O(n) because it also iterates over all numbers in the input list.
+* The space complexity of the `get_primes` function is O(n) because it creates a new list with the same length as the input list.
+
+✅ Final Suggestions:
+
+* Use the Sieve of Eratosthenes algorithm instead of iterating over all numbers up to the given number in the `is_prime` function for better performance and readability.
+* Use a more efficient algorithm such as the Sieve of Sundaram or the Sieve of Atkin to find prime numbers in a list in the `get_primes` function for better performance and readability.
+* Handle negative numbers correctly in the `is_prime` function by returning False instead of raising an error.
+* Handle empty lists correctly in the `get_primes` function by raising a ValueError instead of returning an empty list.

@@ -1,9 +1,9 @@
 import sys
 import requests
-
+import time
 
 OLLAMA_URL = "http://localhost:11434/api/generate"
-MODEL_NAME = "starcoder2"  
+MODEL_NAME = "codellama"  
 
 def read_file(file_path):
     """
@@ -47,7 +47,8 @@ def send_to_ollama(code: str):
         - Suggest improvements where possible.
 
         7. **Performance & Readability Enhancements**:
-        - Recommend ways to make the code faster or more understandable.
+        - Recommend ways to make the code faster or more understandable. 
+        - Also provide refactored code snippets where applicable.
 
         Return your response in a structured format like:
 
