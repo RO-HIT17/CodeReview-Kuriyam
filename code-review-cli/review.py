@@ -70,6 +70,7 @@ def send_to_ollama(code: str):
         "prompt": prompt,
         "stream": False
         })
+        
     except requests.exceptions.ConnectionError:
         print("❌ Could not connect to Ollama at localhost:11434. Is it running?")
         sys.exit(1)
@@ -79,6 +80,8 @@ def send_to_ollama(code: str):
         sys.exit(1)
     
     return response.json()["response"]
+
+    
 def main():
     """
     Entry point for the CLI.
@@ -86,14 +89,31 @@ def main():
     if len(sys.argv) != 2:
         print("Usage: python review.py <python_script.py>")
         sys.exit(1)
-        
+
     file_path = sys.argv[1]
     print(f"📄 Reading file: {file_path}")
     code = read_file(file_path)
 
-    print("🚀 Sending code to Ollama model...\n")
+    print(f"🚀 Sending code to {MODEL_NAME} model...")
+    start_time = time.time()
+
     review = send_to_ollama(code)
+
+    end_time = time.time()
+    elapsed_time = end_time - start_time
 
     print("🧠 Code Review Output:\n")
     print(review)
+    print(f"\n⏱️ Time taken: {elapsed_time:.2f} seconds")
+
+    
+    output_file = f"{MODEL_NAME}_review.txt"
+    try:
+        with open(output_file, 'w', encoding='utf-8') as f:
+            f.write(review)
+        print(f"✅ Review saved to: {output_file}")
+    except Exception as e:
+        print(f"❌ Failed to write review to file: {e}")
+
+    
 main()
