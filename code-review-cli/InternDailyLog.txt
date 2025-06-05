@@ -86,3 +86,10 @@ Next Todo:
 Checkout new datasets.
 CHeckout and summarise new models and various other options
 Summarise
+
+Need to explore and finalize:
+The dataset
+The techniquie or methods
+Base models
+Fine Tuning methods
+conversion methods
