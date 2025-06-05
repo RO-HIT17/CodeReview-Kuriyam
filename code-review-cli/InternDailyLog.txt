@@ -81,3 +81,8 @@ so we are going to perform finetuning with unsloth ,lora and colab,  vjk without
 then we are going to perform the conversion with llama.cpp and him using hugging face we alraeady have 2 notebooks to ryr out 
 2 dataset to try out
 and n number of models we can try/. 
+
+Next Todo:
+Checkout new datasets.
+CHeckout and summarise new models and various other options
+Summarise
