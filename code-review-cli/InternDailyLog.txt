@@ -41,6 +41,15 @@ There are a lot of trainers aavaliable like SFTT
 
 FInetune steps
 get a dataset
-use colab and setup unsloth to train a open sourcemodel
+use colab and setup unsloth to train a open sourcemodel (codellama)
 perform LoRA training using that PEFT
 convert it to ollama useable model then use it
+
+Todo in the Intern:
+Get a Dataset
+Chose a base model
+Learn about training it
+Finetune it using Lora
+Make it ollama useable
+
+OpenWebUI
