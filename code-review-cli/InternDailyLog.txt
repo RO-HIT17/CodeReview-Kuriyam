@@ -7,9 +7,40 @@ ANalysis of a Code review App then we were asked to look at models for a CLI
 Jun-3
 Setup a minimaslistic CLI for a code review app using python and the setup the ollama service
 Testing the deepcoder , starcoder , and codellama models
+Summarise the performance across various models
 We were asked to test various methods to train/finetune models 
 
 Jun-4
 Nothing
 
 Jun-5
+Video on Fine Tuning LLMS
+- Self Supervised
+- Supervised
+- Reinforcement Learning
+
+Supervised
+- Retrain All Parameters
+- Transfer Learning
+- PEFT
+
+LoRA
+
+Finetuning
+Prompt Engineering 
+RAG
+
+Unsloth - used to finetune open source models
+
+A method to fune tune
+Take a Dataset
+Use unsloth to finetune a open source ollama model
+Use Lora to train only a part of those Parameters
+
+There are a lot of trainers aavaliable like SFTT
+
+FInetune steps
+get a dataset
+use colab and setup unsloth to train a open sourcemodel
+perform LoRA training using that PEFT
+convert it to ollama useable model then use it
