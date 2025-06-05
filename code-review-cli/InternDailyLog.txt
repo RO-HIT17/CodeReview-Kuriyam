@@ -55,3 +55,22 @@ Make it ollama useable
 
 if --name--
 OpenWebUI
+
+Unsloth can can be used to fine tune llama family models like codellama
+so it makes it easier to fine tune to specific needs with LoRA and then convert it into ollama ready model file by just directly using unsloth for conversion
+the entire thing has to be done on colab 
+
+there are 2 good datasets avaialbele
+- https://huggingface.co/datasets/m-a-p/Code-Feedback/viewer/default/train?views%5B%5D=train
+- https://huggingface.co/datasets/HuggingFaceH4/CodeAlpaca_20K/viewer/default/train?row=0&views%5B%5D=train
+
+
+these 2 datasets can be used 
+unsloth can only be used on coedellama and llama based families 
+and not on other models like devstral and deepcoder
+
+so the line of action is 
+use any one of the 2 datasets
+finetune the codellama 7b 4bit model with unsloth and Lora
+convert it to ollama useable model using unsloth(into that gguf type) along with proper sytem Prompt
+everything using colab
