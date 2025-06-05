@@ -74,3 +74,10 @@ use any one of the 2 datasets
 finetune the codellama 7b 4bit model with unsloth and Lora
 convert it to ollama useable model using unsloth(into that gguf type) along with proper sytem Prompt
 everything using colab
+
+
+Read 2-3 tutorials and notebooks
+so we are going to perform finetuning with unsloth ,lora and colab,  vjk without unsloth 
+then we are going to perform the conversion with llama.cpp and him using hugging face we alraeady have 2 notebooks to ryr out 
+2 dataset to try out
+and n number of models we can try/. 
