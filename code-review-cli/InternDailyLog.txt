@@ -109,7 +109,7 @@ Fine tuned codellama model with unslot and got the lora adapter weights but coun
 i got the lora adapter weights with codellama 7b 4bit as the base model but erros occur in converting it to gguf
 Reasons:
 Since the base model is alreayd 4 bit quantizedmodel the re quantization doesnt occur
-Maybe the llamma.cpp doesnt work in colab
+Maybe the llamma.cpp doesnt work in colab - no it works so problem is mostly the quantization thing 
 the lora adapters weights are seaprate form the original weights  
 
 other options:
