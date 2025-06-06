@@ -120,3 +120,6 @@ Okay now whaat i did was i cleared the cache and changed the model and dataset a
 
 
 SO waht we did today we finetuned the codellaam model many times iwth code alpaca dataset and got the lora weights we also got that gguf conversion file after a lot of issues and currently testing it in local
+And donwladed the model folder with the Modelfile and th gguf file and the lora weights file \
+and pasted those in the .ollama directory and created the model.
+It is now up and running in local ollama.
