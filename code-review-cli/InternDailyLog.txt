@@ -115,3 +115,8 @@ the lora adapters weights are seaprate form the original weights
 other options:
 use codellama 7b-hf
 
+
+Okay now whaat i did was i cleared the cache and changed the model and dataset and it worke din colab currently i am trying to run it in local ollama
+
+
+SO waht we did today we finetuned the codellaam model many times iwth code alpaca dataset and got the lora weights we also got that gguf conversion file after a lot of issues and currently testing it in local
