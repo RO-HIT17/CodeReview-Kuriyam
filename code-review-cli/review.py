@@ -112,6 +112,7 @@ def main():
     try:
         with open(output_file, 'w', encoding='utf-8') as f:
             f.write(review)
+            f.write(f"\n\nTime taken: {elapsed_time:.2f} seconds")
         print(f"✅ Review saved to: {output_file}")
     except Exception as e:
         print(f"❌ Failed to write review to file: {e}")
