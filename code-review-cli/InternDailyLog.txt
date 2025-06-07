@@ -123,3 +123,7 @@ SO waht we did today we finetuned the codellaam model many times iwth code alpac
 And donwladed the model folder with the Modelfile and th gguf file and the lora weights file \
 and pasted those in the .ollama directory and created the model.
 It is now up and running in local ollama.
+------
+June 7 8 
+Prepare a report and summarise and overall progress this week 
+and also share the github repository and the correspoding notebooks and datasets
