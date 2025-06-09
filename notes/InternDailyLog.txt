@@ -180,3 +180,14 @@ git clone --recursive https://github.com/ggerganov/llama.cpp
 cd llama.cpp && make clean && make all -j
 Once that's done, redo the quantization.
 -----
+
+
+out of the way i found that there was a option ollama gave where we can load the base model in the model file and 
+just add the lora weights on top of it and creare the finetuned model and it worked
+
+actually on the whole thre are 3 options
+https://github.com/ollama/ollama/blob/main/docs/import.md#Importing-a-fine-tuned-adapter-from-Safetensors-weights
+
+Importing a Safetensors adapter - we went with this
+Importing a Safetensors model
+Importing a GGUF file
