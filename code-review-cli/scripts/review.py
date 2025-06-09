@@ -108,7 +108,7 @@ def main():
     print(f"\n⏱️ Time taken: {elapsed_time:.2f} seconds")
 
     
-    output_file = f"{MODEL_NAME}_review.txt"
+    output_file = f"{MODEL_NAME}_review2.txt"
     try:
         with open(output_file, 'w', encoding='utf-8') as f:
             f.write(review)
