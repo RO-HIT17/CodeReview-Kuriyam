@@ -191,3 +191,7 @@ https://github.com/ollama/ollama/blob/main/docs/import.md#Importing-a-fine-tuned
 Importing a Safetensors adapter - we went with this
 Importing a Safetensors model
 Importing a GGUF file
+
+the output seems to be the same with 4mns 
+
+Also we cant delte the base model it is referenced my adapters 
