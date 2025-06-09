@@ -161,11 +161,22 @@ but only the lora adapters weights were generated for codellama and the weights 
 testing in local is taking for qwen and codellama is trained again
 
 
-okay 2 options
-tried converting the gguf by using the transformer hub
-one is try using any different format like f16/f32 while conversion in colab
+okay 4 options
+by chance it works by clearing and restarting the session - DOESNT
+tried converting the gguf by using the transformer hub - DOESNT WORK
+try using any different format like f16/f32 while conversion in colab - DOESNT WORK
 or trying to convert the lora adapter to gguf using llama.cpp, mlx or other tools in local 
 
 lora adapters - zip file + base model : unsloth/codellama-7b-bnb-4bit
 
 ----
+
+error 
+RuntimeError: Unsloth: Quantization failed for /content/rohits1711/model/unsloth.Q8_0.gguf
+You might have to compile llama.cpp yourself, then run this again.
+You do not need to close this Python program. Run the following commands in a new terminal:
+You must run this in the same folder as you're saving your model.
+git clone --recursive https://github.com/ggerganov/llama.cpp
+cd llama.cpp && make clean && make all -j
+Once that's done, redo the quantization.
+-----
