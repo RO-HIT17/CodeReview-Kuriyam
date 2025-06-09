@@ -3,7 +3,7 @@ import requests
 import time
 
 OLLAMA_URL = "http://localhost:11434/api/generate"
-MODEL_NAME = "finetuned_codellama"  
+MODEL_NAME = "codellama_cyber"  
 
 def read_file(file_path):
     """
