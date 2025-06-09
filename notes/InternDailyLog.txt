@@ -159,3 +159,13 @@ Succesfully converted the lora adapter to gguf for qwen 2.5 7B
 but only the lora adapters weights were generated for codellama and the weights wernt converted to gguf format
 
 testing in local is taking for qwen and codellama is trained again
+
+
+okay 2 options
+tried converting the gguf by using the transformer hub
+one is try using any different format like f16/f32 while conversion in colab
+or trying to convert the lora adapter to gguf using llama.cpp, mlx or other tools in local 
+
+lora adapters - zip file + base model : unsloth/codellama-7b-bnb-4bit
+
+----
