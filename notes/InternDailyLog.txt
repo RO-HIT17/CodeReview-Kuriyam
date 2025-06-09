@@ -154,3 +154,8 @@ Large files to download them completely so download the Modelfile and GGUF file
 
 Using the converter file and setting it up in local
 
+---------------
+Succesfully converted the lora adapter to gguf for qwen 2.5 7B
+but only the lora adapters weights were generated for codellama and the weights wernt converted to gguf format
+
+testing in local is taking for qwen and codellama is trained again
