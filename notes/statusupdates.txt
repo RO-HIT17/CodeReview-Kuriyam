@@ -1,0 +1,102 @@
+[2:15 pm, 2/6/2025] Vijay Krishna: Hey @Aswin Murugesh Kuriyam Intern , as we’re moving forward with the code review tool, could you run me through the main priorities again? Just want to make sure we’re still aligned and not missing anything important.
+[2:39 pm, 2/6/2025] Aswin Murugesh Kuriyam Intern: Hey, so we are looking for a model that can point things that people look for in a code review - it can suggest code optimisations, point out security vulnerabilities like hard coded passwords
+[2:40 pm, 2/6/2025] Aswin Murugesh Kuriyam Intern: We can look at code optimisations (refactoring suggestions) to be the first priority
+[2:55 pm, 2/6/2025] Vijay Krishna: Oh ok sir ,thanks for clarifying .👍🏽
+[5:03 pm, 2/6/2025] Aswin Murugesh Kuriyam Intern: To join the video meeting, click this link: https://meet.google.com/dud-scoy-vdd
+Otherwise, to join by phone, dial +1 256-600-8340 and enter this PIN: 722 816 229#
+To view more phone numbers, click this link: https://tel.meet/dud-scoy-vdd?hs=5
+[12:33 pm, 3/6/2025] Aswin Murugesh Kuriyam Intern: Hey guys, how's it going? Were you able to look at the models?
+[1:06 pm, 3/6/2025] Rohit: Hey Sir,
+Yesterday, We tested out DeepSeek R1 7B, LLaMA 3.2 , and DeepSeek Coder 3B. All of them ran smoothly on our setup and were impressively fast — but unfortunately, the outputs weren’t reliable or accurate enough for our use case.
+
+Right now, we’ve shifted focus to testing Devstral, DeepCoder, and CodeLlama, aiming for better consistency and output quality.
+We also tried StarCoder, but it didn’t work well in our setup either.
+[1:10 pm, 3/6/2025] Aswin Murugesh Kuriyam Intern: Okay
+[1:12 pm, 3/6/2025] Vijay Krishna: Also sir, all of these were Q4 quantized. If we get promising output from any model, we’ll try running Q2 versions as well for even faster performance.
+[1:13 pm, 3/6/2025] Aswin Murugesh Kuriyam Intern: Yes
+[5:19 pm, 3/6/2025] Rohit: Hey Sir,
+
+Devstral and CodeLlama are working well and producing good results. However, starcoder(3B) is giving very poor outputs and isn’t usable.
+
+Devstral (14B) delivers solid results but takes quite a bit of time to run. Codellama(7B) seems to be the most balanced in terms of output quality and performance, but even that takes around 4 minutes just to review a simple program.
+[5:20 pm, 3/6/2025] Vijay Krishna: and here is results from gpu system sir,
+CodeLLaMA is noticeably faster on our GPU setup.
+DevStal struggles even with GPU acceleration — performance isn’t great.
+DeepCoder Thinking tends to hallucinate responses frequently, and unfortunately, there's no clear way to disable or control that behavior.
+[5:24 pm, 3/6/2025] Vijay Krishna: Both of our system has 16 gb ram
+@Rohit system doesn't have gpu
+Mine has rtx 4060
+[5:25 pm, 3/6/2025] Vijay Krishna: Devstral might be a good option with 32gb ram with rtx 4090 system for developing a complete agent sir
+[5:35 pm, 3/6/2025] Aswin Murugesh Kuriyam Intern: Okay. Are the results from DevStral better than Codellama?
+[5:37 pm, 3/6/2025] Vijay Krishna: yes sir but they are way slower
+[5:37 pm, 3/6/2025] Vijay Krishna: in our current setup
+[5:48 pm, 3/6/2025] Aswin Murugesh Kuriyam Intern: Okay each of you can take up one of these models and looks at ways to train them
+[5:48 pm, 3/6/2025] Aswin Murugesh Kuriyam Intern: We can follow the same training method for both and see how they behave after that
+[5:52 pm, 3/6/2025] Vijay Krishna: ok sir
+[5:53 pm, 3/6/2025] Rohit: Ok sir ,I’ll take CodeLlama, and @Vijay Krishna will handle Devstral. We’ll start looking into training options.
+[5:33 pm, 4/6/2025] Rohit: Hey Sir, Just a quick update — I tried fine-tuning CodeLlama locally but it keeps crashing due to limited hardware (16GB RAM, no GPU). It's pretty resource-intensive. So i’ve started checking out other lightweight models like Qwen1.5-1.8B which are more practical to fine tune on my local setup.
+[5:34 pm, 4/6/2025] Vijay Krishna: Hey sir,
+I ran into the same issue — my system couldn’t handle fine-tuning the 24B DevStal model. I think a 7B model would be more suitable for my GPU setup. I’m currently considering CodeLLaMA (which we tested yesterday) or Gemma (testing it today) for fine-tuning.
+[6:27 pm, 4/6/2025] Aswin Murugesh Kuriyam Intern: Okay. Do you have many GPU machines that you can use?
+[6:36 pm, 4/6/2025] Vijay Krishna: No sir, just one rtx 4060 laptop , that's where I am running these
+[5:39 pm, 5/6/2025] Rohit: Hey Sir,
+I’ve found a viable approach for the finetuning process with models like CodeLlama.
+
+CodeLlama is compatible with tools like Unsloth, which supports LoRA + PEFT for efficient and lightweight finetuning.
+Since finetuning on my local 16GB system wasn’t stable, I’m planning to proceed with Google Colab for training.
+
+Once finetuned, the model can be converted into GGUF format for Ollama compatibility by merging the LoRA weights and using tools like llama.cpp.
+I also explored converting Hugging Face models into Ollama-compatible formats using Modelfile and ollama create.
+
+I’m now moving forward with Unsloth + LoRA training on Google Colab, with CodeLlama as the base model.
+[5:39 pm, 5/6/2025] Vijay Krishna: Hi sir,
+I found that Qwen 2.5 q4 is also performing quite well. Since it’s already quantized, it can’t be fine-tuned using Unsloth — so I’m planning to go with LoRA for fine-tuning instead.
+
+We’re also planning to use the same dataset for training across both our models.
+[5:44 pm, 5/6/2025] Aswin Murugesh Kuriyam Intern: Yeah makes sense.
+[5:44 pm, 5/6/2025] Aswin Murugesh Kuriyam Intern: Let's look at available datasets and finialise that next
+[5:49 pm, 5/6/2025] Vijay Krishna: Yesterday we explored a couple of datasets for code-focused finetuning:
+
+https://huggingface.co/datasets/m-a-p/Code-Feedback
+
+https://huggingface.co/datasets/HuggingFaceH4/CodeAlpaca_20K
+
+We’re still looking for even more code-specific or review-oriented datasets. We’ll update you if we come across anything better.
+[5:52 pm, 5/6/2025] Rohit: We’re exploring datasets that focus on code security, optimizations, andcode quality issues sir.
+[5:52 pm, 5/6/2025] Aswin Murugesh Kuriyam Intern: Okay. I'll look at these tonight as well. But we want datasets that specialise in security issues, optimisations and bug fixing kind.
+[5:52 pm, 5/6/2025] Vijay Krishna: sure sir
+[5:46 pm, 6/6/2025] Vijay Krishna: Hey Sir,
+I’ve found some valuable datasets for fine tuning
+
+For vulnerability detection:
+
+CyberNative dataset: https://huggingface.co/datasets/CyberNative/Code_Vulnerability_Security_DPO/viewer/default/train?p=1&row=166
+
+PySecDB from SunLab (access request submitted): https://huggingface.co/datasets/sunlab/PySecDB
+
+For code optimization and solution quality:
+
+Leetcode and OpenAI,Effi benchmark datasets:
+
+https://arxiv.org/html/2504.14655v1
+
+https://huggingface.co/datasets/openai/openai_humaneval
+
+https://github.com/huangd1999/EffiBench
+
+Additionally, we can scrape problems and optimized solutions from Codeforces:
+https://github.com/kgautam01/CodeForces-Scraper/tree/main
+[5:46 pm, 6/6/2025] Rohit: Hey sir, quick update on the finetuning progress. I tested the feasibility of fine-tuning the codellama-7b-bnb-4bit model using the CodeAlpaca dataset in Colab with Unsloth. The LoRA-based finetuning worked successfully, and I was able to generate the adapter weights.
+
+At first, I faced issues converting the model to GGUF format. This seemed to be because the base model was already 4-bit quantized, so the re-quantization step didn’t go through properly. I cross-verified by switching to llama-3-8b-bnb-4bit, which worked fine. Then after clearing cache and retrying, even the original Codellama setup worked smoothly.
+
+Now I’m exporting the final merged GGUF model locally and trying to set it up with Ollama for local inference.
+[7:28 pm, 6/6/2025] Aswin Murugesh Kuriyam Intern: Okay. Good work. I will review these and we can discuss on Monday
+[7:28 pm, 6/6/2025] Vijay Krishna: ok sir ,sure👍🏼
+[8:45 pm, 6/6/2025] Rohit: Hey Sir,
+The fine-tuned model is now running successfully in local Ollama. I used the merged GGUF model along with the appropriate Modelfile configuration and registered it using ollama create. Inference is working as expected.
+[9:42 pm, 6/6/2025] Aswin Murugesh Kuriyam Intern: Oh nice. How's the speed?
+[9:46 pm, 6/6/2025] Rohit: There’s a noticeable improvement in the quality of responses and the accuracy of code reviews after fine-tuning. However, the inference time has slightly increased  — it currently takes around 5 to 6 minutes to review a file on my local system.
+This slowdown is likely due to the parameter jump from 7B to 8B as a result of the LoRA fine-tuning.
+[9:59 pm, 6/6/2025] Aswin Murugesh Kuriyam Intern: Oh okay. May be next week I'll run it on a GPU system after we've done some training
+[10:00 pm, 6/6/2025] Rohit: ok sir👍

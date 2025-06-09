@@ -1,0 +1,129 @@
+Log:
+
+Jun-2
+Mrng a Meet
+ANalysis of a Code review App then we were asked to look at models for a CLI
+
+------------------------------------------------
+
+Jun-3
+Setup a minimaslistic CLI for a code review app using python and the setup the ollama service
+Testing the deepcoder , starcoder , and codellama models
+Summarise the performance across various models
+We were asked to test various methods to train/finetune models 
+
+
+------------------------------------------------
+
+Jun-4
+Nothing
+
+------------------------------------------------
+
+Jun-5
+Video on Fine Tuning LLMS
+- Self Supervised
+- Supervised
+- Reinforcement Learning
+
+Supervised
+- Retrain All Parameters
+- Transfer Learning
+- PEFT
+
+LoRA
+
+Finetuning
+Prompt Engineering 
+RAG
+
+Unsloth - used to finetune open source models
+
+A method to fune tune
+Take a Dataset
+Use unsloth to finetune a open source ollama model
+Use Lora to train only a part of those Parameters
+
+There are a lot of trainers aavaliable like SFTT
+
+FInetune steps
+get a dataset
+use colab and setup unsloth to train a open sourcemodel (codellama)
+perform LoRA training using that PEFT
+convert it to ollama useable model then use it
+
+Todo in the Intern:
+Get a Dataset
+Chose a base model
+Learn about training it
+Finetune it using Lora
+Make it ollama useable
+
+
+if --name--
+OpenWebUI
+
+Unsloth can can be used to fine tune llama family models like codellama
+so it makes it easier to fine tune to specific needs with LoRA and then convert it into ollama ready model file by just directly using unsloth for conversion
+the entire thing has to be done on colab 
+
+there are 2 good datasets avaialbele
+- https://huggingface.co/datasets/m-a-p/Code-Feedback/viewer/default/train?views%5B%5D=train
+- https://huggingface.co/datasets/HuggingFaceH4/CodeAlpaca_20K/viewer/default/train?row=0&views%5B%5D=train
+
+
+these 2 datasets can be used 
+unsloth can only be used on coedellama and llama based families 
+and not on other models like devstral and deepcoder
+
+so the line of action is 
+use any one of the 2 datasets
+finetune the codellama 7b 4bit model with unsloth and Lora
+convert it to ollama useable model using unsloth(into that gguf type) along with proper sytem Prompt
+everything using colab
+
+
+Read 2-3 tutorials and notebooks
+so we are going to perform finetuning with unsloth ,lora and colab,  vjk without unsloth 
+then we are going to perform the conversion with llama.cpp and him using hugging face we alraeady have 2 notebooks to ryr out 
+2 dataset to try out
+and n number of models we can try/. 
+
+Next Todo:
+Checkout new datasets.
+CHeckout and summarise new models and various other options
+Summarise
+
+Need to explore and finalize:
+The dataset
+The techniquie or methods
+Base models
+Fine Tuning methods
+conversion methods
+
+
+------------------------------------------------
+
+June 6
+Fine tuned codellama model with unslot and got the lora adapter weights but coundt convert into local weigts
+i got the lora adapter weights with codellama 7b 4bit as the base model but erros occur in converting it to gguf
+Reasons:
+Since the base model is alreayd 4 bit quantizedmodel the re quantization doesnt occur
+Maybe the llamma.cpp doesnt work in colab - no it works so problem is mostly the quantization thing 
+the lora adapters weights are seaprate form the original weights  
+
+other options:
+use codellama 7b-hf
+
+
+Okay now whaat i did was i cleared the cache and changed the model and dataset and it worke din colab currently i am trying to run it in local ollama
+
+
+SO waht we did today we finetuned the codellaam model many times iwth code alpaca dataset and got the lora weights we also got that gguf conversion file after a lot of issues and currently testing it in local
+And donwladed the model folder with the Modelfile and th gguf file and the lora weights file \
+and pasted those in the .ollama directory and created the model.
+It is now up and running in local ollama.
+------
+June 7 8 
+Prepare a report and summarise and overall progress this week 
+and also share the github repository and the correspoding notebooks and datasets
