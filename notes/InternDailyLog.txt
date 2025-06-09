@@ -127,3 +127,30 @@ It is now up and running in local ollama.
 June 7 8 
 Prepare a report and summarise and overall progress this week 
 and also share the github repository and the correspoding notebooks and datasets
+
+
+------------
+June 9
+Asked to finetune with
+https://github.com/huangd1999/EffiBench
+and 
+https://huggingface.co/datasets/CyberNative/Code_Vulnerability_Security_DPO/viewer/default/train?p=1&row=166
+
+
+So we have different notebooks avaialble ready made for different models
+THe models we choose are 
+1.codellama
+2.qwem 2.5 coder 14B Converstaional/ qwen 2.5 7B
+
+Issues:
+Preparing the dataset in the apt way 
+ - different for codellam and qwen also different dataset
+Preparing a clean note book
+ - different for codellama and qwen 
+
+After getting the lora adapter converting it into gguf
+Adding a way to save them in drive / zip and download 
+Large files to download them completely so download the Modelfile and GGUF file
+
+Using the converter file and setting it up in local
+
