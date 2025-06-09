@@ -1,0 +1,110 @@
+## Internship Project Report: Python Code Review System (Weekly Log Summary)
+
+This report provides a chronological summary of the work performed during the internship week, detailing the progress, approaches taken, models tested, and key discussions related to developing a Python code review system.
+
+### Weekly Work Summary
+
+#### June 2nd
+* *Morning Meeting*: The week began with a meeting where the team was tasked with analyzing existing code review applications and exploring models suitable for a Command-Line Interface (CLI) based code review tool.
+* *Priorities Clarified*: The core objective for the model was defined as providing code review suggestions, specifically focusing on code optimizations (refactoring) and identifying security vulnerabilities like hardcoded passwords. Code optimization was set as the immediate priority.
+
+#### June 3rd
+* *Initial Setup*: A basic CLI for a Python code review application was established, and the Ollama service was set up for local Large Language Model (LLM) inference.
+* *Model Testing (Initial)*: Initial tests were conducted with DeepSeek R1 7B, LLaMA 3.2, and DeepSeek Coder 3B. While these models ran quickly, their output reliability and accuracy were insufficient for the project's needs.
+* *Shifted Focus*: Attention then moved to testing Devstral, DeepCoder, and CodeLlama to achieve better consistency and output quality. StarCoder was also attempted but proved ineffective.
+* *Quantization Exploration*: All models were initially tested with Q4 quantization. The team planned to explore Q2 versions for potential speed improvements if any model showed promising results.
+* *Performance Summary*:
+    * Devstral and CodeLlama showed encouraging results.
+    * StarCoder (3B) provided very poor and unusable outputs.
+    * Devstral (14B) delivered strong results but was notably slow, especially on systems without a dedicated GPU. It was suggested that Devstral might be more suitable for high-end systems (e.g., 32GB RAM, RTX 4090).
+    * CodeLlama (7B) was identified as the most balanced in terms of output quality and performance, though it still took about 4 minutes to review a simple program on a non-GPU system. On a GPU setup (RTX 4060, 16GB RAM), CodeLlama performed faster.
+    * DeepCoder Thinking exhibited frequent "hallucinations" (generating irrelevant or incorrect information) that could not be controlled.
+* *Next Steps*: Rohit was assigned to investigate fine-tuning CodeLlama, while Vijay Krishna was assigned to Devstral, with a plan to use consistent training methods.
+
+#### June 4th
+* *Hardware Limitations*: Both interns faced significant challenges with fine-tuning due to hardware constraints (16GB RAM systems, one with an RTX 4060 GPU). Fine-tuning larger models (like Devstral 24B) proved too resource-intensive.
+* *Model Re-evaluation for Fine-tuning*: This led to a re-evaluation of models for fine-tuning. Rohit began exploring lighter models such as Qwen1.5-1.8B that are more practical for local fine-tuning. Vijay Krishna considered CodeLlama or Gemma (currently under testing) as more suitable 7B models for his GPU setup.
+* *GPU Availability*: It was confirmed that only one laptop with an RTX 4060 was available for GPU-accelerated tasks.
+
+#### June 5th
+* *Fine-tuning Research*: Extensive research was conducted on various LLM fine-tuning techniques:
+    * *Types*: Self-Supervised, Supervised, and Reinforcement Learning.
+    * *Supervised Methods*: Detailed exploration of Retraining All Parameters, Transfer Learning, and Parameter-Efficient Fine-Tuning (PEFT), with a specific focus on LoRA (Low-Rank Adaptation) as a key PEFT technique.
+    * *Related Concepts*: Understanding of Prompt Engineering and Retrieval-Augmented Generation (RAG).
+* *Unsloth*: Identified Unsloth as a valuable tool for efficiently fine-tuning open-source models, particularly Llama-family models like CodeLlama, by using LoRA. The plan was to execute the entire fine-tuning process on Google Colab due to local hardware limitations.
+* *Fine-tuning Plan*: A concrete plan for fine-tuning was formulated:
+    1.  Acquire a suitable dataset specializing in security issues, code optimizations, and bug fixing.
+    2.  Select a base model (CodeLlama 7B 4-bit was decided upon).
+    3.  Learn about the training process.
+    4.  Perform LoRA training using Unsloth on Colab.
+    5.  Convert the fine-tuned model into an Ollama-compatible GGUF format using Unsloth, ensuring a proper system prompt.
+* *Dataset Exploration*: Two promising datasets were identified:
+    * [Code-Feedback](https://huggingface.co/datasets/m-a-p/Code-Feedback)
+    * [CodeAlpaca_20K](https://huggingface.co/datasets/HuggingFaceH4/CodeAlpaca_20K)
+    * It was noted that Unsloth is compatible only with CodeLlama and other Llama-based models, not with Devstral or DeepCoder.
+* *Dataset Specialization*: The need for datasets specifically tailored to security issues, code optimizations, and bug fixing was reiterated.
+
+#### June 6th
+* *Fine-tuning Execution*: Rohit successfully fine-tuned the codellama-7b-bnb-4bit model using the CodeAlpaca dataset on Colab with Unsloth, successfully generating LoRA adapter weights.
+* *Conversion Issues and Resolution*: Initial attempts to convert the model to GGUF format faced issues, likely due to the base model already being 4-bit quantized, which interfered with the re-quantization step. This was verified by successfully converting llama-3-8b-bnb-4bit. After clearing the cache and reattempting, the original CodeLlama setup also worked smoothly.
+* *Dataset Discovery (Vijay Krishna)*: Additional valuable datasets for fine-tuning were found:
+    * *For Vulnerability Detection*:
+        * [CyberNative dataset](https://huggingface.co/datasets/CyberNative/Code_Vulnerability_Security_DPO)
+        * PySecDB from SunLab (access request submitted).
+    * *For Code Optimization & Solution Quality*:
+        * [Leetcode and OpenAI,Effi benchmark datasets](https://arxiv.org/html/2504.14655v1)
+        * [OpenAI Humaneval](https://huggingface.co/datasets/openai/openai_humaneval)
+        * [EffiBench](https://github.com/huangd1999/EffiBench)
+        * The possibility of scraping optimized solutions from Codeforces was also identified.
+* *Local Deployment*: The fine-tuned CodeLlama model, in its merged GGUF format, was successfully set up and run with Ollama for local inference. This involved placing the model folder, Modelfile, and GGUF file in the .ollama directory and registering the model.
+* *Performance Post Fine-tuning*: A significant improvement in the quality of responses and accuracy of code reviews was observed. However, the inference time increased to 5-6 minutes per file on the local system. This slowdown was attributed to the effective increase in active parameters (from 7B to approximately 8B) as a result of the LoRA fine-tuning.
+
+#### June 7th & 8th
+* *Reporting and Summarization*: The final task for the week was to prepare a comprehensive report summarizing the progress, approaches, and findings, and to share the relevant GitHub repository (placeholder), notebooks, and datasets.
+
+### Overall Approaches and Models Tested
+
+#### Approaches to Code Review System Implementation:
+
+The project explored various architectural strategies, with a strong emphasis on leveraging AI, particularly LLMs, for code review.
+
+* *CLI-Based Code Review Tool*: The initial implementation focused on a straightforward command-line interface, integrating directly with local LLMs via Ollama.
+* *Web-Based Code Review System (Future Consideration)*: Although not fully developed, discussions highlighted the advantages of a web application integrated with Git platforms through webhooks. This approach was favored for its scalability, centralized management, and ease of LLM API integration.
+* *AI-Assisted Code Review System*: This was the primary focus, aiming to use LLMs to provide intelligent suggestions, aid in refactoring, and detect security vulnerabilities.
+* *Fine-tuning Existing Models*: A substantial part of the work involved the practical process of fine-tuning open-source LLMs (specifically CodeLlama) to enhance their performance on the specific task of code review.
+
+#### Models Tested and Their Summaries:
+
+Throughout the internship, various LLMs were evaluated for their suitability in generating Python code review suggestions and optimizations.
+
+* *Initial Batch (June 3rd - Unreliable/Inaccurate)*:
+    * *DeepSeek R1 7B, LLaMA 3.2, DeepSeek Coder 3B*: While these models ran quickly, their outputs were not sufficiently reliable or accurate for effective code review.
+* *Second Batch (June 3rd - Promising Candidates)*:
+    * *Devstral (14B)*: Provided robust results but suffered from considerable slowness, particularly on systems without powerful GPUs. It was deemed a better fit for more robust hardware configurations.
+    * *CodeLlama (7B)*: Stood out as the most balanced option, offering a good trade-off between output quality and performance. Its compatibility with Unsloth for fine-tuning made it the chosen model for further development.
+    * *DeepCoder Thinking*: Frequently generated irrelevant or incorrect information (hallucinations), making it impractical due to the inability to control this behavior.
+    * *StarCoder (3B)*: Produced consistently poor and unusable outputs.
+* *Fine-tuning Candidates (June 4th-5th)*:
+    * *CodeLlama 7B 4-bit*: Chosen as the primary model for fine-tuning using Unsloth and LoRA. Its balance of performance, output quality, and compatibility with fine-tuning tools made it ideal.
+    * *Qwen1.5-1.8B / Qwen 2.5 q4*: Explored as potential lightweight alternatives. While Qwen 2.5 q4 showed good performance, its pre-quantized nature presented challenges for Unsloth-based fine-tuning.
+    * *Gemma*: Briefly considered as another candidate for fine-tuning.
+* *Post-Fine-tuning (June 6th)*:
+    * *Fine-tuned CodeLlama 7B (effectively ~8B parameters)*: Demonstrated a noticeable improvement in the quality of responses and the accuracy of code reviews. However, the inference time increased to 5-6 minutes per file on the local system, which was attributed to the effective increase in active parameters after LoRA fine-tuning. This fine-tuned model was successfully deployed locally using Ollama.
+
+### Key Learnings and Concepts
+
+The internship provided valuable exposure to various concepts, tools, and best practices relevant to building and deploying modern code review systems:
+
+* *LLM Fine-tuning*: Gained practical experience with advanced techniques like LoRA and PEFT for efficiently adapting large models to specific tasks, understanding the nuances of supervised fine-tuning.
+* *Ollama*: Utilized extensively for locally running LLMs and for converting models to the optimized GGUF format.
+* *Unsloth*: A crucial library that significantly streamlined and accelerated the LoRA fine-tuning process for Llama-family models on Google Colab.
+* *GGUF Format*: Learned about this optimized file format specifically designed for CPU inference of LLMs.
+* *Quantization*: Understood the concept of model quantization (e.g., Q4, Q2, 4-bit) for reducing model size and improving inference speed, as well as potential challenges it can introduce during fine-tuning (e.g., issues with re-quantization).
+* *Prompt Engineering*: Understood the importance of designing effective input prompts to guide LLMs and elicit desired code review responses.
+* *Static Analysis Tools*: Gained awareness of traditional Python code analysis tools like pylint, flake8, mypy, bandit, radon, and safety, which complement LLM-based analysis.
+* *Hardware Constraints*: Developed practical experience in managing the limitations of local hardware for LLM fine-tuning and inference, which necessitated the use of cloud-based resources like Google Colab.
+* *Dataset Curation*: Recognized the critical role of selecting and potentially creating specialized datasets tailored to specific tasks (e.g., detecting security vulnerabilities, suggesting code optimizations) for effective model fine-tuning.
+* *GitHub/GitLab Integration*: Developed a conceptual understanding of how code review systems integrate with Git platforms via webhooks to automate workflows.
+* *OpenWebUI*: Encountered as a potential user interface for interacting with local LLMs.
+
+This internship provided a strong foundation in building automated code review systems, integrating both traditional static analysis methods and advanced LLM technologies, along with practical insights into deployment and optimization challenges.
