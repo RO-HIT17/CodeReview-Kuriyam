@@ -198,6 +198,8 @@ Also we cant delte the base model it is referenced my adapters
 
 ---------------------------------
 
+June 10 
+
 the output has improvide good
 also i have pushed the finetuned models to ollama hub
 so they can be run corectly
@@ -209,9 +211,12 @@ currently training qwen 2.5 coder
 clean up lot of lora weights and models
 -------------------------------------------
 
-Train qwen 2.5
-Find a good test script and test methods
-Read docs and training params
+Train qwen 2.5 - done
+Find a good test script and test methods 
+ - create a dataset with possible soltuions or find a dataset
+ - setup ollama in colab as a bacgroung process and run and compare the results of each model
+ - or check with unsloth for evaluation metrics 
+Read docs and training params - done a overview
 way to connect to every pull request  
 
 ------
