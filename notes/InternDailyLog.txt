@@ -203,3 +203,7 @@ also i have pushed the finetuned models to ollama hub
 so they can be run corectly
 need to look at ways to test both and anyase their performance and connect them with pull requests 
 
+currently training qwen 2.5 coder
+-- 
+
+clean up lot of lora weights and models
