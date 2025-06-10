@@ -207,3 +207,9 @@ currently training qwen 2.5 coder
 -- 
 
 clean up lot of lora weights and models
+-------------------------------------------
+
+Train qwen 2.5
+Find a good test script and test methods
+Read docs and training params
+way to connect to every pull request    
