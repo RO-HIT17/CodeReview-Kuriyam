@@ -240,3 +240,5 @@ To review pull requests
 3.setitng up a backend and automating prs
 
 currentl backend setup and github app is done 
+Read the webhooks and github docs
+Look at Github Docs
