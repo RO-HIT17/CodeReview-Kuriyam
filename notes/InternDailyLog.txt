@@ -230,3 +230,13 @@ tools
 etc
 docs read
 
+-----------
+June 11
+
+To review pull requests
+
+1.setting up a github app
+2.adding cutom web hooks
+3.setitng up a backend and automating prs
+
+currentl backend setup and github app is done 
