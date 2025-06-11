@@ -242,3 +242,4 @@ To review pull requests
 currentl backend setup and github app is done 
 Read the webhooks and github docs
 Look at Github Docs
+Learn about github
