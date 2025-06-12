@@ -3,7 +3,7 @@ from app.github_auth import get_installation_token
 import requests
 
 OLLAMA_URL = "http://localhost:11434/api/generate"
-MODEL_NAME = "codellama"
+MODEL_NAME = "codellama:7b"
 
 async def comment_on_pr(pr_number: int, repo: str, owner: str, message: str):
     token = await get_installation_token()
