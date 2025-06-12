@@ -26,7 +26,7 @@ def generate_jwt():
 
 async def get_installation_token():
     jwt_token = generate_jwt()
-    print("JWT Token:\n", jwt_token)
+    #print("JWT Token:\n", jwt_token)
 
     headers = {
         "Authorization": f"Bearer {jwt_token}",
@@ -42,5 +42,5 @@ async def get_installation_token():
             print("Response body:", res.text)
         res.raise_for_status()
         token = res.json()["token"]
-        print("Installation token:", token)
+        #print("Installation token:", token)
         return token
