@@ -1,26 +1,33 @@
-import jwt
+import jwt  # Make sure this is from PyJWT
 import time
 import httpx
-from dotenv import load_dotenv
 import os
+from dotenv import load_dotenv
+from pathlib import Path
 
 load_dotenv()
 
 APP_ID = os.getenv("GITHUB_APP_ID")
 INSTALLATION_ID = os.getenv("GITHUB_INSTALLATION_ID")
+PRIVATE_KEY_PATH = Path("kuriyamcodereview.2025-06-12.private-key.pem")
+
 
 def generate_jwt():
-    with open("private-key.pem", "r") as f:
+    if not PRIVATE_KEY_PATH.exists():
+        raise FileNotFoundError("Private key file not found.")
+
+    with open(PRIVATE_KEY_PATH, "r") as f:
         private_key = f.read()
 
+    now = int(time.time())
     payload = {
-        "iat": int(time.time()) - 60,
-        "exp": int(time.time()) + (10 * 60),
-        "iss": APP_ID,
+        "iat": now - 60,            # issued at
+        "exp": now + 10 * 60,       # expires after 10 minutes
+        "iss": APP_ID               # GitHub App ID
     }
 
-    token = jwt.encode(payload, private_key, algorithm="RS256")
-    return token
+    encoded_jwt = jwt.encode(payload, private_key, algorithm="RS256")
+    return encoded_jwt
 
 
 async def get_installation_access_token():
@@ -35,4 +42,5 @@ async def get_installation_access_token():
     async with httpx.AsyncClient() as client:
         response = await client.post(url, headers=headers)
         response.raise_for_status()
-        return response.json()["token"]
+
+    return response.json()["token"]
