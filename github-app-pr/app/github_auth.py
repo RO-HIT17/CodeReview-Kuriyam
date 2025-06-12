@@ -18,7 +18,7 @@ def generate_jwt():
     now = int(time.time())
     payload = {
         "iat": now,
-        "exp": now + 540,  # 9 minutes
+        "exp": now + 540,  
         "iss": os.getenv("GITHUB_APP_ID")
     }
 
