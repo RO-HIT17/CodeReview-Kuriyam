@@ -245,6 +245,6 @@ Look at Github Docs
 Learn about github
 
 
-currently using nodejs + smee as proxy web hook 
+currently using nodejs + smee as proxy web hook  and it worked and we are able to perfomr the comments
 
 need to switch to fastapi + ngrok
