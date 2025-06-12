@@ -1,9 +1,9 @@
-import jwt  # Make sure this is from PyJWT
 import time
 import httpx
 import os
 from dotenv import load_dotenv
 from pathlib import Path
+import jwt  # ✅ this ensures you're using PyJWT's encode
 
 load_dotenv()
 
@@ -21,13 +21,18 @@ def generate_jwt():
 
     now = int(time.time())
     payload = {
-        "iat": now - 60,            # issued at
-        "exp": now + 10 * 60,       # expires after 10 minutes
-        "iss": APP_ID               # GitHub App ID
+        "iat": now - 60,
+        "exp": now + (10 * 60),
+        "iss": APP_ID,
     }
 
-    encoded_jwt = jwt.encode(payload, private_key, algorithm="RS256")
-    return encoded_jwt
+    jwt_token = encode(payload, private_key, algorithm="RS256")
+
+    # In PyJWT ≥ 2.x, encode returns a string; in older versions, it returns bytes
+    if isinstance(jwt_token, bytes):
+        jwt_token = jwt_token.decode("utf-8")
+
+    return jwt_token
 
 
 async def get_installation_access_token():
@@ -42,5 +47,4 @@ async def get_installation_access_token():
     async with httpx.AsyncClient() as client:
         response = await client.post(url, headers=headers)
         response.raise_for_status()
-
-    return response.json()["token"]
+        return response.json()["token"]
