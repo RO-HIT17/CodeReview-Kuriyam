@@ -248,3 +248,8 @@ Learn about github
 currently using nodejs + smee as proxy web hook  and it worked and we are able to perfomr the comments
 
 need to switch to fastapi + ngrok
+
+
+----------------
+
+Trying to swithc to fast api + ngrok but coundt and face a lot of connectivity issues
