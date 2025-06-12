@@ -7,7 +7,7 @@ MODEL_NAME = "codellama:7b"
 
 async def comment_on_pr(pr_number: int, repo: str, owner: str, message: str):
     token = await get_installation_token()
-    print("Using token:", token)
+    #print("Using token:", token)
     url = f"https://api.github.com/repos/{owner}/{repo}/issues/{pr_number}/comments"
     headers = {
         "Authorization": f"Bearer {token}",

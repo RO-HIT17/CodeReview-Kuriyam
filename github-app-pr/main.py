@@ -30,13 +30,10 @@ async def github_webhook(request: Request, x_hub_signature_256: str = Header(Non
         owner = payload["repository"]["owner"]["login"]
         repo_full_name = payload["repository"]["full_name"]
 
-        # ✅ Fetch PR diff
         diff_text = await get_pr_diff(repo_full_name, pr_number)
         
-        # 🧠 Send to Ollama for review
         review_comment = await generate_review_comment(diff_text)
 
-        # 💬 Post review comment on PR
         await comment_on_pr(pr_number, repo, owner, review_comment)
 
     return {"ok": True}
@@ -50,7 +47,6 @@ async def test_pr():
     owner = "RO-HIT17"
     repo_full_name = f"{owner}/{repo}"
 
-    # Test flow
     diff_text = await get_pr_diff(repo_full_name, pr_number)
     review_comment = await generate_review_comment(diff_text)
     await comment_on_pr(pr_number, repo, owner, review_comment)
