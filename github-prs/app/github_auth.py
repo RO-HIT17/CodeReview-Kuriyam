@@ -26,7 +26,7 @@ def generate_jwt():
         "iss": APP_ID,
     }
 
-    jwt_token = encode(payload, private_key, algorithm="RS256")
+    jwt_token = jwt.encode(payload, private_key, algorithm="RS256")
 
     # In PyJWT ≥ 2.x, encode returns a string; in older versions, it returns bytes
     if isinstance(jwt_token, bytes):
