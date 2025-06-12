@@ -45,7 +45,7 @@ async def github_webhook(request: Request, x_hub_signature_256: str = Header(Non
 async def test_pr():
     print("🔥 Called /test-pr endpoint")
 
-    pr_number = 11
+    pr_number = 14
     repo = "CodeReview-Kuriyam"
     owner = "RO-HIT17"
     repo_full_name = f"{owner}/{repo}"
