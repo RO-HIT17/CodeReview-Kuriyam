@@ -6,9 +6,19 @@ Codellama and other models
 Fine Tuning methods
     RAG , Prompt Template,Fine Tuning 
 
+Ollama hub
+Transformer hub
+
 
 Github
 Colab
 Unsloth Docs
 Github Issues
 Kaggle Notebooks
+
+ngrok
+Github App
+Github PRs
+
+Webhooks 
+smee

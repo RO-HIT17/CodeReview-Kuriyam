@@ -252,4 +252,9 @@ need to switch to fastapi + ngrok
 
 ----------------
 
+June 12
+
 Trying to swithc to fast api + ngrok but coundt and face a lot of connectivity issues
+
+Fixed and setup the ngrok + fastapi github app and also connected it to codellama model and directly commented on prs
+Faced a lot of bugs with connectivity and jwt signature
