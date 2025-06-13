@@ -15,7 +15,7 @@ def extract_diff_blocks(patch: str):
             position = 0  # Reset position on new hunk
         elif line.startswith("+") and not line.startswith("+++"):
             position += 1
-            diff_blocks.append({"type": "add", "line": line[1:], "position": position})
+            diff_blocks.append({"type": "add", "line": line[:], "position": position})
         elif not line.startswith("-"):
             position += 1
 
@@ -49,17 +49,10 @@ Return JSON as:
 
 def match_comments_to_positions(diff_blocks, suggestions):
     """
-    Matches model suggestions to actual added lines and their positions from the diff.
-    Works whether diff_blocks is a flat list or a list of blocks.
+    Matches model suggestions to actual added lines and their positions from a flat list of diff blocks.
     """
     matched_results = []
     matched_lines = set()
-
-    # Handle both nested and flat formats
-    if all(isinstance(b, dict) and "line" in b for b in diff_blocks):
-        all_entries = diff_blocks  # already flat
-    else:
-        all_entries = [entry for block in diff_blocks for entry in block]  # flatten
 
     for suggestion in suggestions:
         raw_line = suggestion.get("line_snippet", "").strip()
@@ -68,26 +61,28 @@ def match_comments_to_positions(diff_blocks, suggestions):
         if not raw_line or not comment:
             continue
 
-        line_text = raw_line.lstrip("+").strip()
+        # Normalize suggestion line
+        line_text = raw_line.lstrip("+").strip().replace(" ", "")
 
-        for entry in all_entries:
-            if entry["type"] != "add":
+        for entry in diff_blocks:
+            if entry.get("type") != "add":
                 continue
 
-            entry_line = entry.get("line", "").strip()
+            entry_line = entry.get("line", "").lstrip("+").strip().replace(" ", "")
             position = entry.get("position")
+            filename = entry.get("filename")
 
             if (entry_line, position) in matched_lines:
                 continue
 
-            # Loose whitespace-insensitive match
-            if entry_line.replace(" ", "") == line_text.replace(" ", ""):
+            if entry_line == line_text:
                 matched_results.append({
                     "comment": comment,
                     "position": position,
-                    "line": entry_line
+                    "line": entry.get("line", "").lstrip("+").strip(),
+                    "filename": filename
                 })
                 matched_lines.add((entry_line, position))
-                break
+                break  # move to next suggestion after match
 
     return matched_results
