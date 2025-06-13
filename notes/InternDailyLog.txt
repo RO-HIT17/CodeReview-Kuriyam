@@ -272,3 +272,9 @@ but inline comments are way better so switching to inline comments
  Chunk large diffs for LLM token limits. - >> 
 
  Add tags (e.g., "🔐 Security") inline before comment text. ->> TODO
+
+
+
+ 0--
+ Imporive Logic
+ and better prommpt to avoid a ovelapp of comments
