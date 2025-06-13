@@ -2,6 +2,8 @@ from fastapi import FastAPI, Request, Header
 import hmac, hashlib, os
 from app.utils import comment_on_pr, get_pr_diff, generate_review_comment
 from dotenv import load_dotenv
+from app.github_auth import get_installation_token
+from app.inline_test import post_inline_review_comment
 
 load_dotenv()
 app = FastAPI()
@@ -52,3 +54,22 @@ async def test_pr():
     await comment_on_pr(pr_number, repo, owner, review_comment)
 
     return {"status": "Test comment sent"}
+
+@app.post("/test-inline-comment")
+async def test_inline_comment(request: Request):
+    data = await request.json()
+    
+    owner = data["owner"]
+    repo = data["repo"]
+    pr_number = data["pr_number"]
+    file_path = data["file_path"]
+    position = data["position"]
+    comment = data["comment"]
+
+    
+    token = await get_installation_token()
+
+    status_code, res = await post_inline_review_comment(
+        owner, repo, pr_number, token, file_path, comment, position
+    )
+    return {"status": status_code, "response": res}
