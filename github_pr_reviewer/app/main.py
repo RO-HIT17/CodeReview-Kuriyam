@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request, Header , HTTPException
 from dotenv import load_dotenv
 from pydantic import BaseModel
 
-from app.service.review_service import handle_pr_review
+from service.review_service import handle_pr_review
 
 import hmac, hashlib, os
 
