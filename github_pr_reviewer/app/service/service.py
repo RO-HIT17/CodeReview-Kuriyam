@@ -1,5 +1,5 @@
-import httpx, json, requests
-from app.github_auth import get_installation_token
+import httpx
+from app.middleware.github_auth import get_installation_token
 
 async def get_pr_files(repo: str, owner: str, pr_number: int):
     token = await get_installation_token()
@@ -25,7 +25,6 @@ async def get_latest_commit_sha(owner, repo, pr_number):
         res.raise_for_status()
         return res.json()["head"]["sha"]
 
-# ✅ Fix: pass commit_id instead of fetching it inside
 async def post_inline_comment(owner, repo, pr_number, file_path, position, comment, commit_id):
     token = await get_installation_token()
     url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}/comments"
@@ -40,7 +39,7 @@ async def post_inline_comment(owner, repo, pr_number, file_path, position, comme
         "commit_id": commit_id,
         "path": file_path,
         "line": position,
-        "side": "RIGHT"  # Use "RIGHT" for the PR diff side
+        "side": "RIGHT"  
     }
 
     async with httpx.AsyncClient() as client:

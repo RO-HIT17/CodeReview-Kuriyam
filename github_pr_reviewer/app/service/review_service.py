@@ -1,12 +1,9 @@
-# --- services/review_service.py ---
-import httpx
 import requests
 import json
 import re
 
-from app.review_utils import extract_diff_blocks, build_review_prompt, match_comments_to_positions
-from app.github_auth import get_installation_token
-from app.service import get_pr_files, get_latest_commit_sha, post_inline_comment
+from app.utils.review_utils import extract_diff_blocks, build_review_prompt, match_comments_to_positions
+from app.service.service import get_pr_files, get_latest_commit_sha, post_inline_comment
 
 OLLAMA_URL = "http://localhost:11434/api/generate"
 MODEL_NAME = "codellama:7b"
@@ -32,9 +29,6 @@ async def handle_pr_review(owner: str, repo: str, pr_number: int):
         all_diff_blocks.extend(diff_blocks)
         filename_map[filename] = diff_blocks
     
-    print("Sample diff blocks:", all_diff_blocks)
-    print("Sample Filemaps:",filename_map)
-        
     prompt = build_review_prompt("ALL_FILES", all_diff_blocks)
 
     print("Sending request to Ollama... with " , prompt )
@@ -46,8 +40,7 @@ async def handle_pr_review(owner: str, repo: str, pr_number: int):
     })
 
     raw_response = res.json().get("response", "")
-    print("Raw model response:\n", raw_response)
-
+    
     json_objects = re.findall(r'{\s*"line_snippet"\s*:\s*".+?",\s*"comment"\s*:\s*".+?"\s*}', raw_response, re.DOTALL)
 
     if not json_objects:
@@ -62,7 +55,6 @@ async def handle_pr_review(owner: str, repo: str, pr_number: int):
     
     except Exception as e:
         print("❌ Failed to parse cleaned JSON:", e)
-        print("Extracted JSON:", json_text)
         return
 
     
