@@ -3,7 +3,7 @@ import hmac, hashlib, os
 from app.utils import comment_on_pr, get_pr_diff, generate_review_comment
 from dotenv import load_dotenv
 from app.github_auth import get_installation_token
-from app.inline_test import post_inline_review_comment
+from app.inline_test import post_inline_comment
 from pydantic import BaseModel
 from app.review_service import handle_pr_review
 from fastapi import HTTPException
@@ -65,14 +65,14 @@ async def test_inline_comment(request: Request):
     repo = data["repo"]
     pr_number = data["pr_number"]
     file_path = data["file_path"]
-    position = data["position"]
+    line = data["line"]
     comment = data["comment"]
-
+    
     
     token = await get_installation_token()
 
-    status_code, res = await post_inline_review_comment(
-        owner, repo, pr_number, token, file_path, comment, position
+    status_code, res = await post_inline_comment(
+        owner, repo, pr_number, token, file_path, comment, line
     )
     return {"status": status_code, "response": res}
 
