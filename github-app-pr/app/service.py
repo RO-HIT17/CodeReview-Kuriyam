@@ -39,7 +39,8 @@ async def post_inline_comment(owner, repo, pr_number, file_path, position, comme
         "body": comment,
         "commit_id": commit_id,
         "path": file_path,
-        "position": position
+        "line": position,
+        "side": "RIGHT"  # Use "RIGHT" for the PR diff side
     }
 
     async with httpx.AsyncClient() as client:

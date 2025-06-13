@@ -65,7 +65,7 @@ async def handle_pr_review(owner: str, repo: str, pr_number: int):
         print("Extracted JSON:", json_text)
         return
 
-    #=================WORKING TILL HERE========================
+    
     
     grouped_by_file = {}
     for block in all_diff_blocks:
@@ -91,4 +91,5 @@ async def handle_pr_review(owner: str, repo: str, pr_number: int):
                     position=item["position"],
                     comment=item["comment"],
                     commit_id=commit_id
+                    
                 )
