@@ -2,11 +2,11 @@ import requests
 import json
 import re
 
-from app.utils.review_utils import extract_diff_blocks, build_review_prompt, match_comments_to_positions
-from app.service.service import get_pr_files, get_latest_commit_sha, post_inline_comment
+from utils.review_utils import extract_diff_blocks, build_review_prompt, match_comments_to_positions
+from service.service import get_pr_files, get_latest_commit_sha, post_inline_comment
 
 OLLAMA_URL = "http://localhost:11434/api/generate"
-MODEL_NAME = "codellama:7b"
+MODEL_NAME = "codellama_cyber"
 
 async def handle_pr_review(owner: str, repo: str, pr_number: int):
     pr_files = await get_pr_files(repo, owner, pr_number)

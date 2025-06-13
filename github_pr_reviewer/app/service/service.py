@@ -1,5 +1,5 @@
 import httpx
-from app.middleware.github_auth import get_installation_token
+from middleware.github_auth import get_installation_token
 
 async def get_pr_files(repo: str, owner: str, pr_number: int):
     token = await get_installation_token()
