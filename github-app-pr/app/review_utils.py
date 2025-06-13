@@ -48,22 +48,39 @@ Return JSON as:
     """
 
 def match_comments_to_positions(diff_blocks, suggestions):
-    """Matches model suggestions to actual line positions in the diff."""
-    results = []
+    """
+    Matches model suggestions to actual added lines and their positions from the diff.
+    Returns a list of dicts with the comment, position, and cleaned line.
+    """
+    matched_results = []
+    matched_lines = set()
 
     for suggestion in suggestions:
-        line_text = suggestion.get("line_snippet", "").strip()
+        raw_line = suggestion.get("line_snippet", "").strip()
         comment = suggestion.get("comment", "").strip()
-        if not line_text or not comment:
+
+        if not raw_line or not comment:
             continue
 
-        for entry in diff_blocks:
-            if entry["type"] == "add" and entry["line"].strip() == line_text:
-                results.append({
-                    "comment": comment,
-                    "position": entry["position"],
-                    "line": line_text
-                })
-                break
+        # Strip leading '+' if present (common in diff outputs)
+        line_text = raw_line.lstrip("+").strip()
 
-    return results
+        for entry in diff_blocks:
+            entry_line = entry.get("line", "").strip()
+            position = entry.get("position")
+
+            # Skip if already matched this exact line-position pair
+            if (entry_line, position) in matched_lines:
+                continue
+
+            # Loose match for normalized lines
+            if entry["type"] == "add" and entry_line == line_text:
+                matched_results.append({
+                    "comment": comment,
+                    "position": position,
+                    "line": entry_line
+                })
+                matched_lines.add((entry_line, position))
+                break  # move to next suggestion after first match
+
+    return matched_results
