@@ -34,12 +34,11 @@ async def github_webhook(request: Request, x_hub_signature_256: str = Header(Non
         owner = payload["repository"]["owner"]["login"]
         repo_full_name = payload["repository"]["full_name"]
 
-        diff_text = await get_pr_diff(repo_full_name, pr_number)
-        
-        review_comment = await generate_review_comment(diff_text)
-
-        await comment_on_pr(pr_number, repo, owner, review_comment)
-
+        try:
+            await handle_pr_review(owner, repo, pr_number)
+            return {"status": "success", "message": "Review comments posted!"}
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
     return {"ok": True}
 
 @app.post("/test-pr")
