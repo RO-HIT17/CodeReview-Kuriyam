@@ -5,6 +5,7 @@ def is_prime(n):
         return False
     if n == 2:
         return True
+     #Test chages for inline commnets  
     if n % 2 == 0:
         return False
     for i in range(3, int(math.sqrt(n)) + 1, 2):
