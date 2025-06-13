@@ -40,6 +40,7 @@ async def handle_pr_review(owner: str, repo: str, pr_number: int):
     })
 
     raw_response = res.json().get("response", "")
+    print("Raw response from Ollama:", raw_response)
     
     json_objects = re.findall(r'{\s*"line_snippet"\s*:\s*".+?",\s*"comment"\s*:\s*".+?"\s*}', raw_response, re.DOTALL)
 
