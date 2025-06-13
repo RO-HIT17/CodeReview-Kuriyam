@@ -265,13 +265,13 @@ Got the general review commetn working
 
 but inline comments are way better so switching to inline comments
 
- Fallback to summary comment on PR body if inline fails. -> TODO
+ Fallback to summary comment on PR body if inline fails. -> DONE
 
  GitHub webhook to auto-trigger on PR open/update. - Done
 
  Chunk large diffs for LLM token limits. - >> 
 
- Add tags (e.g., "🔐 Security") inline before comment text. ->> TODO
+ Add tags (e.g., "🔐 Security") inline before comment text. ->> DONE
 
 
 
@@ -282,3 +282,5 @@ but inline comments are way better so switching to inline comments
  Fix basic commenting
 
  Need to work on fixing up the logic and improving the prompts 
+
+SETUP the entire pr review process and automated it
