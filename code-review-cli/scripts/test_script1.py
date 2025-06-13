@@ -1,19 +1,9 @@
-import math
+def has_duplicates(arr):
+    for i in range(len(arr)):
+        for j in range(i + 1, len(arr)):
+            if arr[i] == arr[j]:
+                return True
+    return False
 
-def is_prime(n):
-    if n < 2:
-        return False
-    if n == 2:
-        return True
-    if n % 2 == 0:
-        return False
-    for i in range(3, int(math.sqrt(n)) + 1, 2):
-        if n % i == 0:
-            return False
-    return True
-
-def get_primes(nums):
-    return [num for num in nums if is_prime(num)]
-
-numbers = list(range(1, 30))
-print(get_primes(numbers))
+nums = [1, 2, 3, 4, 5, 6, 2]
+print("Contains duplicates:", has_duplicates(nums))
