@@ -123,6 +123,8 @@ SO waht we did today we finetuned the codellaam model many times iwth code alpac
 And donwladed the model folder with the Modelfile and th gguf file and the lora weights file \
 and pasted those in the .ollama directory and created the model.
 It is now up and running in local ollama.
+
+------------------------------END OF WEEK 1---------------------------------------
 ------
 June 7 8 
 Prepare a report and summarise and overall progress this week 
@@ -284,3 +286,18 @@ but inline comments are way better so switching to inline comments
  Need to work on fixing up the logic and improving the prompts 
 
 SETUP the entire pr review process and automated it
+
+Fixed and Cleaned up code but the overall workflow is not great also the model too shoudl be finetuned for the particualr needs
+Things to do to improve output:
+-> Finetune the model with better parameters and quantisation
+-> Finetune with apt dataset and better chat_template as the one we would use
+-> Improve the prompts used to fetch pr diff
+-> Use better logic to extract the pr diff and pass them in 
+-> Use better logic to map the pr diff with the correct response frmo model
+-> Add Fall Backs
+-> Check if only add pr diff is checked or both add and delete pr diff is checked
+-> Check the returned patch and fix the entire workflow
+-> Can be deployed in Render but Ollama cant be hosted as we run our finetuned model from local so github app can only be used in local as of now
+-> But with the port forwarding better ways can be implemented
+
+------------------------------END OF WEEK 2---------------------------------------
