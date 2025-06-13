@@ -6,7 +6,7 @@ from app.github_auth import get_installation_token
 from app.inline_test import post_inline_review_comment
 from pydantic import BaseModel
 from app.review_service import handle_pr_review
-
+from fastapi import HTTPException
 load_dotenv()
 app = FastAPI()
 
