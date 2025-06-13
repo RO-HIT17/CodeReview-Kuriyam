@@ -278,3 +278,7 @@ but inline comments are way better so switching to inline comments
  0--
  Imporive Logic
  and better prommpt to avoid a ovelapp of comments
+
+ Fix basic commenting
+
+ Need to work on fixing up the logic and improving the prompts 
