@@ -1,19 +1,52 @@
-import math
+from flask import Flask, request, render_template_string
+import sqlite3
+import os
 
-def is_prime(n):
-    if n < 2:
-        return False
-    if n == 2:
-        return True
-    if n % 2 == 0:
-        return False
-    for i in range(3, int(math.sqrt(n)) + 1, 2):
-        if n % i == 0:
-            return False
-    return True
+app = Flask(_name_)
+DB_PATH = 'users.db'
 
-def get_primes(nums):
-    return [num for num in nums if is_prime(num)]
+def init_db():
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT,
+        password TEXT
+    )''')
+    conn.commit()
+    conn.close()
 
-numbers = list(range(1, 30))
-print(get_primes(numbers))
+@app.route('/')
+def home():
+    return '''
+    <form method="POST" action="/login">
+        <input name="username" placeholder="Username" />
+        <input name="password" placeholder="Password" />
+        <input type="submit" />
+    </form>
+    '''
+
+@app.route('/login', methods=['POST'])
+def login():
+    username = request.form['username']
+    password = request.form['password']
+    query = f"SELECT * FROM users WHERE username = '{username}' AND password = '{password}'"
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute(query)
+    result = cursor.fetchone()
+    conn.close()
+    if result:
+        return render_template_string(f"<h1>Welcome, {username}!</h1>")
+    else:
+        return "Invalid credentials"
+
+@app.route('/admin')
+def admin():
+    if request.args.get('key') == 'letmein123':
+        return os.popen('cat /etc/passwd').read()
+    return "Unauthorized", 403
+
+if _name_ == '_main_':
+    init_db()
+    app.run(debug=True)
