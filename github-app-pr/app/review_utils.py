@@ -50,10 +50,16 @@ Return JSON as:
 def match_comments_to_positions(diff_blocks, suggestions):
     """
     Matches model suggestions to actual added lines and their positions from the diff.
-    Returns a list of dicts with the comment, position, and cleaned line.
+    Works whether diff_blocks is a flat list or a list of blocks.
     """
     matched_results = []
     matched_lines = set()
+
+    # Handle both nested and flat formats
+    if all(isinstance(b, dict) and "line" in b for b in diff_blocks):
+        all_entries = diff_blocks  # already flat
+    else:
+        all_entries = [entry for block in diff_blocks for entry in block]  # flatten
 
     for suggestion in suggestions:
         raw_line = suggestion.get("line_snippet", "").strip()
@@ -62,25 +68,26 @@ def match_comments_to_positions(diff_blocks, suggestions):
         if not raw_line or not comment:
             continue
 
-        # Strip leading '+' if present (common in diff outputs)
         line_text = raw_line.lstrip("+").strip()
 
-        for entry in diff_blocks:
+        for entry in all_entries:
+            if entry["type"] != "add":
+                continue
+
             entry_line = entry.get("line", "").strip()
             position = entry.get("position")
 
-            # Skip if already matched this exact line-position pair
             if (entry_line, position) in matched_lines:
                 continue
 
-            # Loose match for normalized lines
-            if entry["type"] == "add" and entry_line == line_text:
+            # Loose whitespace-insensitive match
+            if entry_line.replace(" ", "") == line_text.replace(" ", ""):
                 matched_results.append({
                     "comment": comment,
                     "position": position,
                     "line": entry_line
                 })
                 matched_lines.add((entry_line, position))
-                break  # move to next suggestion after first match
+                break
 
     return matched_results
