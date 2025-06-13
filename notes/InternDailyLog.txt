@@ -258,3 +258,17 @@ Trying to swithc to fast api + ngrok but coundt and face a lot of connectivity i
 
 Fixed and setup the ngrok + fastapi github app and also connected it to codellama model and directly commented on prs
 Faced a lot of bugs with connectivity and jwt signature
+-------------------------
+June 13
+
+Got the general review commetn working
+
+but inline comments are way better so switching to inline comments
+
+ Fallback to summary comment on PR body if inline fails. -> TODO
+
+ GitHub webhook to auto-trigger on PR open/update. - Done
+
+ Chunk large diffs for LLM token limits. - >> 
+
+ Add tags (e.g., "🔐 Security") inline before comment text. ->> TODO
