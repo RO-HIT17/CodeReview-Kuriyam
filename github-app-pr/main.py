@@ -4,6 +4,8 @@ from app.utils import comment_on_pr, get_pr_diff, generate_review_comment
 from dotenv import load_dotenv
 from app.github_auth import get_installation_token
 from app.inline_test import post_inline_review_comment
+from pydantic import BaseModel
+from app.review_service import handle_pr_review
 
 load_dotenv()
 app = FastAPI()
@@ -73,3 +75,17 @@ async def test_inline_comment(request: Request):
         owner, repo, pr_number, token, file_path, comment, position
     )
     return {"status": status_code, "response": res}
+
+
+class PRReviewRequest(BaseModel):
+    owner: str
+    repo: str
+    pr_number: int
+
+@app.post("/review-pr")
+async def review_pr_route(payload: PRReviewRequest):
+    try:
+        await handle_pr_review(payload.owner, payload.repo, payload.pr_number)
+        return {"status": "success", "message": "Review comments posted!"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
