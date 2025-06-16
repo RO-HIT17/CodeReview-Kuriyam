@@ -290,7 +290,7 @@ SETUP the entire pr review process and automated it
 Fixed and Cleaned up code but the overall workflow is not great also the model too shoudl be finetuned for the particualr needs
 Things to do to improve output:
 -> Finetune the model with better parameters and quantisation
--> Finetune with apt dataset and better chat_template as the one we would use
+-> Finetune with apt dataset and better chat_template as the one we would use for the pr diff  
 -> Improve the prompts used to fetch pr diff
 -> Use better logic to extract the pr diff and pass them in 
 -> Use better logic to map the pr diff with the correct response frmo model
@@ -301,3 +301,39 @@ Things to do to improve output:
 -> But with the port forwarding better ways can be implemented
 
 ------------------------------END OF WEEK 2---------------------------------------
+
+June 16
+
+Javascript review is pretty good.
+
+Workflow:
+-> User creates a pull request with code changes
+-> Send the request to the backend fastapi webhook endpoint and send the pr diff along with the files.
+-> Extract the patch additions and deletions from the pr diff and map them with the apt filenames 
+-> Send the extracted content to the local ollama finetuned model
+-> The ollama basemodel is codellama and the finetuned model uses cyber native dataset
+-> The dataset contained rejected and chosen templates so the dataset was modified using default chat templates
+-> THe extracted lora weights were merged on top of the base model using ollama create
+-> Using the model along with the prompt template to extract the json of the particular format  
+-> Clean the returned json and map the returned json and map it with the apporpraite line numbers
+-> Send the line snippets and postion numbers along with SIDE and send it to geihub bot to create the inline comments
+
+Current Setup:
+-> The finetuned model we use id finetuned based on the cyber native dataset 
+-> We used unsloth + lora weights with q4 quantisation and used default chat template for alpaca
+-> Used a basic level prompt to get the pr diff  
+-> Setup github app webhook api to send the pr diff to the model for review
+-> Setup forwarding of the localhost using ngrok
+
+
+Things to do to improve output:
+-> Finetune the model with better parameters and quantisation
+-> Finetune with apt dataset and better chat_template as the one we would use for the pr diff  
+-> Improve the prompts used to fetch pr diff
+-> Use better logic to extract the pr diff and pass them in 
+-> Use better logic to map the pr diff with the correct response frmo model
+-> Add Fall Backs
+-> Check if only add pr diff is checked or both add and delete pr diff is checked
+-> Check the returned patch and fix the entire workflow
+-> Can be deployed in Render but Ollama cant be hosted as we run our finetuned model from local so github app can only be used in local as of now
+-> But with the port forwarding better ways can be implemented
