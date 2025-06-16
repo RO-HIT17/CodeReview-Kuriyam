@@ -316,7 +316,7 @@ Workflow:
 -> THe extracted lora weights were merged on top of the base model using ollama create
 -> Using the model along with the prompt template to extract the json of the particular format  
 -> Clean the returned json and map the returned json and map it with the apporpraite line numbers
--> Send the line snippets and postion numbers along with SIDE and send it to geihub bot to create the inline comments
+-> Send the line snippets and postion numbers along with SIDE and send it to github bot to create the inline comments
 
 Current Setup:
 -> The finetuned model we use id finetuned based on the cyber native dataset 
@@ -337,3 +337,6 @@ Things to do to improve output:
 -> Check the returned patch and fix the entire workflow
 -> Can be deployed in Render but Ollama cant be hosted as we run our finetuned model from local so github app can only be used in local as of now
 -> But with the port forwarding better ways can be implemented
+
+Enhancements:
+-> Make the model to better review formultiple languages
