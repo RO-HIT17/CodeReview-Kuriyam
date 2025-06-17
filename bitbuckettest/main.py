@@ -1,7 +1,9 @@
 from fastapi import FastAPI, Request, HTTPException
 import httpx
 import os
-
+from dotenv import load_dotenv
+from typing import Optional
+load_dotenv()
 app = FastAPI()
 
 # Set your Bitbucket credentials via env vars or hardcode for local testing
@@ -35,7 +37,12 @@ async def bitbucket_webhook(request: Request):
 
         # Post a general comment
         message = "👋 Hello! This is an automated review comment for your new PR. We'll analyze your code shortly. Stay tuned!"
-        await post_bitbucket_general_comment(workspace, repo_slug, pr_id, message)
+        await post_bitbucket_general_comment(
+            workspace=workspace,
+            repo_slug=repo_slug,
+            pr_id=pr_id,
+            message=message
+        )
 
         return {"status": "comment posted"}
 
@@ -43,10 +50,26 @@ async def bitbucket_webhook(request: Request):
         print("[ERROR]", str(e))
         raise HTTPException(status_code=500, detail="Internal processing error")
 
+async def post_bitbucket_general_comment(
+    workspace: str,
+    repo_slug: str,
+    pr_id: int,
+    message: str,
+    username: Optional[str] = BITBUCKET_USERNAME,
+    app_password: Optional[str] = BITBUCKET_APP_PASSWORD
+) -> None:
+    """
+    Post a general comment on a Bitbucket pull request.
 
-async def post_bitbucket_general_comment(workspace: str, repo_slug: str, pr_id: int, message: str):
+    Args:
+        workspace (str): Bitbucket workspace name.
+        repo_slug (str): Repository slug.
+        pr_id (int): Pull request ID.
+        message (str): The comment message to post.
+        username (str, optional): Bitbucket username. Defaults to global.
+        app_password (str, optional): Bitbucket app password. Defaults to global.
+    """
     url = f"https://api.bitbucket.org/2.0/repositories/{workspace}/{repo_slug}/pullrequests/{pr_id}/comments"
-
     payload = {
         "content": {
             "raw": message
@@ -56,11 +79,11 @@ async def post_bitbucket_general_comment(workspace: str, repo_slug: str, pr_id: 
     async with httpx.AsyncClient() as client:
         response = await client.post(
             url,
-            auth=(BITBUCKET_USERNAME, BITBUCKET_APP_PASSWORD),
+            auth=(username, app_password),
             json=payload
         )
 
-        if response.status_code not in [200, 201]:
-            print(f"[ERROR] Failed to comment: {response.status_code} - {response.text}")
-        else:
-            print("[SUCCESS] General comment posted successfully")
+    if response.status_code in (200, 201):
+        print("[✅] Comment posted successfully")
+    else:
+        print(f"[❌] Failed to post comment: {response.status_code} - {response.text}")
