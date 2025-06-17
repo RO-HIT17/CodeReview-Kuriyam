@@ -5,8 +5,8 @@ import os
 app = FastAPI()
 
 # Set your Bitbucket credentials via env vars or hardcode for local testing
-BITBUCKET_USERNAME = os.getenv("BITBUCKET_USERNAME", "RO_HIT17")
-BITBUCKET_APP_PASSWORD = os.getenv("BITBUCKET_APP_PASSWORD", "ATBBn6xXftHzwEQGznusTSTm62spF11B4CC6")
+BITBUCKET_USERNAME = os.getenv("BITBUCKET_USERNAME" )
+BITBUCKET_APP_PASSWORD = os.getenv("BITBUCKET_APP_PASSWORD" )
 
 
 @app.post("/webhook")
