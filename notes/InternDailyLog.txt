@@ -346,3 +346,8 @@ Enhancements:
 June 17
 
 Test feasibilty fot bitbucket
+And made the comments working on the partucaur repo
+
+----------------------
+June 18
+Fixed inline comments in bitbucket 
