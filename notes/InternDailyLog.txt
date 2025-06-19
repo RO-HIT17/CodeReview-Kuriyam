@@ -351,3 +351,10 @@ And made the comments working on the partucaur repo
 ----------------------
 June 18
 Fixed inline comments in bitbucket 
+
+------------------
+June 19
+Setup the comments for the issues and pr mapping
+
+Need to make a summary of all the new features we hcae tried out there and make a good action plan for the next 
+7 days
