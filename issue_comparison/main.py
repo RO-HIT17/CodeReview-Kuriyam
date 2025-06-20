@@ -1,17 +1,14 @@
-from fastapi import FastAPI, Request, Header, HTTPException
+from fastapi import FastAPI, Request, Header, HTTPException, Query
+from fastapi.responses import JSONResponse, RedirectResponse, HTMLResponse
 from dotenv import load_dotenv
 from pydantic import BaseModel
+from datetime import datetime
 import httpx
 import requests
-import hmac, hashlib, os, re
-from datetime import datetime
-from fastapi import Query
-from fastapi import Depends
-from fastapi.responses import JSONResponse
+import hmac, hashlib, os, re, json, textwrap
+
 from middleware.github_auth import get_installation_token
 from service.review_service import handle_pr_review
-import json
-from fastapi.responses import RedirectResponse
 
 load_dotenv()
 app = FastAPI()
@@ -19,6 +16,9 @@ app = FastAPI()
 WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET")
 OLLAMA_URL = "http://localhost:11434/api/generate"
 MODEL_NAME = "codellama:7b"
+FEEDBACK_FILE = "feedback_store.json"
+
+# --------------------- Utility Functions ---------------------
 
 def verify_signature(payload: bytes, signature: str):
     mac = hmac.new(WEBHOOK_SECRET.encode(), msg=payload, digestmod=hashlib.sha256)
@@ -28,205 +28,244 @@ def verify_signature(payload: bytes, signature: str):
 def extract_issue_number(text: str) -> str | None:
     if not text:
         return None
-    print("🔍 Scanning text for issue reference...")
     match = re.search(r'#(\d+)', text)
-    if match:
-        issue_num = match.group(1)
-        print(f"✅ Found issue number: #{issue_num}")
-        return issue_num
-    print("⚠️ No issue reference found in this text.")
-    return None
+    return match.group(1) if match else None
+
+def load_feedbacks():
+    if os.path.exists(FEEDBACK_FILE):
+        with open(FEEDBACK_FILE, "r") as f:
+            return json.load(f)
+    return []
+
+def save_feedbacks(data):
+    with open(FEEDBACK_FILE, "w") as f:
+        json.dump(data, f, indent=2)
+
+# --------------------- GitHub Webhook Handler ---------------------
 
 @app.post("/webhook")
 async def github_webhook(request: Request, x_hub_signature_256: str = Header(None)):
     body = await request.body()
-    GITHUB_TOKEN = await get_installation_token()
-    print("🔗 Received webhook request from GitHub."
-          f" Token: {GITHUB_TOKEN[:]}... (truncated for security)")
+    print(f"📩 Received webhook event")
+    
     if WEBHOOK_SECRET and not verify_signature(body, x_hub_signature_256):
-        print("❌ Signature verification failed.")
+        print("❌ Invalid webhook signature")
         return {"error": "Invalid signature"}
 
     payload = await request.json()
     action = payload.get("action")
     event = payload.get("pull_request")
 
-    print(f"📩 Received webhook - action: {action}")
+    if action != "opened" or not event:
+        print("ℹ️ Ignoring non-PR-opened events")
+        return {"ok": True}
 
-    if action == "opened" and event:
-        pr_number = event["number"]
-        repo = payload["repository"]["name"]
-        owner = payload["repository"]["owner"]["login"]
+    pr_number = event["number"]
+    repo = payload["repository"]["name"]
+    owner = payload["repository"]["owner"]["login"]
+    print(f"🔍 PR #{pr_number} opened in {owner}/{repo}")
 
-        print(f"➡️ PR opened: #{pr_number} in {owner}/{repo}")
+    GITHUB_TOKEN = await get_installation_token()
+    headers = {
+        "Authorization": f"Bearer {GITHUB_TOKEN}",
+        "Accept": "application/vnd.github.v3+json"
+    }
 
-        headers = {
-            "Authorization": f"Bearer {GITHUB_TOKEN}",
-            "Accept": "application/vnd.github.v3+json"
-        }
+    timeout = httpx.Timeout(30.0, connect=10.0)
 
-        timeout = httpx.Timeout(30.0, connect=10.0)
+    async with httpx.AsyncClient(timeout=timeout) as client:
+        try:
+            diff_resp = await client.get(
+                f"https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}",
+                headers={**headers, "Accept": "application/vnd.github.v3.diff"}
+            )
+            if diff_resp.status_code != 200:
+                print("❌ Failed to fetch PR diff")
+                return {"error": "PR diff fetch failed"}
+            pr_diff = diff_resp.text
 
-        async with httpx.AsyncClient(timeout=timeout) as client:
-            try:
-                print("➡️ Fetching PR diff...")
-                diff_resp = await client.get(
-                    f"https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}",
-                    headers={**headers, "Accept": "application/vnd.github.v3.diff"}
-                )
-                if diff_resp.status_code != 200:
-                    print(f"❌ Failed to fetch PR diff: {diff_resp.text}")
-                    raise HTTPException(status_code=diff_resp.status_code, detail="Failed to fetch PR diff")
-                pr_diff = diff_resp.text
-                print("✅ PR diff fetched.")
+            pr_body = event.get("body", "")
+            pr_title = event.get("title", "")
+            issue_number = extract_issue_number(pr_body) or extract_issue_number(pr_title)
 
-                # Try to extract issue number from PR body, title, and commit messages
-                print("🔎 Attempting to extract linked issue...")
-                pr_body = event.get("body", "")
-                pr_title = event.get("title", "")
-                issue_number = extract_issue_number(pr_body) or extract_issue_number(pr_title)
-
-                # If still not found, check commit messages
-                if not issue_number:
-                    print("➡️ Checking commits in the PR...")
-                    commits_resp = await client.get(
-                        f"https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}/commits",
-                        headers=headers
-                    )
-                    if commits_resp.status_code == 200:
-                        commits = commits_resp.json()
-                        for commit in commits:
-                            message = commit.get("commit", {}).get("message", "")
-                            issue_number = extract_issue_number(message)
-                            if issue_number:
-                                break
-                    else:
-                        print(f"⚠️ Could not fetch commits: {commits_resp.text}")
-
-                if not issue_number:
-                    print("⚠️ No linked issue found in PR body, title, or commits.")
-                    return {"status": "skipped", "message": "No issue linked in PR body, title, or commits"}
-
-                print(f"➡️ Fetching issue #{issue_number}...")
-                issue_resp = await client.get(
-                    f"https://api.github.com/repos/{owner}/{repo}/issues/{issue_number}",
+            if not issue_number:
+                print("🔍 Scanning commit messages for issue link...")
+                commits_resp = await client.get(
+                    f"https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}/commits",
                     headers=headers
                 )
-                if issue_resp.status_code != 200:
-                    print(f"❌ Failed to fetch issue: {issue_resp.text}")
-                    raise HTTPException(status_code=issue_resp.status_code, detail="Failed to fetch issue")
-                issue_body = issue_resp.json().get("body", "")
-                print("✅ Issue fetched.")
+                for commit in commits_resp.json():
+                    issue_number = extract_issue_number(commit.get("commit", {}).get("message", ""))
+                    if issue_number:
+                        break
 
-                print("➡️ Sending prompt to CodeLlama...")
-                prompt = (
-                    "You are a code reviewer.\n"
-                    "Given the following GitHub issue and PR diff, determine if the PR addresses the issue.\n"
-                    "Respond with YES if fully addressed, else explain why not.\n\n"
-                    f"Issue:\n{issue_body}\n\nPR Diff:\n{pr_diff}"
-                )
+            if not issue_number:
+                print("⚠️ No issue found")
+                return {"status": "skipped", "message": "No linked issue"}
 
-                res = requests.post(OLLAMA_URL, json={
-                    "model": MODEL_NAME,
-                    "prompt": prompt,
-                    "stream": False
-                })
-                llama_output = res.json().get("response", "").strip()
-                print("✅ LLM response received.")
-                import textwrap
+            issue_resp = await client.get(
+                f"https://api.github.com/repos/{owner}/{repo}/issues/{issue_number}",
+                headers=headers
+            )
+            issue_body = issue_resp.json().get("body", "")
 
-                clean_output = textwrap.dedent(llama_output).strip()
-                GITHUB_PR_URL = f"https://github.com/{owner}/{repo}/pull/{pr_number}"    
-                comment_payload = {
-                    "body": textwrap.dedent(f"""
-                        🔍 **Review Check**
+            print("🧠 Calling LLM for review...")
+            prompt = (
+                "You are a code reviewer.\n"
+                "Given the following GitHub issue and PR diff, determine if the PR addresses the issue.\n"
+                "Respond with YES if fully addressed, else explain why not.\n\n"
+                f"Issue:\n{issue_body}\n\nPR Diff:\n{pr_diff}"
+            )
 
-                        This PR tries to address issue #{issue_number}.
+            llama_resp = requests.post(OLLAMA_URL, json={
+                "model": MODEL_NAME,
+                "prompt": prompt,
+                "stream": False
+            })
 
-                        ---
+            llama_output = llama_resp.json().get("response", "").strip()
+            clean_output = textwrap.dedent(llama_output).strip()
+            GITHUB_PR_URL = f"https://github.com/{owner}/{repo}/pull/{pr_number}"
 
-                        {clean_output}
+            comment_payload = {
+                "body": textwrap.dedent(f"""
+                    🔍 **Review Check**
 
-                        ---
+                    This PR tries to address issue #{issue_number}.
 
-                        **Was this helpful?**
+                    ---
 
-                        [👍 Yes](https://4bda-2405-201-e048-7046-dc8f-e49c-617e-17ec.ngrok-free.app/feedback?pr={pr_number}&issue={issue_number}&vote=up&redirect={GITHUB_PR_URL})  
-                        [👎 No](https://4bda-2405-201-e048-7046-dc8f-e49c-617e-17ec.ngrok-free.app/feedback?pr={pr_number}&issue={issue_number}&vote=down&redirect={GITHUB_PR_URL})
-                    """).strip()
-                }
+                    {clean_output}
 
+                    ---
 
-                print("➡️ Posting comment to PR...")
-                comment_resp = await client.post(
-                    f"https://api.github.com/repos/{owner}/{repo}/issues/{pr_number}/comments",
-                    json=comment_payload,
-                    headers=headers
-                )
-                if comment_resp.status_code != 201:
-                    print(f"❌ Failed to post comment: {comment_resp.text}")
-                    raise HTTPException(status_code=comment_resp.status_code, detail="Failed to post PR comment")
+                    **Was this helpful?**
 
-                print("✅ Review comment posted.")
-                return {"status": "success", "llama_output": llama_output}
+                    [👍 Yes](https://4bda-2405-201-e048-7046-dc8f-e49c-617e-17ec.ngrok-free.app/feedback?pr={pr_number}&issue={issue_number}&vote=up&redirect={GITHUB_PR_URL})  
+                    [👎 No](https://4bda-2405-201-e048-7046-dc8f-e49c-617e-17ec.ngrok-free.app/feedback?pr={pr_number}&issue={issue_number}&vote=down&redirect={GITHUB_PR_URL})
+                """).strip()
+            }
 
-            except Exception as e:
-                print("🔥 Exception occurred:", str(e))
-                raise HTTPException(status_code=500, detail=str(e))
+            print("💬 Posting comment to PR...")
+            comment_resp = await client.post(
+                f"https://api.github.com/repos/{owner}/{repo}/issues/{pr_number}/comments",
+                json=comment_payload,
+                headers=headers
+            )
+            if comment_resp.status_code != 201:
+                print("❌ Failed to post comment")
+                raise HTTPException(status_code=comment_resp.status_code, detail="Failed to post comment")
 
-    print("ℹ️ Event not handled.")
-    return {"ok": True}
+            print("✅ Review comment posted.")
+            return {"status": "success", "llama_output": llama_output}
+
+        except Exception as e:
+            print("🔥 Error:", e)
+            raise HTTPException(status_code=500, detail=str(e))
+
+# --------------------- Feedback ---------------------
+
 @app.get("/feedback")
 async def collect_feedback(
     pr: int = Query(...),
     issue: int = Query(...),
     vote: str = Query(...),
-    redirect: str = Query(...),# "up" or "down"
+    redirect: str = Query(...),
     request: Request = None
 ):
     user_ip = request.client.host
-    feedback_entry = {
-        "timestamp": str(datetime.utcnow()),
+    print(f"🗳 Feedback from {user_ip} on PR #{pr}, Issue #{issue}: {vote}")
+
+    feedbacks = load_feedbacks()
+    for fb in feedbacks:
+        if fb["pr"] == pr and fb["issue"] == issue and fb["ip"] == user_ip:
+            print("⚠️ Duplicate vote, ignoring.")
+            return RedirectResponse(url=redirect)
+
+    feedbacks.append({
+        "timestamp": datetime.utcnow().isoformat(),
         "pr": pr,
         "issue": issue,
         "vote": vote,
         "ip": user_ip,
-        "approved": False  # to be set by admin later
-    }
-    print("📥 Feedback received:", feedback_entry)
-
-    # Save to file (you can replace with DB)
-    import json
-    feedback_file = "feedback_store.json"
-    if os.path.exists(feedback_file):
-        with open(feedback_file, "r") as f:
-            data = json.load(f)
-    else:
-        data = []
-
-    data.append(feedback_entry)
-
-    with open(feedback_file, "w") as f:
-        json.dump(data, f, indent=2)
-
+        "approved": False
+    })
+    save_feedbacks(feedbacks)
+    print("✅ Feedback recorded")
     return RedirectResponse(url=redirect)
+
+# --------------------- Admin API ---------------------
 
 @app.get("/feedback-list")
 async def list_feedback():
-    with open("feedback_store.json", "r") as f:
-        return json.load(f)
+    return load_feedbacks()
 
 @app.post("/approve-feedback")
 async def approve_feedback(pr: int, issue: int, timestamp: str):
-    with open("feedback_store.json", "r") as f:
-        data = json.load(f)
-
-    for entry in data:
+    print(f"🔐 Approving feedback for PR #{pr}, Issue #{issue}")
+    feedbacks = load_feedbacks()
+    for entry in feedbacks:
         if entry["pr"] == pr and entry["issue"] == issue and entry["timestamp"] == timestamp:
             entry["approved"] = True
             break
-
-    with open("feedback_store.json", "w") as f:
-        json.dump(data, f, indent=2)
-
+    save_feedbacks(feedbacks)
     return {"message": "Feedback approved."}
+
+# --------------------- Admin UI ---------------------
+
+@app.get("/admin", response_class=HTMLResponse)
+async def admin_panel():
+    feedbacks = load_feedbacks()
+
+    html = """
+    <html>
+        <head>
+            <title>Feedback Admin Panel</title>
+            <style>
+                body { font-family: Arial; padding: 20px; }
+                table { border-collapse: collapse; width: 100%; }
+                th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+                th { background-color: #f2f2f2; }
+                .approved { color: green; font-weight: bold; }
+                .pending { color: red; font-weight: bold; }
+            </style>
+        </head>
+        <body>
+            <h2>🛠 Feedback Admin Panel</h2>
+            <table>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>PR</th>
+                    <th>Issue</th>
+                    <th>Vote</th>
+                    <th>IP</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+    """
+
+    for fb in feedbacks:
+        status = "✅ Approved" if fb["approved"] else "❌ Pending"
+        css_class = "approved" if fb["approved"] else "pending"
+        approve_link = (
+            f"/approve-feedback?pr={fb['pr']}&issue={fb['issue']}&timestamp={fb['timestamp']}"
+            if not fb["approved"] else "-"
+        )
+        html += f"""
+            <tr>
+                <td>{fb['timestamp']}</td>
+                <td>{fb['pr']}</td>
+                <td>{fb['issue']}</td>
+                <td>{fb['vote']}</td>
+                <td>{fb['ip']}</td>
+                <td class="{css_class}">{status}</td>
+                <td>{f'<a href="{approve_link}">Approve</a>' if approve_link != '-' else '-'}</td>
+            </tr>
+        """
+
+    html += """
+            </table>
+        </body>
+    </html>
+    """
+    return HTMLResponse(content=html)
