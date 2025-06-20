@@ -4,9 +4,14 @@ from pydantic import BaseModel
 import httpx
 import requests
 import hmac, hashlib, os, re
-
+from datetime import datetime
+from fastapi import Query
+from fastapi import Depends
+from fastapi.responses import JSONResponse
 from middleware.github_auth import get_installation_token
 from service.review_service import handle_pr_review
+import json
+from fastapi.responses import RedirectResponse
 
 load_dotenv()
 app = FastAPI()
@@ -36,7 +41,8 @@ def extract_issue_number(text: str) -> str | None:
 async def github_webhook(request: Request, x_hub_signature_256: str = Header(None)):
     body = await request.body()
     GITHUB_TOKEN = await get_installation_token()
-
+    print("🔗 Received webhook request from GitHub."
+          f" Token: {GITHUB_TOKEN[:]}... (truncated for security)")
     if WEBHOOK_SECRET and not verify_signature(body, x_hub_signature_256):
         print("❌ Signature verification failed.")
         return {"error": "Invalid signature"}
@@ -127,10 +133,29 @@ async def github_webhook(request: Request, x_hub_signature_256: str = Header(Non
                 })
                 llama_output = res.json().get("response", "").strip()
                 print("✅ LLM response received.")
+                import textwrap
 
+                clean_output = textwrap.dedent(llama_output).strip()
+                GITHUB_PR_URL = f"https://github.com/{owner}/{repo}/pull/{pr_number}"    
                 comment_payload = {
-                    "body": f"🔍 **Review Check**:\n\nThis PR tries to address issue #{issue_number}.\n\n{llama_output}"
+                    "body": textwrap.dedent(f"""
+                        🔍 **Review Check**
+
+                        This PR tries to address issue #{issue_number}.
+
+                        ---
+
+                        {clean_output}
+
+                        ---
+
+                        **Was this helpful?**
+
+                        [👍 Yes](https://4bda-2405-201-e048-7046-dc8f-e49c-617e-17ec.ngrok-free.app/feedback?pr={pr_number}&issue={issue_number}&vote=up&redirect={GITHUB_PR_URL})  
+                        [👎 No](https://4bda-2405-201-e048-7046-dc8f-e49c-617e-17ec.ngrok-free.app/feedback?pr={pr_number}&issue={issue_number}&vote=down&redirect={GITHUB_PR_URL})
+                    """).strip()
                 }
+
 
                 print("➡️ Posting comment to PR...")
                 comment_resp = await client.post(
@@ -151,3 +176,57 @@ async def github_webhook(request: Request, x_hub_signature_256: str = Header(Non
 
     print("ℹ️ Event not handled.")
     return {"ok": True}
+@app.get("/feedback")
+async def collect_feedback(
+    pr: int = Query(...),
+    issue: int = Query(...),
+    vote: str = Query(...),
+    redirect: str = Query(...),# "up" or "down"
+    request: Request = None
+):
+    user_ip = request.client.host
+    feedback_entry = {
+        "timestamp": str(datetime.utcnow()),
+        "pr": pr,
+        "issue": issue,
+        "vote": vote,
+        "ip": user_ip,
+        "approved": False  # to be set by admin later
+    }
+    print("📥 Feedback received:", feedback_entry)
+
+    # Save to file (you can replace with DB)
+    import json
+    feedback_file = "feedback_store.json"
+    if os.path.exists(feedback_file):
+        with open(feedback_file, "r") as f:
+            data = json.load(f)
+    else:
+        data = []
+
+    data.append(feedback_entry)
+
+    with open(feedback_file, "w") as f:
+        json.dump(data, f, indent=2)
+
+    return RedirectResponse(url=redirect)
+
+@app.get("/feedback-list")
+async def list_feedback():
+    with open("feedback_store.json", "r") as f:
+        return json.load(f)
+
+@app.post("/approve-feedback")
+async def approve_feedback(pr: int, issue: int, timestamp: str):
+    with open("feedback_store.json", "r") as f:
+        data = json.load(f)
+
+    for entry in data:
+        if entry["pr"] == pr and entry["issue"] == issue and entry["timestamp"] == timestamp:
+            entry["approved"] = True
+            break
+
+    with open("feedback_store.json", "w") as f:
+        json.dump(data, f, indent=2)
+
+    return {"message": "Feedback approved."}
