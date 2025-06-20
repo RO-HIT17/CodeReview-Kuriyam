@@ -358,3 +358,10 @@ Setup the comments for the issues and pr mapping
 
 Need to make a summary of all the new features we hcae tried out there and make a good action plan for the next 
 7 days
+
+
+June 20
+
+Tryiong to implement feedbacl mechanishm
+
+But the response isnt converted into proper markdown format
