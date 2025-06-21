@@ -367,3 +367,21 @@ Tryiong to implement feedbacl mechanishm
 But the response isnt converted into proper markdown format
 fixed it also setup the apis for feedback approval
 to check with stategeis for feedback finetuning
+
+
+------------------------------END OF WEEK 3---------------------------------------
+
+TODO:
+Check for the feedback mechanishm finetuning
+Integrate all the bits and pieces into one
+Check for ways and draw the overall architecture
+Combine various separate parts like github , bitbucket etc
+List down all the variosu features and things we have tried and implemented
+Check for planned UI
+Deployment and Further Use
+Repo Cleanup
+Cleanup of all tech debt and hacky fixes
+Further list down the ways of improvement in each aspect
+Check the structure of each api call
+
+------------------------------END OF WEEK 3---------------------------------------
