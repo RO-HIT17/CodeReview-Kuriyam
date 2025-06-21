@@ -383,5 +383,6 @@ Repo Cleanup
 Cleanup of all tech debt and hacky fixes
 Further list down the ways of improvement in each aspect
 Check the structure of each api call
+List of things we have and how to implement them for a user 
 
 ------------------------------END OF WEEK 3---------------------------------------
