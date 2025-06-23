@@ -393,3 +393,5 @@ Deployment and Further Use
 ---
 
 ------------------------------END OF WEEK 3---------------------------------------
+June 23
+Viewed Feedback finetuning option
