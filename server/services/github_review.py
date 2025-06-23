@@ -21,6 +21,7 @@ async def handle_pr_review(owner: str, repo: str, pr_number: int):
         all_diff_blocks.extend(diff_blocks)
 
     prompt = build_review_prompt("ALL_FILES", all_diff_blocks)
+    print(f"Generated prompt for {len(all_diff_blocks)} diff blocks")
     res = requests.post(OLLAMA_URL, json={"model": MODEL_NAME, "prompt": prompt, "stream": False})
 
     raw_response = res.json().get("response", "")
