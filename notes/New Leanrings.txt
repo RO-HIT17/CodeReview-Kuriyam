@@ -22,3 +22,7 @@ Github PRs
 
 Webhooks 
 smee
+
+bitbucket
+Connect apps
+
