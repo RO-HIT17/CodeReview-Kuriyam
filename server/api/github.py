@@ -23,6 +23,8 @@ async def github_webhook(request: Request, x_hub_signature_256: str = Header(Non
     action = payload.get("action")
     event = payload.get("pull_request")
 
+    print(f"Received GitHub webhook: action={action}, event={event}")
+    
     if action == "opened" and event:
         pr_number = event["number"]
         repo = payload["repository"]["name"]
@@ -30,6 +32,7 @@ async def github_webhook(request: Request, x_hub_signature_256: str = Header(Non
 
         try:
             await handle_pr_review(owner, repo, pr_number)
+            
             return {"status": "success", "message": "Review comments posted!"}
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))

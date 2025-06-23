@@ -395,3 +395,5 @@ Deployment and Further Use
 ------------------------------END OF WEEK 3---------------------------------------
 June 23
 Viewed Feedback finetuning option
+Ontegrated entire code into a single folder
+Now need to work on imporvemnts , docs and fixes 

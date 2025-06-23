@@ -1,16 +1,27 @@
 # feedback/store.py
 
+import os
 import json
-from datetime import datetime
 
-FEEDBACK_FILE = "static/feedback_store.json"
+FEEDBACK_FILE = os.path.join("static", "feedback_store.json")  # Store in static directory
 
-def store_feedback_vote(data):
-    with open(FEEDBACK_FILE, "r") as f:
-        feedback = json.load(f)
+def load_feedbacks() -> list:
+    """
+    Loads feedback from a JSON file.
+    If the file doesn't exist, returns an empty list.
+    """
+    if os.path.exists(FEEDBACK_FILE):
+        try:
+            with open(FEEDBACK_FILE, "r") as f:
+                return json.load(f)
+        except json.JSONDecodeError:
+            return []
+    return []
 
-    data["timestamp"] = str(datetime.utcnow())
-    feedback.append(data)
-
+def save_feedbacks(data: list):
+    """
+    Saves feedback data to a JSON file.
+    """
+    os.makedirs(os.path.dirname(FEEDBACK_FILE), exist_ok=True)
     with open(FEEDBACK_FILE, "w") as f:
-        json.dump(feedback, f, indent=2)
+        json.dump(data, f, indent=2)

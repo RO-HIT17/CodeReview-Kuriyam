@@ -15,6 +15,7 @@ def generate_jwt():
         private_key = f.read()
     now = int(time.time())
     payload = {"iat": now, "exp": now + 540, "iss": APP_ID}
+    print(f"Generating JWT for GitHub App ID: {APP_ID}, Installation ID: {INSTALLATION_ID}")
     return jwt.encode(payload, private_key, algorithm="RS256")
 
 async def get_installation_token():
