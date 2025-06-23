@@ -31,7 +31,6 @@ async def github_webhook(request: Request, x_hub_signature_256: str = Header(Non
         pr_number = event["number"]
         repo = payload["repository"]["name"]
         owner = payload["repository"]["owner"]["login"]
-        
 
         try:
             await handle_pr_review(owner, repo, pr_number)
