@@ -1,28 +1,46 @@
-# services/github_service.py
+import httpx
+from utils.github_auth import get_installation_token
 
-def fetch_pr_diff(client, repo, pr):
-    owner = repo["owner"]["login"]
-    repo_name = repo["name"]
-    number = pr["number"]
+async def get_pr_files(repo: str, owner: str, pr_number: int):
+    token = await get_installation_token()
+    url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}/files"
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Accept": "application/vnd.github+json"
+    }
+    async with httpx.AsyncClient() as client:
+        res = await client.get(url, headers=headers)
+        res.raise_for_status()
+        return res.json()
 
-    files = client.pull_requests.list_files(owner, repo_name, number)
-    return [f for f in files if f.status == "added" or f.status == "modified"]
+async def get_latest_commit_sha(owner, repo, pr_number):
+    token = await get_installation_token()
+    url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}"
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Accept": "application/vnd.github+json"
+    }
+    async with httpx.AsyncClient() as client:
+        res = await client.get(url, headers=headers)
+        res.raise_for_status()
+        return res.json()["head"]["sha"]
 
-def post_comments(client, repo, pr, review):
-    owner = repo["owner"]["login"]
-    repo_name = repo["name"]
-    number = pr["number"]
+async def post_inline_comment(owner, repo, pr_number, file_path, position, comment, commit_id):
+    token = await get_installation_token()
+    url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}/comments"
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Accept": "application/vnd.github+json"
+    }
 
-    for comment in review.get("inline", []):
-        client.pulls.create_review_comment(
-            owner,
-            repo_name,
-            number,
-            body=comment["text"],
-            commit_id=pr["head"]["sha"],
-            path=comment["path"],
-            position=comment["position"]
-        )
+    data = {
+        "body": comment,
+        "commit_id": commit_id,
+        "path": file_path,
+        "line": position,
+        "side": "RIGHT"
+    }
 
-    if "general" in review:
-        client.issues.create_comment(owner, repo_name, number, review["general"])
+    async with httpx.AsyncClient() as client:
+        res = await client.post(url, headers=headers, json=data)
+        res.raise_for_status()
