@@ -8,7 +8,7 @@ MODEL_NAME = "codellama:7b"
 async def handle_pr_review(owner: str, repo: str, pr_number: int):
     pr_files = await get_pr_files(repo, owner, pr_number)
     all_diff_blocks = []
-
+    print(f"Processing PR #{pr_number} for {owner}/{repo}")
     for file in pr_files:
         filename = file["filename"]
         patch = file.get("patch", "")
@@ -26,6 +26,8 @@ async def handle_pr_review(owner: str, repo: str, pr_number: int):
     raw_response = res.json().get("response", "")
     json_objects = re.findall(r'{\s*"line_snippet"\s*:\s*".+?",\s*"comment"\s*:\s*".+?"\s*}', raw_response, re.DOTALL)
 
+    print(f"Found {len(json_objects)} JSON objects in response")
+    
     if not json_objects:
         return
 
