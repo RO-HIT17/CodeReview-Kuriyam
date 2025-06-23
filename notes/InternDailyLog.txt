@@ -384,7 +384,7 @@ Check the structure of each api call
 List of things we have and how to implement them for a user 
 
 
-Check for the feedback mechanishm finetuning
+Check for the feedback mechanishm finetuning - LoRA + SFT need to work on this now also need to check how we are gonna test it
 Check for ways and draw the overall architecture
 Check for planned UI
 Deployment and Further Use
