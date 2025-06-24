@@ -2,18 +2,13 @@ import time
 import jwt
 import os
 import httpx
-from dotenv import load_dotenv
-
-load_dotenv()
-
-APP_ID = os.getenv("GITHUB_APP_ID")
-PRIVATE_KEY_PATH = os.getenv("GITHUB_PRIVATE_KEY_PATH")
+from core.config import GITHUB_APP_ID, GITHUB_PRIVATE_KEY_PATH  
 
 def generate_jwt():
-    with open(PRIVATE_KEY_PATH, "r") as f:
+    with open(GITHUB_PRIVATE_KEY_PATH, "r") as f:
         private_key = f.read()
     now = int(time.time())
-    payload = {"iat": now, "exp": now + 540, "iss": APP_ID}
+    payload = {"iat": now, "exp": now + 540, "iss": GITHUB_APP_ID}
     
     return jwt.encode(payload, private_key, algorithm="RS256")
 
