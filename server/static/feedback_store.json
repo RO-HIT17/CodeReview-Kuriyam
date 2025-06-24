@@ -22,5 +22,45 @@
     "vote": "up",
     "ip": "2405:201:e048:7046:d48f:3b0:7cbe:19a6",
     "approved": false
+  },
+  {
+    "id": "de1adeb6-6b4f-48f6-a811-70c146cf2a48",
+    "timestamp": "2025-06-24T22:28:58.652207",
+    "pr": 50,
+    "issue": "51",
+    "vote": null,
+    "ip": null,
+    "diff": "File: test_prs/test.js\n-function findMax(arr) {\n-  let max = 0;\n-  for (let i = 0; i < arr.length; i++) {\n-    arr.sort(); // Unnecessary and wrong\n-    if (arr[i] > max) {\n-      max = arr[i];\n-    }\n-  }\n-  return max;\n+function fetchData(url) {\n+  fetch(url).then(res => {\n+    res.json().then(data => {\n+      console.log(\"Data received:\", data);\n+    }).catch(err => {\n+      console.log(\"Error parsing JSON\");\n+    });\n+  }).catch(err => {\n+    console.log(\"Network error\");\n+  });",
+    "approved": false
+  },
+  {
+    "id": "7fa20332-f7e3-4ce4-aaef-11aac5f34675",
+    "timestamp": "2025-06-24T22:39:21.986483",
+    "pr": 53,
+    "issue": "52",
+    "vote": null,
+    "ip": null,
+    "diff": "File: test_prs/test.js\n-function fetchData(url) {\n-  fetch(url).then(res => {\n-    res.json().then(data => {\n-      console.log(\"Data received:\", data);\n-    }).catch(err => {\n-      console.log(\"Error parsing JSON\");\n-    });\n-  }).catch(err => {\n-    console.log(\"Network error\");\n-  });\n+function findMax(arr) {\n+  let max = 0;\n+  for (let i = 0; i < arr.length; i++) {\n+    arr.sort();\n+    if (arr[i] > max) {\n+      max = arr[i];\n+    }\n+  }\n+  return max;",
+    "approved": false
+  },
+  {
+    "id": "16c0bc74-b3a2-4234-8cf9-3d2f2a3af24e",
+    "timestamp": "2025-06-24T22:43:59.106986",
+    "pr": 53,
+    "issue": "52",
+    "vote": null,
+    "ip": null,
+    "diff": "File: test_prs/test.js\n-function fetchData(url) {\n-  fetch(url).then(res => {\n-    res.json().then(data => {\n-      console.log(\"Data received:\", data);\n-    }).catch(err => {\n-      console.log(\"Error parsing JSON\");\n-    });\n-  }).catch(err => {\n-    console.log(\"Network error\");\n-  });\n+function findMax(arr) {\n+  let max = 0;\n+  for (let i = 0; i < arr.length; i++) {\n+    arr.sort();\n+    if (arr[i] > max) {\n+      max = arr[i];\n+    }\n+  }\n+  return max;",
+    "approved": false
+  },
+  {
+    "id": "9063154d-94cd-4bfe-b5a0-2e919e50ea53",
+    "timestamp": "2025-06-24T22:51:27.802047",
+    "pr": 53,
+    "issue": "52",
+    "vote": null,
+    "ip": null,
+    "diff": "File: test_prs/test.js\n-function fetchData(url) {\n-  fetch(url).then(res => {\n-    res.json().then(data => {\n-      console.log(\"Data received:\", data);\n-    }).catch(err => {\n-      console.log(\"Error parsing JSON\");\n-    });\n-  }).catch(err => {\n-    console.log(\"Network error\");\n-  });\n+function findMax(arr) {\n+  let max = 0;\n+  for (let i = 0; i < arr.length; i++) {\n+    arr.sort();\n+    if (arr[i] > max) {\n+      max = arr[i];\n+    }\n+  }\n+  return max;",
+    "approved": false
   }
 ]

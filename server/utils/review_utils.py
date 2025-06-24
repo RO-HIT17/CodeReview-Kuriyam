@@ -51,12 +51,12 @@ def build_review_prompt(added_lines: list[str]) -> str:
         6. ✅ **Final Suggestions**  
         - Include brief fixes or example corrections for the above.
 
-        Return your review as structured JSON like:
+        Return your response as **strict JSON** like this:
         ```json
         [
         {{
-            "line_snippet": "...",
-            "comment": "..."
+            "line_snippet": "+ const token = req.headers['authorization'];",
+            "comment": "Avoid directly trusting headers without validation. Use proper auth middleware."
         }}
         ]
         ```
@@ -88,7 +88,7 @@ def match_comments_to_positions(diff_blocks, suggestions):
             if (normalized_entry_line, position) in matched_lines:
                 continue
 
-            if normalized_entry_line == normalized_suggestion_line:
+            if normalized_entry_line == normalized_suggestion_line or normalized_suggestion_line in normalized_entry_line:
                 matched_results.append({
                     "comment": comment,
                     "position": position,

@@ -108,13 +108,9 @@ async def handle_pr_review(owner: str, repo: str, pr_number: int, installation_i
 
             comment_body = textwrap.dedent(f"""
                 🔍 **Review Check**
-
                 This PR tries to address issue #{issue_number}.
-
-                {llama_output.lstrip()}
-
+                {(llama_output.lstrip()).rstrip()}
                 **Was this helpful?**
-
                 [👍 Yes]({NGROK_URL}/feedback?vote=up&id={feedback_id}&redirect=https://github.com/{owner}/{repo}/pull/{pr_number})  
                 [👎 No]({NGROK_URL}/feedback?vote=down&id={feedback_id}&redirect=https://github.com/{owner}/{repo}/pull/{pr_number})
                 """).strip()

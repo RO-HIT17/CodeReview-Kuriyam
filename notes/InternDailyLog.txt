@@ -409,4 +409,10 @@ need to read more docs
 Also need to work on the base model + adapters
 
 
+---
+Logics Involed:
+Cleaning up the reponse from codellama - done
+Sedning the general comments with feedback links in markdown - done
+Mapping the comments to inline code lines - done
+Extraction of pr diff - done 
 ----------

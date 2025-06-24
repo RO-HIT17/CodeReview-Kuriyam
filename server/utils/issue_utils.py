@@ -23,7 +23,7 @@ def get_llama_response(prompt: str) -> str:
     
 def build_issue_check_prompt(issue_title: str, issue_body: str, diff_text: str) -> str:
     return f"""
-        You are a senior software engineer and expert open-source contributor tasked with evaluating whether a GitHub pull request (PR) effectively resolves the linked issue.
+        You are a code review tool tasked with evaluating whether a GitHub pull request (PR) effectively resolves the linked issue.
 
         Please carefully assess the provided **issue title and description** alongside the **PR diff**. Analyze the intent of the issue and the nature of the code changes. Based on your analysis, provide:
 
