@@ -397,3 +397,11 @@ June 23
 Viewed Feedback finetuning option
 Ontegrated entire code into a single folder
 Now need to work on imporvemnts , docs and fixes 
+
+
+June 24
+Trying to finetune the model with the feedback
+https://www.databricks.com/blog/efficient-fine-tuning-lora-guide-llms
+
+need to learn what i did
+need to read more docs
