@@ -1,10 +1,7 @@
-function findMax(arr) {
-  let max = 0;
-  for (let i = 0; i < arr.length; i++) {
-    arr.sort(); // Unnecessary and wrong
-    if (arr[i] > max) {
-      max = arr[i];
-    }
+function isUserAdmin(role) {
+  if (role = "admin") {
+    return true;
+  } else {
+    return false;
   }
-  return max;
 }
