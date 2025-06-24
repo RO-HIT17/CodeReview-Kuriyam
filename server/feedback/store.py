@@ -1,5 +1,3 @@
-# feedback/store.py
-
 import os
 import json
 

@@ -10,3 +10,4 @@ BITBUCKET_USERNAME = os.getenv("BITBUCKET_USERNAME")
 BITBUCKET_APP_PASSWORD = os.getenv("BITBUCKET_APP_PASSWORD")
 OLLAMA_URL = "http://localhost:11434/api/generate"
 MODEL_NAME = "codellama:7b"
+NGROK_URL = os.getenv("NGROK_URL")

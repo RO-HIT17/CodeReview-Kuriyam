@@ -1,11 +1,10 @@
 from fastapi import APIRouter, Request, Header, HTTPException
 from services.github_review import handle_pr_review
-import os, hmac, hashlib
+import hmac, hashlib
 from models.schemas import PRReviewRequest
+from core.config import WEBHOOK_SECRET
 
 router = APIRouter()
-
-WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET")
 
 def verify_signature(payload: bytes, signature: str):
     mac = hmac.new(WEBHOOK_SECRET.encode(), msg=payload, digestmod=hashlib.sha256)

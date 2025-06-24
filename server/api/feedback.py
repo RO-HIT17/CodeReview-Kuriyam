@@ -1,5 +1,3 @@
-# feedback/routes.py
-
 from fastapi import APIRouter, Query, Request
 from fastapi.responses import RedirectResponse, HTMLResponse
 from feedback.store import load_feedbacks, save_feedbacks
