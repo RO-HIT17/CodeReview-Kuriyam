@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request, Header, HTTPException
-from pydantic import BaseModel
 from services.github_review import handle_pr_review
 import os, hmac, hashlib
+from models.schemas import PRReviewRequest
 
 router = APIRouter()
 
@@ -23,7 +23,7 @@ async def github_webhook(request: Request, x_hub_signature_256: str = Header(Non
     action = payload.get("action")
     event = payload.get("pull_request")
 
-    print(f"Received GitHub webhook: action={action}, event={event}")
+    print(f"Received GitHub webhook: action={action}")
     
     if action == "opened" and event:
         pr_number = event["number"]
@@ -40,11 +40,6 @@ async def github_webhook(request: Request, x_hub_signature_256: str = Header(Non
 
     return {"ok": True}
 
-class PRReviewRequest(BaseModel):
-    owner: str
-    repo: str
-    pr_number: int
-    installation_id: int
 
 @router.post("/review-pr")
 async def review_pr_route(payload: PRReviewRequest):

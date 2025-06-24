@@ -56,11 +56,11 @@ async def handle_pr_review(owner: str, repo: str, pr_number: int,installation_id
                 continue
 
             suggestions = json.loads("[" + ",".join(json_objects) + "]")
-            print(f"✅ Suggestions for {filename}:", suggestions)
+            print(f"SUGGESTIONS FOR {filename}:", suggestions)
 
             matched = match_comments_to_positions(file_entry["diff"], suggestions)
 
-            print(f"🔗 Matched comments for {filename}:", matched)
+            print(f"MATCHED COMMENTS FOR {filename}:", matched)
                 
             commit_id = await get_latest_commit_sha(owner, repo, pr_number,installation_id)
             for item in matched:

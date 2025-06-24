@@ -67,14 +67,6 @@ def match_comments_to_positions(diff_blocks, suggestions):
     def normalize_line(line: str) -> str:
         return line.lstrip("+").strip().replace(" ", "")
 
-    print("\n🔗 Matching comments to positions...")
-    print("📄 Diff blocks:")
-    for b in diff_blocks:
-        print(f"  - {b}")
-    print("🧠 Suggestions:")
-    for s in suggestions:
-        print(f"  - {s}")
-
     matched_results = []
     matched_lines = set()
 
