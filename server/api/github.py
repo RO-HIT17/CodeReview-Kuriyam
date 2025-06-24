@@ -4,7 +4,7 @@ from services.github_review import handle_pr_review
 import os, hmac, hashlib
 
 router = APIRouter()
-    
+
 WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET")
 
 def verify_signature(payload: bytes, signature: str):
@@ -29,9 +29,9 @@ async def github_webhook(request: Request, x_hub_signature_256: str = Header(Non
         pr_number = event["number"]
         repo = payload["repository"]["name"]
         owner = payload["repository"]["owner"]["login"]
-
+        installation_id = payload["installation"]["id"]
         try:
-            await handle_pr_review(owner, repo, pr_number)
+            await handle_pr_review(owner, repo, pr_number,installation_id)
             
             return {"status": "success", "message": "Review comments posted!"}
         except Exception as e:
