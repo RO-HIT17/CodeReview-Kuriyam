@@ -405,3 +405,5 @@ https://www.databricks.com/blog/efficient-fine-tuning-lora-guide-llms
 
 need to learn what i did
 need to read more docs
+
+Also need to work on the base model + adapters

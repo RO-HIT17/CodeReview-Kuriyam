@@ -41,6 +41,7 @@ async def handle_pr_review(owner: str, repo: str, pr_number: int):
     for filename, blocks in grouped_by_file.items():
         matched = match_comments_to_positions(blocks, suggestions)
         for item in matched:
+            print(f"Processing comment for {filename} at position {item['position']}: {item['comment']}")
             if item["comment"]:
                 commit_id = await get_latest_commit_sha(owner, repo, pr_number)
                 await post_inline_comment(owner, repo, pr_number,
