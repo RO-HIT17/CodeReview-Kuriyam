@@ -1,9 +1,7 @@
 import requests, json, re
 from utils.review_utils import extract_diff_blocks, build_review_prompt, match_comments_to_positions
 from services.github_service import get_pr_files, get_latest_commit_sha, post_inline_comment
-
-OLLAMA_URL = "http://localhost:11434/api/generate"
-MODEL_NAME = "codellama:7b"
+from core.config import OLLAMA_URL, MODEL_NAME
 
 async def handle_pr_review(owner: str, repo: str, pr_number: int,installation_id: int ):
     
@@ -34,7 +32,7 @@ async def handle_pr_review(owner: str, repo: str, pr_number: int,installation_id
         if not added_lines:
             continue  
 
-        prompt = build_review_prompt(filename, added_lines)
+        prompt = build_review_prompt(added_lines)
 
         try:
             response = requests.post(
@@ -61,8 +59,10 @@ async def handle_pr_review(owner: str, repo: str, pr_number: int,installation_id
             matched = match_comments_to_positions(file_entry["diff"], suggestions)
 
             print(f"MATCHED COMMENTS FOR {filename}:", matched)
+            print(f"COUNT OF MATCHED COMMENTS FOR {filename}:", len(matched))
                 
             commit_id = await get_latest_commit_sha(owner, repo, pr_number,installation_id)
+            
             for item in matched:
                 await post_inline_comment(
                     owner, repo, pr_number,
