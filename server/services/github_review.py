@@ -2,7 +2,7 @@ import requests, json, re
 from utils.review_utils import extract_diff_blocks, build_review_prompt, match_comments_to_positions
 from services.github_service import get_pr_files, get_latest_commit_sha, post_inline_comment, get_pr_commits, get_pr_metadata, get_issue_details, post_issue_check_comment
 from utils.issue_utils import extract_issue_number, get_llama_response, build_issue_check_prompt
-from core.config import OLLAMA_URL, MODEL_NAME
+from core.config import OLLAMA_URL, MODEL_NAME ,NGROK_URL
 import textwrap
 
 async def handle_pr_review(owner: str, repo: str, pr_number: int, installation_id: int):
@@ -67,7 +67,7 @@ async def handle_pr_review(owner: str, repo: str, pr_number: int, installation_i
             )
 
             if not json_objects:
-                print(f"❌ NO REVIEW SUGGESTIONS FOR FILE: {filename.upper()} — RAW OUTPUT:\n{raw_output}")
+                print(f"❌ NO REVIEW SUGGESTIONS FOR FILE: {filename} — RAW OUTPUT:\n{raw_output}")
                 continue
 
             suggestions = json.loads("[" + ",".join(json_objects) + "]")
@@ -109,8 +109,8 @@ async def handle_pr_review(owner: str, repo: str, pr_number: int, installation_i
 
                 **Was this helpful?**
 
-                [👍 Yes](/feedback?pr={pr_number}&issue={issue_number}&vote=up&redirect=https://github.com/{owner}/{repo}/pull/{pr_number})  
-                [👎 No](/feedback?pr={pr_number}&issue={issue_number}&vote=down&redirect=https://github.com/{owner}/{repo}/pull/{pr_number})
+                [👍 Yes]({NGROK_URL}/feedback?pr={pr_number}&issue={issue_number}&vote=up&redirect=https://github.com/{owner}/{repo}/pull/{pr_number})  
+                [👎 No]({NGROK_URL}/feedback?pr={pr_number}&issue={issue_number}&vote=down&redirect=https://github.com/{owner}/{repo}/pull/{pr_number})
             """).strip()
 
             await post_issue_check_comment(owner, repo, pr_number, issue_number, comment_body, installation_id)
