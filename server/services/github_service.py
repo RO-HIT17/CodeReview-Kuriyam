@@ -2,12 +2,17 @@ import httpx
 from utils.github_auth import get_installation_token
 
 async def get_pr_files(repo: str, owner: str, pr_number: int , installation_id: int):
+    
     token = await get_installation_token(installation_id)
+
+    print("TOKEN:", token)    
+    
     url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}/files"
     headers = {
         "Authorization": f"Bearer {token}",
         "Accept": "application/vnd.github+json"
     }
+    
     async with httpx.AsyncClient() as client:
         res = await client.get(url, headers=headers)
         res.raise_for_status()
