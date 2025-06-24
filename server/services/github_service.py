@@ -18,8 +18,9 @@ async def get_pr_files(repo: str, owner: str, pr_number: int , installation_id: 
         res.raise_for_status()
         return res.json()
 
-async def get_latest_commit_sha(owner, repo, pr_number):
-    token = await get_installation_token()
+async def get_latest_commit_sha(owner, repo, pr_number,installation_id):
+    token = await get_installation_token(installation_id)
+    
     url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}"
     headers = {
         "Authorization": f"Bearer {token}",
