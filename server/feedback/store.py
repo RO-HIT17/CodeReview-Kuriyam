@@ -1,7 +1,7 @@
 import os
 import json
 
-FEEDBACK_FILE = os.path.join("static", "feedback_store.json")  # Store in static directory
+FEEDBACK_FILE = os.path.join("static", "feedback_store.json")  
 
 def load_feedbacks() -> list:
     """

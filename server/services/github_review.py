@@ -103,10 +103,8 @@ async def handle_pr_review(owner: str, repo: str, pr_number: int, installation_i
 
                 This PR tries to address issue #{issue_number}.
 
-                ---
                 {llama_output}
-                ---
-
+                
                 **Was this helpful?**
 
                 [👍 Yes]({NGROK_URL}/feedback?pr={pr_number}&issue={issue_number}&vote=up&redirect=https://github.com/{owner}/{repo}/pull/{pr_number})  
