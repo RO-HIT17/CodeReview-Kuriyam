@@ -30,13 +30,13 @@ def match_comments_to_positions(diff_blocks, suggestions):
         comment = suggestion.get("comment", "").strip()
         if not raw_line or not comment:
             continue
-
+        print(f"Processing suggestion: {raw_line} -> {comment}")    
         line_text = raw_line.lstrip("+").strip().replace(" ", "")
         for entry in diff_blocks:
             entry_line = entry.get("line", "").lstrip("+").strip().replace(" ", "")
             position = entry.get("position")
             filename = entry.get("filename")
-
+            print(f"Comparing with entry: {entry_line} at position {position} in {filename}")
             if (entry_line, position) in matched_lines:
                 continue
 
