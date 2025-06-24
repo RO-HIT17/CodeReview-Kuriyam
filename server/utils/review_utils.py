@@ -19,7 +19,7 @@ def extract_diff_blocks(patch: str):
 
     return diff_blocks
 
-def build_review_prompt(filename: str, diff_blocks: list):
+def build_review_prompt(diff_blocks: list):
     diff_text = "\n".join([f"+ {entry['line']}" for entry in diff_blocks if entry["type"] == "add"])
     return f"""
 You are an expert code reviewer. Analyze the following GitHub Pull Request diff. Return JSON:

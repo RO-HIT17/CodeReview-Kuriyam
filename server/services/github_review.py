@@ -11,7 +11,6 @@ async def handle_pr_review(owner: str, repo: str, pr_number: int,installation_id
     all_diff_blocks = []
     
     print("PR FILES:", pr_files)
-    #print(f"Processing PR #{pr_number} for {owner}/{repo}")
     
     for file in pr_files:
         filename = file["filename"]
@@ -29,32 +28,47 @@ async def handle_pr_review(owner: str, repo: str, pr_number: int,installation_id
         print("DIFF BLOCKS:", diff_blocks)
         print("ALL DIFF BLOCKS:", all_diff_blocks)
         
-    prompt = build_review_prompt("ALL_FILES", all_diff_blocks)
-    
-    res = requests.post(OLLAMA_URL, json={"model": MODEL_NAME, "prompt": prompt, "stream": False})
+    for file_entry in all_diff_blocks:
+        filename = file_entry["filename"]
+        added_lines = [entry["line"] for entry in file_entry["diff"] if entry["type"] == "add"]
+        if not added_lines:
+            continue  
 
-    raw_response = res.json().get("response", "")
-    json_objects = re.findall(r'{\s*"line_snippet"\s*:\s*".+?",\s*"comment"\s*:\s*".+?"\s*}', raw_response, re.DOTALL)
+        prompt = build_review_prompt(filename, added_lines)
 
-    #print(f"Found {len(json_objects)} JSON objects in response")
-    
-    if not json_objects:
-        return
+        try:
+            response = requests.post(
+                OLLAMA_URL,
+                json={"model": MODEL_NAME, "prompt": prompt, "stream": False},
+                timeout=60
+            )
+            response.raise_for_status()
 
-    suggestions = json.loads("[" + ",".join(json_objects) + "]")
+            raw_output = response.json().get("response", "")
+            json_objects = re.findall(
+                r'{\s*"line_snippet"\s*:\s*".+?",\s*"comment"\s*:\s*".+?"\s*}',
+                raw_output,
+                re.DOTALL
+            )
 
-    grouped_by_file = {}
-    for block in all_diff_blocks:
-        grouped_by_file.setdefault(block["filename"], []).append(block)
+            if not json_objects:
+                print(f"❌ No review suggestions for {filename}")
+                continue
 
-    for filename, blocks in grouped_by_file.items():
-        matched = match_comments_to_positions(blocks, suggestions)
-        for item in matched:
-            #print(f"Processing comment for {filename} at position {item['position']}: {item['comment']}")
-            if item["comment"]:
-                commit_id = await get_latest_commit_sha(owner, repo, pr_number)
-                await post_inline_comment(owner, repo, pr_number,
-                                          file_path=filename,
-                                          position=item["position"],
-                                          comment=item["comment"],
-                                          commit_id=commit_id)
+            suggestions = json.loads("[" + ",".join(json_objects) + "]")
+            print(f"✅ Suggestions for {filename}:", suggestions)
+
+            matched = match_comments_to_positions(file_entry["diff"], suggestions)
+
+            commit_id = await get_latest_commit_sha(owner, repo, pr_number)
+            for item in matched:
+                await post_inline_comment(
+                    owner, repo, pr_number,
+                    file_path=filename,
+                    position=item["position"],
+                    comment=item["comment"],
+                    commit_id=commit_id
+                )
+
+        except Exception as e:
+            print(f"🔥 Error processing {filename}:", e)
