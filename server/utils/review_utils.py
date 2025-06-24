@@ -26,32 +26,15 @@ def build_review_prompt(added_lines: list[str]) -> str:
     diff_text = "\n".join(added_lines)
 
     return f"""
-        You are an expert Python code reviewer and software engineer.
+        You are an expert Python code reviewer. Review only the newly added lines from a GitHub PR diff. Do not assume missing context.
 
-        Your task is to review **only the newly added lines** from a GitHub Pull Request diff. The code may be partial, so focus only on the provided lines and avoid assumptions about the rest of the file.
+        1. 🔧 Optimization & Refactoring – Suggest cleaner, faster, or simpler alternatives.
+        2. 🚫 Bad Practices & Security – Flag insecure code, hardcoded secrets, or risky patterns.
+        3. ❗ Logic & Edge Cases – Identify logical errors, unhandled inputs, or invalid assumptions.
+        4. ⏱️ Complexity – Mention time/space complexity where applicable.
+        5. ✅ Improvements – Suggest concise fixes or better code snippets.
 
-        Perform your review with emphasis on:
-
-        1. 🔧 **Optimization & Refactoring**  
-        - Recommend cleaner or faster alternatives.  
-        - Identify redundant or inefficient logic.
-
-        2. 🚫 **Bad Practices / Anti-Patterns**  
-        - Flag risky coding patterns that could cause bugs or poor maintainability.
-
-        3. 🔐 **Security Concerns**  
-        - Watch for insecure code: hardcoded credentials, unsanitized inputs, dangerous patterns.
-
-        4. ❗ **Logic Issues**  
-        - Look for incorrect logic, missed edge cases, or invalid assumptions.
-
-        5. ⏱️ **Complexity Analysis**  
-        - Briefly comment on time/space complexity of loops/functions if applicable.
-
-        6. ✅ **Final Suggestions**  
-        - Include brief fixes or example corrections for the above.
-
-        Return your response as **strict JSON** like this:
+        Return your response as **strict JSON** in the following format:
         ```json
         [
         {{

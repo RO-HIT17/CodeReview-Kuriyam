@@ -1,28 +1,17 @@
-# api/bitbucket.py
-
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import JSONResponse
 import json, os, httpx
-from dotenv import load_dotenv
-
-load_dotenv()
+from core.config import BITBUCKET_APP_PASSWORD, BITBUCKET_USERNAME
 
 router = APIRouter()
 
-BITBUCKET_USERNAME = os.getenv("BITBUCKET_USERNAME")
-BITBUCKET_APP_PASSWORD = os.getenv("BITBUCKET_APP_PASSWORD")
-
-if not BITBUCKET_USERNAME or not BITBUCKET_APP_PASSWORD:
-    raise Exception("❌ Missing Bitbucket credentials in .env file.")
-
-# Manifest serving
 @router.get("/atlassian-connect.json")
 async def serve_manifest():
     with open("atlassian-connect.json", "r") as f:
         manifest = json.load(f)
     return JSONResponse(content=manifest)
 
-# General comment poster
+
 async def post_bitbucket_general_comment(comments_url: str, message: str):
     payload = {
         "content": {"raw": message}
