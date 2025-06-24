@@ -1,14 +1,22 @@
 def extract_diff_blocks(patch: str):
     diff_blocks = []
     position = 0
+
     for line in patch.splitlines():
         if line.startswith("@@"):
-            position = 0
-        elif line.startswith("+") and not line.startswith("+++"):
+            position = 0  
+            continue
+
+        if line.startswith("+") and not line.startswith("+++"):
             position += 1
-            diff_blocks.append({"type": "add", "line": line[:], "position": position})
+            diff_blocks.append({"type": "add", "line": line, "position": position})
+
+        elif line.startswith("-") and not line.startswith("---"):
+            diff_blocks.append({"type": "del", "line": line, "position": position})
+
         elif not line.startswith("-"):
             position += 1
+
     return diff_blocks
 
 def build_review_prompt(filename: str, diff_blocks: list):
@@ -30,13 +38,13 @@ def match_comments_to_positions(diff_blocks, suggestions):
         comment = suggestion.get("comment", "").strip()
         if not raw_line or not comment:
             continue
-        print(f"Processing suggestion: {raw_line} -> {comment}")    
+        #print(f"Processing suggestion: {raw_line} -> {comment}")    
         line_text = raw_line.lstrip("+").strip().replace(" ", "")
         for entry in diff_blocks:
             entry_line = entry.get("line", "").lstrip("+").strip().replace(" ", "")
             position = entry.get("position")
             filename = entry.get("filename")
-            print(f"Comparing with entry: {entry_line} at position {position} in {filename}")
+            #print(f"Comparing with entry: {entry_line} at position {position} in {filename}")
             if (entry_line, position) in matched_lines:
                 continue
 

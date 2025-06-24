@@ -30,6 +30,7 @@ async def github_webhook(request: Request, x_hub_signature_256: str = Header(Non
         repo = payload["repository"]["name"]
         owner = payload["repository"]["owner"]["login"]
         installation_id = payload["installation"]["id"]
+        
         try:
             await handle_pr_review(owner, repo, pr_number,installation_id)
             
@@ -43,11 +44,12 @@ class PRReviewRequest(BaseModel):
     owner: str
     repo: str
     pr_number: int
+    installation_id: int
 
 @router.post("/review-pr")
 async def review_pr_route(payload: PRReviewRequest):
     try:
-        await handle_pr_review(payload.owner, payload.repo, payload.pr_number)
+        await handle_pr_review(payload.owner, payload.repo, payload.pr_number, payload.installation_id)
         return {"status": "success", "message": "Review comments posted!"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

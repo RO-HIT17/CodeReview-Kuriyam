@@ -20,7 +20,6 @@ def generate_jwt():
 async def get_installation_token(installation_id : int ):
     
     jwt_token = generate_jwt()
-    print(f"Generated JWT token: {jwt_token}")
     
     headers = {
         "Authorization": f"Bearer {jwt_token}",
