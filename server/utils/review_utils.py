@@ -55,8 +55,8 @@ def build_review_prompt(added_lines: list[str]) -> str:
         ```json
         [
         {{
-            "line_snippet": "+ const token = req.headers['authorization'];",
-            "comment": "Avoid directly trusting headers without validation. Use proper auth middleware."
+            "line_snippet": "...",
+            "comment": "..."
         }}
         ]
         ```
