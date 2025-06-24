@@ -60,7 +60,9 @@ async def handle_pr_review(owner: str, repo: str, pr_number: int,installation_id
 
             matched = match_comments_to_positions(file_entry["diff"], suggestions)
 
-            commit_id = await get_latest_commit_sha(owner, repo, pr_number)
+            print(f"🔗 Matched comments for {filename}:", matched)
+                
+            commit_id = await get_latest_commit_sha(owner, repo, pr_number,installation_id)
             for item in matched:
                 await post_inline_comment(
                     owner, repo, pr_number,
