@@ -5,8 +5,8 @@ from services.github_service import get_pr_files, get_latest_commit_sha, post_in
 OLLAMA_URL = "http://localhost:11434/api/generate"
 MODEL_NAME = "codellama:7b"
 
-async def handle_pr_review(owner: str, repo: str, pr_number: int):
-    pr_files = await get_pr_files(repo, owner, pr_number)
+async def handle_pr_review(owner: str, repo: str, pr_number: int,installation_id: int ):
+    pr_files = await get_pr_files(repo, owner, pr_number ,installation_id)
     all_diff_blocks = []
     print(f"Processing PR #{pr_number} for {owner}/{repo}")
     for file in pr_files:

@@ -1,8 +1,8 @@
 import httpx
 from utils.github_auth import get_installation_token
 
-async def get_pr_files(repo: str, owner: str, pr_number: int):
-    token = await get_installation_token()
+async def get_pr_files(repo: str, owner: str, pr_number: int , installation_id: int):
+    token = await get_installation_token(installation_id)
     url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}/files"
     headers = {
         "Authorization": f"Bearer {token}",
