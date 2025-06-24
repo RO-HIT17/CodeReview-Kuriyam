@@ -30,8 +30,8 @@ async def get_latest_commit_sha(owner, repo, pr_number):
         res.raise_for_status()
         return res.json()["head"]["sha"]
 
-async def post_inline_comment(owner, repo, pr_number, file_path, position, comment, commit_id):
-    token = await get_installation_token()
+async def post_inline_comment(owner, repo, pr_number, file_path, position, comment, commit_id,installation_id):
+    token = await get_installation_token(installation_id)
     url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}/comments"
     headers = {
         "Authorization": f"Bearer {token}",
