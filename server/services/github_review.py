@@ -1,15 +1,33 @@
 import requests, json, re
 from utils.review_utils import extract_diff_blocks, build_review_prompt, match_comments_to_positions
-from services.github_service import get_pr_files, get_latest_commit_sha, post_inline_comment
+from services.github_service import get_pr_files, get_latest_commit_sha, post_inline_comment, get_pr_commits, get_pr_metadata, get_issue_body, post_issue_check_comment
+from utils.issue_utils import extract_issue_number, get_llama_response, build_issue_check_prompt
 from core.config import OLLAMA_URL, MODEL_NAME
+import textwrap
 
-async def handle_pr_review(owner: str, repo: str, pr_number: int,installation_id: int ):
-    
-    pr_files = await get_pr_files(repo, owner, pr_number ,installation_id)
+async def handle_pr_review(owner: str, repo: str, pr_number: int, installation_id: int):
+    issue_number = None
+
+    pr_metadata = await get_pr_metadata(repo, owner, pr_number, installation_id)
+    pr_body = pr_metadata.get("body", "")
+    pr_title = pr_metadata.get("title", "")
+    issue_number = extract_issue_number(pr_body) or extract_issue_number(pr_title)
+
+    if not issue_number:
+        pr_commits = await get_pr_commits(repo, owner, pr_number, installation_id)
+        for commit in pr_commits:
+            msg = commit.get("commit", {}).get("message", "")
+            issue_number = extract_issue_number(msg)
+            if issue_number:
+                break
+
+    print(f"🔗 LINKED ISSUE: #{issue_number}" if issue_number else "⚠️ NO LINKED ISSUE FOUND.")
+
+    pr_files = await get_pr_files(repo, owner, pr_number, installation_id)
     all_diff_blocks = []
-    
-    print("PR FILES:", pr_files)
-    
+
+    print("📂 PR FILES RECEIVED:", pr_files)
+
     for file in pr_files:
         filename = file["filename"]
         patch = file.get("patch", "")
@@ -23,14 +41,14 @@ async def handle_pr_review(owner: str, repo: str, pr_number: int,installation_id
             "diff": diff_blocks
         })
 
-        print("DIFF BLOCKS:", diff_blocks)
-        print("ALL DIFF BLOCKS:", all_diff_blocks)
-        
+        print("🔍 DIFF BLOCKS FOR FILE:", filename.upper(), diff_blocks)
+        print("📦 UPDATED ALL DIFF BLOCKS:", all_diff_blocks)
+
     for file_entry in all_diff_blocks:
         filename = file_entry["filename"]
         added_lines = [entry["line"] for entry in file_entry["diff"] if entry["type"] == "add"]
         if not added_lines:
-            continue  
+            continue
 
         prompt = build_review_prompt(added_lines)
 
@@ -38,7 +56,6 @@ async def handle_pr_review(owner: str, repo: str, pr_number: int,installation_id
             response = requests.post(
                 OLLAMA_URL,
                 json={"model": MODEL_NAME, "prompt": prompt, "stream": False},
-                
             )
             response.raise_for_status()
 
@@ -50,19 +67,19 @@ async def handle_pr_review(owner: str, repo: str, pr_number: int,installation_id
             )
 
             if not json_objects:
-                print(f"❌ No review suggestions for {filename} is {raw_output}" )
+                print(f"❌ NO REVIEW SUGGESTIONS FOR FILE: {filename.upper()} — RAW OUTPUT:\n{raw_output}")
                 continue
 
             suggestions = json.loads("[" + ",".join(json_objects) + "]")
-            print(f"SUGGESTIONS FOR {filename}:", suggestions)
+            print(f"💡 SUGGESTIONS FOR {filename.upper()}:", suggestions)
 
             matched = match_comments_to_positions(file_entry["diff"], suggestions)
 
-            print(f"MATCHED COMMENTS FOR {filename}:", matched)
-            print(f"COUNT OF MATCHED COMMENTS FOR {filename}:", len(matched))
-                
-            commit_id = await get_latest_commit_sha(owner, repo, pr_number,installation_id)
-            
+            print(f"📌 MATCHED COMMENTS FOR {filename.upper()}:", matched)
+            print(f"🔢 COUNT OF MATCHED COMMENTS FOR {filename.upper()}: {len(matched)}")
+
+            commit_id = await get_latest_commit_sha(owner, repo, pr_number, installation_id)
+
             for item in matched:
                 await post_inline_comment(
                     owner, repo, pr_number,
@@ -72,6 +89,32 @@ async def handle_pr_review(owner: str, repo: str, pr_number: int,installation_id
                     commit_id=commit_id,
                     installation_id=installation_id
                 )
-
         except Exception as e:
-            print(f"🔥 Error processing {filename}:", e)
+            print(f"🔥 ERROR WHILE PROCESSING FILE {filename.upper()}: {e}")
+
+    if issue_number:
+        try:
+            issue_body = await get_issue_body(owner, repo, issue_number, installation_id)
+            prompt = build_issue_check_prompt(issue_body, all_diff_blocks)
+            llama_output = get_llama_response(prompt)
+
+            comment_body = textwrap.dedent(f"""
+                🔍 **Review Check**
+
+                This PR tries to address issue #{issue_number}.
+
+                ---
+                {llama_output}
+                ---
+
+                **Was this helpful?**
+
+                [👍 Yes](/feedback?pr={pr_number}&issue={issue_number}&vote=up&redirect=https://github.com/{owner}/{repo}/pull/{pr_number})  
+                [👎 No](/feedback?pr={pr_number}&issue={issue_number}&vote=down&redirect=https://github.com/{owner}/{repo}/pull/{pr_number})
+            """).strip()
+
+            await post_issue_check_comment(owner, repo, pr_number, issue_number, comment_body, installation_id)
+
+            print(f"✅ POSTED ISSUE LINKAGE COMMENT FOR ISSUE #{issue_number}")
+        except Exception as e:
+            print("⚠️ ISSUE CHECK FAILED:", e)

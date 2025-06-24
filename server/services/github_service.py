@@ -50,3 +50,53 @@ async def post_inline_comment(owner, repo, pr_number, file_path, position, comme
     async with httpx.AsyncClient() as client:
         res = await client.post(url, headers=headers, json=data)
         res.raise_for_status()
+
+async def get_pr_metadata(repo, owner, pr_number, installation_id):
+    token = await get_installation_token(installation_id)
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Accept": "application/vnd.github.v3+json"
+    }
+    url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}"
+    async with httpx.AsyncClient() as client:
+        resp = await client.get(url, headers=headers)
+        resp.raise_for_status()
+        return resp.json()
+
+async def get_pr_commits(repo, owner, pr_number, installation_id):
+    token = await get_installation_token(installation_id)
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Accept": "application/vnd.github.v3+json"
+    }
+    url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}/commits"
+    async with httpx.AsyncClient() as client:
+        resp = await client.get(url, headers=headers)
+        resp.raise_for_status()
+        return resp.json()
+    
+    
+async def get_issue_body(owner, repo, issue_number, installation_id):
+    token = await get_installation_token(installation_id)
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Accept": "application/vnd.github.v3+json"
+    }
+    async with httpx.AsyncClient() as client:
+        resp = await client.get(f"https://api.github.com/repos/{owner}/{repo}/issues/{issue_number}", headers=headers)
+        resp.raise_for_status()
+        return resp.json().get("body", "")    
+    
+async def post_issue_check_comment(owner, repo, pr_number, issue_number, comment_body, installation_id):
+    token = await get_installation_token(installation_id)
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Accept": "application/vnd.github.v3+json"
+    }
+
+    async with httpx.AsyncClient() as client:
+        await client.post(
+            f"https://api.github.com/repos/{owner}/{repo}/issues/{pr_number}/comments",
+            json={"body": comment_body},
+            headers=headers
+        )    
