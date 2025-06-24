@@ -76,16 +76,21 @@ async def get_pr_commits(repo, owner, pr_number, installation_id):
         return resp.json()
     
     
-async def get_issue_body(owner, repo, issue_number, installation_id):
+async def get_issue_details(owner: str, repo: str, issue_number: str, installation_id: int):
     token = await get_installation_token(installation_id)
     headers = {
         "Authorization": f"Bearer {token}",
         "Accept": "application/vnd.github.v3+json"
     }
+
     async with httpx.AsyncClient() as client:
-        resp = await client.get(f"https://api.github.com/repos/{owner}/{repo}/issues/{issue_number}", headers=headers)
-        resp.raise_for_status()
-        return resp.json().get("body", "")    
+        response = await client.get(
+            f"https://api.github.com/repos/{owner}/{repo}/issues/{issue_number}",
+            headers=headers
+        )
+        response.raise_for_status()
+        data = response.json()
+        return data.get("title", ""), data.get("body", "")
     
 async def post_issue_check_comment(owner, repo, pr_number, issue_number, comment_body, installation_id):
     token = await get_installation_token(installation_id)

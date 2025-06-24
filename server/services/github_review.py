@@ -1,6 +1,6 @@
 import requests, json, re
 from utils.review_utils import extract_diff_blocks, build_review_prompt, match_comments_to_positions
-from services.github_service import get_pr_files, get_latest_commit_sha, post_inline_comment, get_pr_commits, get_pr_metadata, get_issue_body, post_issue_check_comment
+from services.github_service import get_pr_files, get_latest_commit_sha, post_inline_comment, get_pr_commits, get_pr_metadata, get_issue_details, post_issue_check_comment
 from utils.issue_utils import extract_issue_number, get_llama_response, build_issue_check_prompt
 from core.config import OLLAMA_URL, MODEL_NAME
 import textwrap
@@ -94,8 +94,8 @@ async def handle_pr_review(owner: str, repo: str, pr_number: int, installation_i
 
     if issue_number:
         try:
-            issue_body = await get_issue_body(owner, repo, issue_number, installation_id)
-            prompt = build_issue_check_prompt(issue_body, all_diff_blocks)
+            issue_title, issue_body = await get_issue_details(owner, repo, issue_number, installation_id)
+            prompt = build_issue_check_prompt(issue_title,issue_body, all_diff_blocks)
             llama_output = get_llama_response(prompt)
 
             comment_body = textwrap.dedent(f"""

@@ -23,20 +23,22 @@ def get_llama_response(prompt: str) -> str:
         print("🔥 LLM issue check failed:", e)
         return ""
     
-def build_issue_check_prompt(issue_body: str, diff_blocks: list) -> str:
-    pr_diff_full = "\n".join([
+def build_issue_check_prompt(issue_title: str, issue_body: str, all_diff_blocks: list) -> str:
+    diff_text = "\n\n".join([
         f"File: {entry['filename']}\n" + "\n".join([x['line'] for x in entry['diff']])
-        for entry in diff_blocks
+        for entry in all_diff_blocks
     ])
-
-    return textwrap.dedent(f"""
+    return f"""
         You are a code reviewer.
-        Given the following GitHub issue and PR diff, determine if the PR addresses the issue.
+        Given the following GitHub issue and the PR diff, determine if the PR addresses the issue.
         Respond with YES if fully addressed, else explain why not.
 
-        Issue:
+        Issue Title:
+        {issue_title}
+
+        Issue Description:
         {issue_body}
 
         PR Diff:
-        {pr_diff_full}
-    """).strip()
+        {diff_text}
+        """
