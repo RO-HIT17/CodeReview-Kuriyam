@@ -40,7 +40,7 @@ async def handle_pr_review(owner: str, repo: str, pr_number: int,installation_id
             response = requests.post(
                 OLLAMA_URL,
                 json={"model": MODEL_NAME, "prompt": prompt, "stream": False},
-                timeout=60
+                
             )
             response.raise_for_status()
 
@@ -52,7 +52,7 @@ async def handle_pr_review(owner: str, repo: str, pr_number: int,installation_id
             )
 
             if not json_objects:
-                print(f"❌ No review suggestions for {filename}")
+                print(f"❌ No review suggestions for {filename} is {raw_output}" )
                 continue
 
             suggestions = json.loads("[" + ",".join(json_objects) + "]")
@@ -67,7 +67,8 @@ async def handle_pr_review(owner: str, repo: str, pr_number: int,installation_id
                     file_path=filename,
                     position=item["position"],
                     comment=item["comment"],
-                    commit_id=commit_id
+                    commit_id=commit_id,
+                    installation_id=installation_id
                 )
 
         except Exception as e:
