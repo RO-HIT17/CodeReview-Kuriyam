@@ -2,6 +2,7 @@ import requests, json, re
 from utils.review_utils import extract_diff_blocks, build_review_prompt, match_comments_to_positions
 from services.github_service import get_pr_files, get_latest_commit_sha, post_inline_comment, get_pr_commits, get_pr_metadata, get_issue_details, post_issue_check_comment
 from utils.issue_utils import extract_issue_number, get_llama_response, build_issue_check_prompt
+from feedback.store import store_feedback_draft
 from core.config import OLLAMA_URL, MODEL_NAME ,NGROK_URL
 import textwrap
 
@@ -94,8 +95,15 @@ async def handle_pr_review(owner: str, repo: str, pr_number: int, installation_i
 
     if issue_number:
         try:
+            
+            diff_text = "\n".join([
+                f"File: {entry['filename']}\n" + "\n".join([x['line'] for x in entry['diff']])
+                for entry in all_diff_blocks
+            ])
+            feedback_id = store_feedback_draft(pr_number, issue_number, diff_text)
+
             issue_title, issue_body = await get_issue_details(owner, repo, issue_number, installation_id)
-            prompt = build_issue_check_prompt(issue_title,issue_body, all_diff_blocks)
+            prompt = build_issue_check_prompt(issue_title,issue_body, diff_text)
             llama_output = get_llama_response(prompt)
 
             comment_body = textwrap.dedent(f"""
@@ -103,13 +111,14 @@ async def handle_pr_review(owner: str, repo: str, pr_number: int, installation_i
 
                 This PR tries to address issue #{issue_number}.
 
-                {llama_output}
-                
+                {llama_output.lstrip()}
+
                 **Was this helpful?**
 
-                [👍 Yes]({NGROK_URL}/feedback?pr={pr_number}&issue={issue_number}&vote=up&redirect=https://github.com/{owner}/{repo}/pull/{pr_number})  
-                [👎 No]({NGROK_URL}/feedback?pr={pr_number}&issue={issue_number}&vote=down&redirect=https://github.com/{owner}/{repo}/pull/{pr_number})
-            """).strip()
+                [👍 Yes]({NGROK_URL}/feedback?vote=up&id={feedback_id}&redirect=https://github.com/{owner}/{repo}/pull/{pr_number})  
+                [👎 No]({NGROK_URL}/feedback?vote=down&id={feedback_id}&redirect=https://github.com/{owner}/{repo}/pull/{pr_number})
+                """).strip()
+
 
             await post_issue_check_comment(owner, repo, pr_number, issue_number, comment_body, installation_id)
 

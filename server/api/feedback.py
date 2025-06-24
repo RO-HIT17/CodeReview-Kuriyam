@@ -6,22 +6,18 @@ from datetime import datetime
 router = APIRouter()
 
 @router.get("/feedback")
-async def collect_feedback(pr: int = Query(...), issue: int = Query(...), vote: str = Query(...), redirect: str = Query(...), request: Request = None):
+async def collect_feedback(vote: str = Query(...), id: str = Query(...), redirect: str = Query(...), request: Request = None):
     user_ip = request.client.host
     feedbacks = load_feedbacks()
-    for fb in feedbacks:
-        if fb["pr"] == pr and fb["issue"] == issue and fb["ip"] == user_ip:
-            return RedirectResponse(url=redirect)
 
-    feedbacks.append({
-        "timestamp": datetime.utcnow().isoformat(),
-        "pr": pr,
-        "issue": issue,
-        "vote": vote,
-        "ip": user_ip,
-        "approved": False
-    })
-    save_feedbacks(feedbacks)
+    for fb in feedbacks:
+        if fb["id"] == id:
+            if fb["vote"] is None:
+                fb["vote"] = vote
+                fb["ip"] = user_ip
+                save_feedbacks(feedbacks)
+            break
+
     return RedirectResponse(url=redirect)
 
 @router.get("/feedback-list")
