@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import JSONResponse
-import json, os, httpx
-from typing import Optional
-from services.bitbucket_review import post_bitbucket_general_comment,post_inline_comment, fetch_pr_diff
+import json
+from services.bitbucket_review import post_bitbucket_general_comment, fetch_pr_diff, handle_file_review
+from utils.bitbucket_utils import parse_diff
 
 router = APIRouter()
 
@@ -20,7 +20,7 @@ async def bitbucket_webhook(request: Request):
     payload = await request.json()
 
     print(f"[DEBUG] Received event: {event}")
-    print(f"[DEBUG] Payload: {json.dumps(payload, indent=2)}")
+    #print(f"[DEBUG] Payload: {json.dumps(payload, indent=2)}")
         
     if event != "pullrequest:created":
         return {"message": "Event ignored"}
@@ -46,15 +46,20 @@ async def bitbucket_webhook(request: Request):
 
         diff_text = await fetch_pr_diff(diff_url)
         print("[✅] PR diff fetched (preview):", diff_text[:500])
+        files = parse_diff(diff_text)
+        print(f"[DEBUG] Parsed files : {(files)} ")
 
-        await post_inline_comment(
-            workspace=workspace,
-            repo_slug=repo_slug,
-            pr_id=pr_id,
-            file_path="test.js",  
-            line=3,  
-            message="🛠️ Consider renaming this variable for clarity."
-        )
+        for f in files:
+            await handle_file_review(f, workspace, repo_slug, pr_id)
+            
+        # await post_bitbucket_inline_comment(
+        #     workspace=workspace,
+        #     repo_slug=repo_slug,
+        #     pr_id=pr_id,
+        #     file_path="test.js",  
+        #     line=3,  
+        #     message="🛠️ Consider renaming this variable for clarity."
+        # )
 
         return {"status": "PR handled"}
 

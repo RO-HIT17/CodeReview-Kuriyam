@@ -430,3 +430,6 @@ First setup the bitbucket app with pass and user name
 then remove it and complete the whole server 
 then move on to frontend authentication
 then come back to backend and frontend integration
+
+Bitbucket check for issue and feedback and codellama logic
+Also check for different cases like mutiple files combined commit and thin of other tests and cases that can porlly happen
