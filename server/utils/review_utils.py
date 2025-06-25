@@ -26,7 +26,7 @@ def build_review_prompt(added_lines: list[str]) -> str:
     diff_text = "\n".join(added_lines)
 
     return f"""
-        You are an expert Python code reviewer. Review only the newly added lines from a GitHub PR diff. Do not assume missing context.
+        You are an expert code reviewer. Review only the newly added lines from a GitHub PR diff. Do not assume missing context.
 
         1. 🔧 Optimization & Refactoring – Suggest cleaner, faster, or simpler alternatives.
         2. 🚫 Bad Practices & Security – Flag insecure code, hardcoded secrets, or risky patterns.
