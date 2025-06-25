@@ -23,18 +23,16 @@ export default async function DashboardPage() {
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-2">
               <GitBranch className="h-6 w-6" />
-              <h1 className="text-xl font-semibold">Repository Manager</h1>
+              <h1 className="text-xl font-semibold">Kuriyam - Code Reviewer</h1>
             </div>
             <div className="flex items-center space-x-4">
               <span className="text-sm text-muted-foreground">Welcome, {session.user.name}</span>
-              <Button variant="outline" size="sm">
-                <Settings className="h-4 w-4 mr-2" />
-                Settings
-              </Button>
-              <Button variant="outline" size="sm">
-                <LogOut className="h-4 w-4 mr-2" />
-                Sign Out
-              </Button>
+                <Link href="/">
+                <Button variant="outline" size="sm">
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sign Out
+                </Button>
+                </Link>
             </div>
           </div>
         </div>
