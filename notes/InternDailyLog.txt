@@ -416,3 +416,6 @@ Sedning the general comments with feedback links in markdown - done
 Mapping the comments to inline code lines - done
 Extraction of pr diff - done 
 ----------
+June 25
+Tryong to fix bitbucket and integrate all parts together 
+Also draw tha overall new product and fix the models
