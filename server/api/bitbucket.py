@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import JSONResponse
 import json, os, httpx
-from core.config import BITBUCKET_APP_PASSWORD, BITBUCKET_USERNAME
+from typing import Optional
+from server.services.bitbucket_review import post_bitbucket_general_comment,post_inline_comment, fetch_pr_diff
 
 router = APIRouter()
 
@@ -12,26 +13,7 @@ async def serve_manifest():
     return JSONResponse(content=manifest)
 
 
-async def post_bitbucket_general_comment(comments_url: str, message: str):
-    payload = {
-        "content": {"raw": message}
-    }
-
-    async with httpx.AsyncClient() as client:
-        response = await client.post(
-            comments_url,
-            auth=(BITBUCKET_USERNAME, BITBUCKET_APP_PASSWORD),
-            headers={"Content-Type": "application/json"},
-            json=payload
-        )
-
-    if response.status_code in (200, 201):
-        print("[✅] Bitbucket comment posted")
-    else:
-        print(f"[❌] Failed to comment: {response.status_code}, {response.text}")
-        raise HTTPException(status_code=500, detail="Bitbucket comment failed")
-
-# Webhook handler
+# Main webhook handler
 @router.post("/webhook")
 async def bitbucket_webhook(request: Request):
     headers = request.headers
@@ -42,17 +24,36 @@ async def bitbucket_webhook(request: Request):
         return {"message": "Event ignored"}
 
     try:
-        payload = payload.get("data", payload)  # unwrap if necessary
+        payload = payload.get("data", payload)  # unwrap if needed
         pr = payload["pullrequest"]
         pr_id = pr["id"]
-        comments_url = pr["links"]["comments"]["href"]
         repo_full_name = pr["destination"]["repository"]["full_name"]
+        workspace, repo_slug = repo_full_name.split("/")
+        comments_url = pr["links"]["comments"]["href"]
+        diff_url = pr["links"]["diff"]["href"]
 
+        print(f"[INFO] Handling PR #{pr_id} in `{repo_full_name}`")
+        print(f"[DEBUG] Diff URL: {diff_url}")
+
+        # General comment
         message = f"👋 Thanks for opening PR #{pr_id} in `{repo_full_name}`! Our bot will review this soon."
-
         await post_bitbucket_general_comment(comments_url, message)
 
-        return {"status": "comment posted"}
+        # Fetch diff for future use (currently just logging)
+        diff_text = await fetch_pr_diff(diff_url)
+        print("[✅] PR diff fetched (preview):", diff_text[:500])
+
+        # 🔥 You can loop over actual changes to find file + line, here's dummy:
+        await post_inline_comment(
+            workspace=workspace,
+            repo_slug=repo_slug,
+            pr_id=pr_id,
+            file_path="test.js",  # replace dynamically later
+            line=3,  # dummy line
+            message="🛠️ Consider renaming this variable for clarity."
+        )
+
+        return {"status": "PR handled"}
 
     except Exception as e:
         print("[ERROR]", e)

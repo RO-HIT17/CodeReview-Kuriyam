@@ -7,11 +7,7 @@ from typing import Optional
 load_dotenv()
 app = FastAPI()
 
-<<<<<<< HEAD
-# Load Bitbucket credentials
-=======
 # Set your Bitbucket credentials via env vars or hardcode for local testing
->>>>>>> 04614d2 (bitbucket test)
 BITBUCKET_USERNAME = os.getenv("BITBUCKET_USERNAME")
 BITBUCKET_APP_PASSWORD = os.getenv("BITBUCKET_APP_PASSWORD")
 
