@@ -5,3 +5,9 @@ class PRReviewRequest(BaseModel):
     repo: str
     pr_number: int
     installation_id: int
+    
+class TestRequest(BaseModel):
+    workspace: str
+    repo_slug: str
+    pr_id: int
+    diff_url: str    
