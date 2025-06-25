@@ -11,7 +11,7 @@
     "webhooks": [
       {
         "event": "pullrequest:created",
-        "url": "/webhook"
+        "url": "bitbucket/webhook"
       }
     ]
   }

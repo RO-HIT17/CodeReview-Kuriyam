@@ -25,4 +25,7 @@ smee
 
 bitbucket
 Connect apps
+atlastin
+
+nvm - node version manager
 
