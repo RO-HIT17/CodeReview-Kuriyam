@@ -2,7 +2,7 @@
   "key": "my-bitbucket-app",
   "name": "Code Review Bot",
   "description": "A bot that reviews pull requests for code quality and security.",
-  "baseUrl": "https://4f52-2405-201-e048-7046-d48f-3b0-7cbe-19a6.ngrok-free.app",
+  "baseUrl": "https://9ecc-2405-201-e048-7046-fd15-e00a-fa22-4cfa.ngrok-free.app",
   "authentication": {
     "type": "jwt"
   },
