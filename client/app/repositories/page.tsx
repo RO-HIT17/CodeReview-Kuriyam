@@ -93,8 +93,7 @@ export default function RepositoriesPage() {
           <CardHeader>
             <CardTitle>Choose repositories to integrate</CardTitle>
             <CardDescription>
-              Select the repositories you want to manage through this application. You can change this selection later
-              in your settings.
+              Select the repositories you want to include for code review. You can update your selection at any time in your settings.
             </CardDescription>
           </CardHeader>
           <CardContent>
