@@ -13,15 +13,24 @@ async def serve_manifest():
         manifest = json.load(f)
     return JSONResponse(content=manifest)
 
+from utils.verify_jwt import verify_bitbucket_jwt
 
 @router.post("/webhook")
 async def bitbucket_webhook(request: Request):
     headers = request.headers
     event = headers.get("X-Event-Key")
-    payload = await request.json()
 
+    # JWT Verification
+    try:
+        path = "/bitbucket/webhook"  # Exact path in your manifest
+        verify_bitbucket_jwt(headers, method="POST", path=path)
+    except HTTPException as e:
+        print("[❌] JWT verification failed")
+        raise e
+
+    payload = await request.json()
     print(f"[DEBUG] Received event: {event}")
-        
+
     if event != "pullrequest:created":
         return {"message": "Event ignored"}
 
