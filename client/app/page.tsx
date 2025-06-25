@@ -12,9 +12,9 @@ export default function LoginPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">Sign in to your account</CardTitle>
-          <CardDescription className="text-center">
-            Enter your email and password to access your repositories
-          </CardDescription>
+            <CardDescription className="text-center">
+            Welcome to Kuriyam Code Review. Enter your email and password to access your repositories.
+            </CardDescription>
         </CardHeader>
         <CardContent>
           <form action={login} className="space-y-4">

@@ -16,7 +16,7 @@ export default function RegisterPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">Create your account</CardTitle>
-          <CardDescription className="text-center">Sign up to start managing your repositories</CardDescription>
+          <CardDescription className="text-center">Sign up to start code-reviewing your repositories</CardDescription>
         </CardHeader>
         <CardContent>
           <form action={action} className="space-y-4">
