@@ -425,3 +425,8 @@ Line of action:
 Fix the bitbucket and complete the backend and isolate it
 Complete the frontend and appropirate authentication
 Complete the backend and frontend integration
+
+First setup the bitbucket app with pass and user name
+then remove it and complete the whole server 
+then move on to frontend authentication
+then come back to backend and frontend integration
