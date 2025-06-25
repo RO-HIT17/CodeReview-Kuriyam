@@ -1,0 +1,262 @@
+{
+  "event": "pullrequest:created",
+  "data": {
+    "repository": {
+      "type": "repository",
+      "full_name": "kuriyamcodereview/code-review-tests",
+      "links": {
+        "self": {
+          "href": "https://api.bitbucket.org/2.0/repositories/kuriyamcodereview/code-review-tests"
+        },
+        "html": {
+          "href": "https://bitbucket.org/kuriyamcodereview/code-review-tests"
+        },
+        "avatar": {
+          "href": "https://bytebucket.org/ravatar/%7B87c6c000-fe0c-401f-81bf-f4d6a5f126fd%7D?ts=default"
+        }
+      },
+      "name": "code-review-tests",
+      "scm": "git",
+      "website": null,
+      "owner": {
+        "display_name": "kuriyamcodereview",
+        "links": {
+          "self": {
+            "href": "https://api.bitbucket.org/2.0/workspaces/%7Beaba83d3-68fb-4436-8f11-2636200f7974%7D"
+          },
+          "avatar": {
+            "href": "https://bitbucket.org/account/kuriyamcodereview/avatar/"
+          },
+          "html": {
+            "href": "https://bitbucket.org/%7Beaba83d3-68fb-4436-8f11-2636200f7974%7D/"
+          }
+        },
+        "type": "team",
+        "uuid": "{eaba83d3-68fb-4436-8f11-2636200f7974}",
+        "username": "kuriyamcodereview"
+      },
+      "workspace": {
+        "type": "workspace",
+        "uuid": "{eaba83d3-68fb-4436-8f11-2636200f7974}",
+        "name": "kuriyamcodereview",
+        "slug": "kuriyamcodereview",
+        "links": {
+          "avatar": {
+            "href": "https://bitbucket.org/workspaces/kuriyamcodereview/avatar/?ts=1750149319"
+          },
+          "html": {
+            "href": "https://bitbucket.org/kuriyamcodereview/"
+          },
+          "self": {
+            "href": "https://api.bitbucket.org/2.0/workspaces/kuriyamcodereview"
+          }
+        }
+      },
+      "is_private": true,
+      "project": {
+        "type": "project",
+        "key": "KUR",
+        "uuid": "{4e92b46f-6cec-4208-a0c0-fd4411f7c9d7}",
+        "name": "kuriyam",
+        "links": {
+          "self": {
+            "href": "https://api.bitbucket.org/2.0/workspaces/kuriyamcodereview/projects/KUR"
+          },
+          "html": {
+            "href": "https://bitbucket.org/kuriyamcodereview/workspace/projects/KUR"
+          },
+          "avatar": {
+            "href": "https://bitbucket.org/kuriyamcodereview/workspace/projects/KUR/avatar/32?ts=1750151315"
+          }
+        }
+      },
+      "uuid": "{87c6c000-fe0c-401f-81bf-f4d6a5f126fd}",
+      "parent": null
+    },
+    "actor": {
+      "display_name": "Rohit Selvakumaran",
+      "links": {
+        "self": {
+          "href": "https://api.bitbucket.org/2.0/users/%7Bc73ce4f6-e27f-496c-89b9-cd20d76d6e70%7D"
+        },
+        "avatar": {
+          "href": "https://secure.gravatar.com/avatar/72ff7412c2b9a30c52efae28266218c0?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FRS-1.png"
+        },
+        "html": {
+          "href": "https://bitbucket.org/%7Bc73ce4f6-e27f-496c-89b9-cd20d76d6e70%7D/"
+        }
+      },
+      "type": "user",
+      "uuid": "{c73ce4f6-e27f-496c-89b9-cd20d76d6e70}",
+      "account_id": "712020:0b7fffa0-95aa-44b1-9d69-969cb17e4ba6",
+      "nickname": "Rohit Selvakumaran"
+    },
+    "pullrequest": {
+      "comment_count": 0,
+      "task_count": 0,
+      "type": "pullrequest",
+      "id": 32,
+      "title": "Review test1",
+      "description": "* Add test\n* Add test\n* Add test\n\n\u200c",
+      "rendered": {
+        "title": {
+          "type": "rendered",
+          "raw": "Review test1",
+          "markup": "markdown",
+          "html": "<p>Review test1</p>"
+        },
+        "description": {
+          "type": "rendered",
+          "raw": "* Add test\n* Add test\n* Add test\n\n\u200c",
+          "markup": "markdown",
+          "html": "<ul>\n<li>Add test</li>\n<li>Add test</li>\n<li>Add test</li>\n</ul>\n<p>\u200c</p>"
+        }
+      },
+      "state": "OPEN",
+      "draft": false,
+      "merge_commit": null,
+      "close_source_branch": false,
+      "closed_by": null,
+      "author": {
+        "display_name": "Rohit Selvakumaran",
+        "links": {
+          "self": {
+            "href": "https://api.bitbucket.org/2.0/users/%7Bc73ce4f6-e27f-496c-89b9-cd20d76d6e70%7D"
+          },
+          "avatar": {
+            "href": "https://secure.gravatar.com/avatar/72ff7412c2b9a30c52efae28266218c0?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FRS-1.png"
+          },
+          "html": {
+            "href": "https://bitbucket.org/%7Bc73ce4f6-e27f-496c-89b9-cd20d76d6e70%7D/"
+          }
+        },
+        "type": "user",
+        "uuid": "{c73ce4f6-e27f-496c-89b9-cd20d76d6e70}",
+        "account_id": "712020:0b7fffa0-95aa-44b1-9d69-969cb17e4ba6",
+        "nickname": "Rohit Selvakumaran"
+      },
+      "reason": "",
+      "created_on": "2025-06-25T20:29:36.006767+00:00",
+      "updated_on": "2025-06-25T20:29:36.836533+00:00",
+      "destination": {
+        "branch": {
+          "name": "main"
+        },
+        "commit": {
+          "hash": "2068e1da11a4",
+          "links": {
+            "self": {
+              "href": "https://api.bitbucket.org/2.0/repositories/kuriyamcodereview/code-review-tests/commit/2068e1da11a4"
+            },
+            "html": {
+              "href": "https://bitbucket.org/kuriyamcodereview/code-review-tests/commits/2068e1da11a4"
+            }
+          },
+          "type": "commit"
+        },
+        "repository": {
+          "type": "repository",
+          "full_name": "kuriyamcodereview/code-review-tests",
+          "links": {
+            "self": {
+              "href": "https://api.bitbucket.org/2.0/repositories/kuriyamcodereview/code-review-tests"
+            },
+            "html": {
+              "href": "https://bitbucket.org/kuriyamcodereview/code-review-tests"
+            },
+            "avatar": {
+              "href": "https://bytebucket.org/ravatar/%7B87c6c000-fe0c-401f-81bf-f4d6a5f126fd%7D?ts=default"
+            }
+          },
+          "name": "code-review-tests",
+          "uuid": "{87c6c000-fe0c-401f-81bf-f4d6a5f126fd}"
+        }
+      },
+      "source": {
+        "branch": {
+          "name": "review-test1",
+          "links": {},
+          "sync_strategies": [
+            "merge_commit",
+            "rebase"
+          ]
+        },
+        "commit": {
+          "hash": "e46aab935bd8",
+          "links": {
+            "self": {
+              "href": "https://api.bitbucket.org/2.0/repositories/kuriyamcodereview/code-review-tests/commit/e46aab935bd8"
+            },
+            "html": {
+              "href": "https://bitbucket.org/kuriyamcodereview/code-review-tests/commits/e46aab935bd8"
+            }
+          },
+          "type": "commit"
+        },
+        "repository": {
+          "type": "repository",
+          "full_name": "kuriyamcodereview/code-review-tests",
+          "links": {
+            "self": {
+              "href": "https://api.bitbucket.org/2.0/repositories/kuriyamcodereview/code-review-tests"
+            },
+            "html": {
+              "href": "https://bitbucket.org/kuriyamcodereview/code-review-tests"
+            },
+            "avatar": {
+              "href": "https://bytebucket.org/ravatar/%7B87c6c000-fe0c-401f-81bf-f4d6a5f126fd%7D?ts=default"
+            }
+          },
+          "name": "code-review-tests",
+          "uuid": "{87c6c000-fe0c-401f-81bf-f4d6a5f126fd}"
+        }
+      },
+      "reviewers": [],
+      "participants": [],
+      "links": {
+        "self": {
+          "href": "https://api.bitbucket.org/2.0/repositories/kuriyamcodereview/code-review-tests/pullrequests/32"    
+        },
+        "html": {
+          "href": "https://bitbucket.org/kuriyamcodereview/code-review-tests/pull-requests/32"
+        },
+        "commits": {
+          "href": "https://api.bitbucket.org/2.0/repositories/kuriyamcodereview/code-review-tests/pullrequests/32/commits"
+        },
+        "approve": {
+          "href": "https://api.bitbucket.org/2.0/repositories/kuriyamcodereview/code-review-tests/pullrequests/32/approve"
+        },
+        "request-changes": {
+          "href": "https://api.bitbucket.org/2.0/repositories/kuriyamcodereview/code-review-tests/pullrequests/32/request-changes"
+        },
+        "diff": {
+          "href": "https://api.bitbucket.org/2.0/repositories/kuriyamcodereview/code-review-tests/diff/kuriyamcodereview/code-review-tests:e46aab935bd8%0D2068e1da11a4?from_pullrequest_id=32&topic=true"
+        },
+        "diffstat": {
+          "href": "https://api.bitbucket.org/2.0/repositories/kuriyamcodereview/code-review-tests/diffstat/kuriyamcodereview/code-review-tests:e46aab935bd8%0D2068e1da11a4?from_pullrequest_id=32&topic=true"
+        },
+        "comments": {
+          "href": "https://api.bitbucket.org/2.0/repositories/kuriyamcodereview/code-review-tests/pullrequests/32/comments"
+        },
+        "activity": {
+          "href": "https://api.bitbucket.org/2.0/repositories/kuriyamcodereview/code-review-tests/pullrequests/32/activity"
+        },
+        "merge": {
+          "href": "https://api.bitbucket.org/2.0/repositories/kuriyamcodereview/code-review-tests/pullrequests/32/merge"
+        },
+        "decline": {
+          "href": "https://api.bitbucket.org/2.0/repositories/kuriyamcodereview/code-review-tests/pullrequests/32/decline"
+        },
+        "statuses": {
+          "href": "https://api.bitbucket.org/2.0/repositories/kuriyamcodereview/code-review-tests/pullrequests/32/statuses"
+        }
+      },
+      "summary": {
+        "type": "rendered",
+        "raw": "* Add test\n* Add test\n* Add test\n\n\u200c",
+        "markup": "markdown",
+        "html": "<ul>\n<li>Add test</li>\n<li>Add test</li>\n<li>Add test</li>\n</ul>\n<p>\u200c</p>"
+      }
+    }
+  }
+}

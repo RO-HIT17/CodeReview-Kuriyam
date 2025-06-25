@@ -3,7 +3,6 @@ from fastapi import HTTPException
 from core.config import BITBUCKET_APP_PASSWORD, BITBUCKET_USERNAME
 from typing import Optional
 
-# General comment
 async def post_bitbucket_general_comment(comments_url: str, message: str):
     payload = {
         "content": {"raw": message}
@@ -24,7 +23,6 @@ async def post_bitbucket_general_comment(comments_url: str, message: str):
         raise HTTPException(status_code=500, detail="Bitbucket comment failed")
 
 
-# Inline comment
 async def post_inline_comment(
     workspace: str,
     repo_slug: str,
@@ -39,7 +37,7 @@ async def post_inline_comment(
     payload = {
         "inline": {
             "path": file_path,
-            "to": line  # comment on new line
+            "to": line  
         },
         "content": {
             "raw": message
@@ -57,9 +55,6 @@ async def post_inline_comment(
         print(f"[❌] Failed to post inline comment: {response.status_code}, {response.text}")
         raise HTTPException(status_code=500, detail="Bitbucket inline comment failed")
 
-
-
-# PR diff fetch
 async def fetch_pr_diff(diff_url: str) -> str:
     async with httpx.AsyncClient() as client:
         response = await client.get(diff_url, auth=(BITBUCKET_USERNAME, BITBUCKET_APP_PASSWORD))
