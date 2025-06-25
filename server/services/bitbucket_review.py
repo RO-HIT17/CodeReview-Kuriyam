@@ -26,7 +26,6 @@ async def handle_file_review(file_entry, workspace, repo_slug, pr_id):
                 json={"model": MODEL_NAME, "prompt": prompt, "stream": False}
             )
         response.raise_for_status()
-        print(f"[✅] LLM response received for {response}")
         raw_output = response.json().get("response", "")
         
                 
