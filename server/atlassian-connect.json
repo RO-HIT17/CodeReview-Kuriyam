@@ -6,6 +6,10 @@
   "authentication": {
     "type": "jwt"
   },
+  "lifecycle": {
+    "installed": "/bitbucket/installed",
+    "uninstalled": "/bitbucket/uninstalled"
+  },
   "scopes": ["pullrequest", "repository", "webhook"],
   "modules": {
     "webhooks": [
@@ -14,5 +18,6 @@
         "url": "bitbucket/webhook"
       }
     ]
+  
   }
 }

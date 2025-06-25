@@ -58,6 +58,26 @@ async def bitbucket_webhook(request: Request):
         raise HTTPException(status_code=500, detail="Webhook processing failed")
 
 
+@router.post("/installed")
+async def on_installed(request: Request):
+    data = await request.json()
+
+    client_key = data.get("clientKey")
+    shared_secret = data.get("sharedSecret")
+    base_url = data.get("baseUrl")
+    user = data.get("principal", {}).get("username")
+
+    print(f"[✅] App installed by: {user}")
+    print(f"[🔐] Client key: {client_key}")
+    print(f"[🔐] Shared secret: {shared_secret}")
+    print(f"[🔗] Base URL: {base_url}")
+
+    # 🗃️ Store this securely in your DB (keyed by clientKey)
+    # e.g. db.save(client_key, shared_secret)
+
+    return JSONResponse(content={"message": "Installation handled"})
+
+
 @router.post("/test")
 async def test_endpoint(request: TestRequest):
     try:
