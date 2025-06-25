@@ -44,6 +44,11 @@ export default function RegisterPage() {
                 </div>
               )}
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="confirm-password">Confirm Password</Label>
+              <Input id="confirm-password" name="confirmPassword" type="password" placeholder="Re-enter your password" required />
+              {state?.errors?.confirmPassword && <p className="text-sm text-red-600">{state.errors.confirmPassword[0]}</p>}
+            </div>
             {state?.message && <p className="text-sm text-red-600">{state.message}</p>}
             <Button type="submit" className="w-full" disabled={pending}>
               {pending ? "Creating Account..." : "Create Account"}

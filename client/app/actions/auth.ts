@@ -11,6 +11,7 @@ export async function signup(state: FormState, formData: FormData): Promise<Form
     name: formData.get("name"),
     email: formData.get("email"),
     password: formData.get("password"),
+    confirmPassword: formData.get("confirmPassword"),
   })
 
   // If any form fields are invalid, return early
