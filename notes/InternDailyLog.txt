@@ -436,3 +436,18 @@ Also check for different cases like mutiple files combined commit and thin of ot
 Check for the feedback mechanishm finetuning - LoRA + SFT need to work on this
 Check for impriving finetuned model
 Check for wasy to delpoy the model and the app
+
+Fix the jwt auth things
+Ask if other 2 features are need in bitbuket as in github
+Finish Frontedn with proper en and Oauth to connec it with github and bitbucket
+Check how the logic works for installation aacross repository (may deviate from current logic)
+Integrate existin backend
+
+Check for wasy to deploy model (base codellama)
+
+If all this works within tom or friday 
+
+Check for wasy to imporve the model with different dataset and also tuning the chat templates and hyperparamters
+Same thing with the feedback model and wasy to incrementally train it
+Complete the answers to all the 
+Slight Change in the overall architecture
