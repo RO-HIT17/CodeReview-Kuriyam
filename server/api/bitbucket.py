@@ -20,10 +20,9 @@ async def bitbucket_webhook(request: Request):
     headers = request.headers
     event = headers.get("X-Event-Key")
 
-    # JWT Verification
     try:
-        path = "/bitbucket/webhook"  # Exact path in your manifest
-        verify_bitbucket_jwt(headers, method="POST", path=path)
+        path = "/bitbucket/webhook"  # This must match what Bitbucket hits
+        verify_bitbucket_jwt(headers=headers, method="POST", path=path)
     except HTTPException as e:
         print("[❌] JWT verification failed")
         raise e
@@ -35,28 +34,27 @@ async def bitbucket_webhook(request: Request):
         return {"message": "Event ignored"}
 
     try:
-        payload = payload.get("data", payload)  
-        pr = payload["pullrequest"]
+        pr_data = payload.get("data", payload)
+        pr = pr_data["pullrequest"]
         pr_id = pr["id"]
         repo_full_name = pr["destination"]["repository"]["full_name"]
         workspace, repo_slug = repo_full_name.split("/")
-        comments_url = pr["links"]["comments"]["href"]
-        diff_url = pr["links"]["diff"]["href"]
-        
-        diff_text = await fetch_pr_diff(diff_url)
-        print("[✅] PR diff fetched (preview):", diff_text[:500])
-        files = parse_diff(diff_text)
-        print(f"[DEBUG] Parsed files : {(files)} ")
 
-        for f in files:
-            await handle_file_review(f, workspace, repo_slug, pr_id)
-  
-        return {"status": "PR handled"}
+        diff_url = pr["links"]["diff"]["href"]
+        diff_text = await fetch_pr_diff(diff_url)
+        print("[✅] PR diff fetched")
+
+        files = parse_diff(diff_text)
+        print(f"[DEBUG] Parsed files: {files}")
+
+        for file in files:
+            await handle_file_review(file, workspace, repo_slug, pr_id)
+
+        return {"status": "PR handled successfully"}
 
     except Exception as e:
-        print("[ERROR]", e)
+        print(f"[❌ ERROR] {e}")
         raise HTTPException(status_code=500, detail="Webhook processing failed")
-
 
 @router.post("/installed")
 async def on_installed(request: Request):
