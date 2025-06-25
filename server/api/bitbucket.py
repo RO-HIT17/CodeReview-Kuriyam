@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 import json
 from services.bitbucket_review import post_bitbucket_general_comment, fetch_pr_diff, handle_file_review
 from utils.bitbucket_utils import parse_diff
+from pydantic import BaseModel
 
 router = APIRouter()
 
@@ -62,6 +63,29 @@ async def bitbucket_webhook(request: Request):
         # )
 
         return {"status": "PR handled"}
+
+    except Exception as e:
+        print("[ERROR]", e)
+        raise HTTPException(status_code=500, detail="Webhook processing failed")
+
+class TestRequest(BaseModel):
+    workspace: str
+    repo_slug: str
+    pr_id: int
+    diff_url: str
+
+@router.post("/test")
+async def test_endpoint(request: TestRequest):
+    try:
+        diff_text = await fetch_pr_diff(request.diff_url)
+        print("[✅] PR diff fetched (preview):", diff_text[:500])
+        files = parse_diff(diff_text)
+        print(f"[DEBUG] Parsed files : {files}")
+
+        for f in files:
+            await handle_file_review(f, request.workspace, request.repo_slug, request.pr_id)
+
+        return {"status": "PR handled successfully"}
 
     except Exception as e:
         print("[ERROR]", e)
