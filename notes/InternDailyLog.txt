@@ -419,3 +419,9 @@ Extraction of pr diff - done
 June 25
 Tryong to fix bitbucket and integrate all parts together 
 Also draw tha overall new product and fix the models
+
+Line of action:
+
+Fix the bitbucket and complete the backend and isolate it
+Complete the frontend and appropirate authentication
+Complete the backend and frontend integration
