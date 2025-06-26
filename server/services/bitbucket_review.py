@@ -1,10 +1,11 @@
 import httpx
 from fastapi import HTTPException
-from core.config import BITBUCKET_APP_PASSWORD, BITBUCKET_USERNAME,OLLAMA_URL, MODEL_NAME
+from core.config import OLLAMA_URL, MODEL_NAME
 from utils.bitbucket_utils import build_review_prompt, match_comments_to_lines
 import json
 import re
 from typing import Optional
+from middleware.bitbucket_auth import get_bitbucket_access_token
 
 async def handle_file_review(file_entry, workspace, repo_slug, pr_id):
     file_path = file_entry["file_path"]
@@ -57,6 +58,13 @@ async def handle_file_review(file_entry, workspace, repo_slug, pr_id):
         
         
 async def post_bitbucket_general_comment(comments_url: str, message: str):
+    access_token = get_bitbucket_access_token()
+    
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {access_token}"
+    }
+    
     payload = {
         "content": {"raw": message}
     }
@@ -64,8 +72,7 @@ async def post_bitbucket_general_comment(comments_url: str, message: str):
     async with httpx.AsyncClient() as client:
         response = await client.post(
             comments_url,
-            auth=(BITBUCKET_USERNAME, BITBUCKET_APP_PASSWORD),
-            headers={"Content-Type": "application/json"},
+            headers,
             json=payload
         )
 
@@ -82,13 +89,13 @@ async def post_bitbucket_inline_comment(
     file_path: str,
     line: int,
     message: str,
-    username: Optional[str] = BITBUCKET_USERNAME,
-    app_password: Optional[str] = BITBUCKET_APP_PASSWORD
 ):
+    access_token = get_bitbucket_access_token()
+    
     headers = {
-        "Authorization": f"Bearer PGEKllDd26JfuA5JGGFdfhrQEQFnjoRYgktjJdESNXxBFpd4CaX2d6VQNyoAd5H2Hy1M1stxZcqpa0xjcz7hGz4-mPjVdTftsvaGHhHBk-6NVkCRxd7r9oFNOgV3HHV0NUwugu27J-JACG8SezUTnGH8cWOP",
-        
+        "Authorization": f"Bearer {access_token}"
     }
+    
     url = f"https://api.bitbucket.org/2.0/repositories/{workspace}/{repo_slug}/pullrequests/{pr_id}/comments"
     payload = {
         "inline": {
@@ -112,8 +119,14 @@ async def post_bitbucket_inline_comment(
         raise HTTPException(status_code=500, detail="Bitbucket inline comment failed")
 
 async def fetch_pr_diff(diff_url: str) -> str:
+    access_token = get_bitbucket_access_token()
+    
+    headers = {
+        "Authorization": f"Bearer {access_token}"
+    }
+     
     async with httpx.AsyncClient() as client:
-        response = await client.get(diff_url, auth=(BITBUCKET_USERNAME, BITBUCKET_APP_PASSWORD))
+        response = await client.get(diff_url, headers=headers)
     if response.status_code == 200:
         return response.text
     else:
