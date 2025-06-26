@@ -29,3 +29,6 @@ atlastin
 
 nvm - node version manager
 
+Forge 
+Connect 
+OAuth 2

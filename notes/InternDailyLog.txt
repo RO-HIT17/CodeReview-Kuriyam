@@ -473,7 +473,17 @@ bitubucket has a lot of issues with authentication
 
 Steps:
 Fix Bitbuckt as a isolated component in server
+2 new features in bitubucket
 Fix UI Auth 
 Integrate backend
+Work with the model
 
 Answer all the questions
+
+
+---
+Ref:
+https://developer.atlassian.com/cloud/bitbucket/rest/intro/
+https://developer.atlassian.com/cloud/bitbucket/getting-started-with-connect/
+https://developer.atlassian.com/cloud/bitbucket/understanding-jwt-for-apps/
+https://developer.atlassian.com/cloud/bitbucket/authentication-for-apps/
