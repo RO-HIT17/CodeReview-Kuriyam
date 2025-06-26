@@ -30,7 +30,7 @@ def verify_bitbucket_request(request):
             headers=dict(request.headers)
         )
         print(f"[DEBUG] Client Key from JWT: {client_key}")
-        return True, client_key, claims
+        return True 
     except DecodeError as e:
         print(f"[❌] JWT verification failed: {str(e)}")
-        return False, None, None
+        return False 

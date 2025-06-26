@@ -13,22 +13,18 @@
   "scopes": [
     "pullrequest",
     "pullrequest:write",
-    "pullrequest:read",
     "repository",
     "repository:write",
     "repository:admin",
     "project",
-    "project:read",
     "account",
-    "account:read",
     "webhook"
   ],
   "modules": {
     "webhooks": [
       {
         "event": "pullrequest:created",
-        "url": "/bitbucket/webhook",
-        "excludeBody": false
+        "url": "/bitbucket/webhook"
       }
     ]
   },
