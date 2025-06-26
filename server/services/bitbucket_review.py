@@ -85,6 +85,10 @@ async def post_bitbucket_inline_comment(
     username: Optional[str] = BITBUCKET_USERNAME,
     app_password: Optional[str] = BITBUCKET_APP_PASSWORD
 ):
+    headers = {
+        "Authorization": f"Bearer PGEKllDd26JfuA5JGGFdfhrQEQFnjoRYgktjJdESNXxBFpd4CaX2d6VQNyoAd5H2Hy1M1stxZcqpa0xjcz7hGz4-mPjVdTftsvaGHhHBk-6NVkCRxd7r9oFNOgV3HHV0NUwugu27J-JACG8SezUTnGH8cWOP",
+        
+    }
     url = f"https://api.bitbucket.org/2.0/repositories/{workspace}/{repo_slug}/pullrequests/{pr_id}/comments"
     payload = {
         "inline": {
@@ -95,11 +99,11 @@ async def post_bitbucket_inline_comment(
             "raw": message
         }
     }
-
+    print(f"[🔍] Posting inline comment to {url}")
     print(f"[DEBUG] Posting inline comment at {file_path}:{line}")
 
     async with httpx.AsyncClient() as client:
-        response = await client.post(url, auth=(username, app_password), json=payload)
+        response = await client.post(url, headers=headers, json=payload)
 
     if response.status_code in (200, 201):
         print("[✅] Inline comment posted successfully")
