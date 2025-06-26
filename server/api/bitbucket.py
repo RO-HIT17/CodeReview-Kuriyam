@@ -8,7 +8,7 @@ from utils.verify_jwt import verify_bitbucket_request
 from core.config import BITBUCKET_CLIENT_ID, BITBUCKET_CLIENT_SECRET
 import httpx
 from fastapi.responses import RedirectResponse
-from services.test import post_inline_comment
+from services.test import test_api
 router = APIRouter()
 
 @router.get("/atlassian-connect.json")
@@ -135,7 +135,7 @@ async def oauth_callback(request: Request):
 @router.post("/test/inline")
 async def test_inline_comment():
     try:
-        await post_inline_comment()
+        await test_api()
 
     except Exception as e:
         print("[ERROR]", e)
