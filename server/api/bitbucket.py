@@ -19,6 +19,7 @@ async def serve_manifest():
 async def bitbucket_webhook(request: Request):
     headers = request.headers
     event = headers.get("X-Event-Key")
+    
     full_url = str(request.url)
     method = request.method
     success, client_key, claims = verify_bitbucket_request(request)
