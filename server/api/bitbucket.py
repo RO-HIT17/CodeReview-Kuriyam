@@ -5,10 +5,10 @@ from services.bitbucket_review import  fetch_pr_diff, handle_file_review
 from utils.bitbucket_utils import parse_diff
 from models.schemas import TestRequest
 from utils.verify_jwt import verify_bitbucket_request
-from core.config import BITBUCKET_CLIENT_ID, BITBUCKET_CLIENT_SECRET
-import httpx
-from fastapi.responses import RedirectResponse
-from services.test import test_api
+from deps import get_db
+from models.installation import Installation
+from sqlalchemy.orm import Session
+from fastapi import Depends
 router = APIRouter()
 
 @router.get("/atlassian-connect.json")
@@ -23,7 +23,7 @@ async def bitbucket_webhook(request: Request):
     headers = request.headers
     event = headers.get("X-Event-Key")
     
-    success, client_key, claims = verify_bitbucket_request(request)
+    success = verify_bitbucket_request(request)
     
     if not success:
         raise HTTPException(status_code=401, detail="JWT verification failed")
@@ -58,21 +58,39 @@ async def bitbucket_webhook(request: Request):
         raise HTTPException(status_code=500, detail="Webhook processing failed")
 
 @router.post("/installed")
-async def on_installed(request: Request):
+async def on_installed(request: Request, db: Session = Depends(get_db)):
     data = await request.json()
 
     client_key = data.get("clientKey")
     shared_secret = data.get("sharedSecret")
-    base_url = data.get("baseUrl")
-    user = data.get("principal", {}).get("username")
+    base_api_url = data.get("baseApiUrl")
+    workspace_uuid = data.get("principal", {}).get("uuid", "").strip("{}")
+    workspace_name = data.get("principal", {}).get("username")
+    installed_by = data.get("actor", {}).get("account_id")
 
-    print(f"[✅] App installed by: {user}")
-    print(f"[🔐] Client key: {client_key}")
-    print(f"[🔐] Shared secret: {shared_secret}")
-    print(f"[🔗] Base URL: {base_url}")
+    print(f"[✅] Installed by: {workspace_name} ({installed_by})")
 
+    existing = db.query(Installation).filter_by(client_key=client_key).first()
+    if existing:
+        existing.shared_secret = shared_secret
+        existing.base_api_url = base_api_url
+        existing.workspace_uuid = workspace_uuid
+        existing.workspace_name = workspace_name
+        existing.installed_by_user = installed_by
+    else:
+        new_install = Installation(
+            client_key=client_key,
+            shared_secret=shared_secret,
+            base_api_url=base_api_url,
+            workspace_uuid=workspace_uuid,
+            workspace_name=workspace_name,
+            installed_by_user=installed_by,
+        )
+        db.add(new_install)
 
-    return JSONResponse(content={"message": "Installation handled"})
+    db.commit()
+
+    return JSONResponse(content={"message": "Installation stored successfully"})
 
 
 @router.post("/test")
@@ -96,7 +114,8 @@ async def test_endpoint(request: TestRequest):
 @router.post("/test/inline")
 async def test_inline_comment():
     try:
-        await test_api()
+        pass
+        #await test_api()
 
     except Exception as e:
         print("[ERROR]", e)
