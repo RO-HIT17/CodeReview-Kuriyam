@@ -464,3 +464,16 @@ Need to add refresh tokens
 Need to relook the entire architecture on how these things gonna work on
 
 Entire bitbucket code need to be worked on
+
+Summary Till Now:
+server has entire github code working
+UI is done 
+
+bitubucket has a lot of issues with authentication
+
+Steps:
+Fix Bitbuckt as a isolated component in server
+Fix UI Auth 
+Integrate backend
+
+Answer all the questions
