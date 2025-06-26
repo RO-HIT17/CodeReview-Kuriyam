@@ -10,7 +10,7 @@
     "installed": "/bitbucket/installed",
     "uninstalled": "/bitbucket/uninstalled"
   },
-  "scopes": ["pullrequest", "repository", "webhook"],
+  "scopes": ["pullrequest", "repository", "webhook" , "repository:write",  "pullrequest:read", "pullrequest:write"],
   "modules": {
     "webhooks": [
       {
