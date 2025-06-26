@@ -433,6 +433,7 @@ then come back to backend and frontend integration
 
 Bitbucket check for issue and feedback and codellama logic
 Also check for different cases like mutiple files combined commit and thin of other tests and cases that can porlly happen
+->Also check if bitbucket app works across mutiple repos
 Check for the feedback mechanishm finetuning - LoRA + SFT need to work on this
 Check for impriving finetuned model
 Check for wasy to delpoy the model and the app
@@ -502,3 +503,6 @@ So Connect app is the vest choice as only then we can list it in the market plac
 
 we may need this
 https://developer.atlassian.com/cloud/bitbucket/install-an-app-from-your-site/
+
+Need to check refesh tokens
+And finally check wheather all the tasks have been completed
