@@ -499,3 +499,6 @@ Split into all the parts.
 3 Apps and OAuth Client ->
 
 So Connect app is the vest choice as only then we can list it in the market place
+
+we may need this
+https://developer.atlassian.com/cloud/bitbucket/install-an-app-from-your-site/
