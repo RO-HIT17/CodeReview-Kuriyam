@@ -4,6 +4,7 @@ import json
 from services.bitbucket_review import  fetch_pr_diff, handle_file_review
 from utils.bitbucket_utils import parse_diff
 from models.schemas import TestRequest
+from utils.verify_jwt import verify_bitbucket_request
 
 router = APIRouter()
 
@@ -13,19 +14,16 @@ async def serve_manifest():
         manifest = json.load(f)
     return JSONResponse(content=manifest)
 
-from utils.verify_jwt import verify_bitbucket_jwt
 
 @router.post("/webhook")
 async def bitbucket_webhook(request: Request):
     headers = request.headers
     event = headers.get("X-Event-Key")
-
-    try:
-        path = "/bitbucket/webhook"  # This must match what Bitbucket hits
-        verify_bitbucket_jwt(headers=headers, method="POST", path=path)
-    except HTTPException as e:
-        print("[❌] JWT verification failed")
-        raise e
+    full_url = str(request.url)
+    method = request.method
+    success, client_key, claims = verify_bitbucket_request(request)
+    if not success:
+        raise HTTPException(status_code=401, detail="JWT verification failed")
 
     payload = await request.json()
     print(f"[DEBUG] Received event: {event}")
