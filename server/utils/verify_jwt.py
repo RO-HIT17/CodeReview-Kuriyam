@@ -1,12 +1,5 @@
 from atlassian_jwt import Authenticator, DecodeError
-from core.config import BITBUCKET_CLIENT_KEY, BITBUCKET_SHARED_SECRET 
-
-tenant_info_store = {
-    BITBUCKET_CLIENT_KEY: {
-        "clientKey": BITBUCKET_CLIENT_KEY,
-        "sharedSecret": BITBUCKET_SHARED_SECRET
-    }
-}
+from core.tenants import TENANT_STORE
 
 class BitbucketAuthenticator(Authenticator):
     def __init__(self, store):
@@ -20,7 +13,7 @@ class BitbucketAuthenticator(Authenticator):
             raise ValueError("Unknown client key")
         return tenant_info['sharedSecret']
 
-authenticator = BitbucketAuthenticator(tenant_info_store)
+authenticator = BitbucketAuthenticator(TENANT_STORE)
 
 def verify_bitbucket_request(request):
     try:
@@ -29,8 +22,8 @@ def verify_bitbucket_request(request):
             url=str(request.url),
             headers=dict(request.headers)
         )
-        print(f"[DEBUG] Client Key from JWT: {client_key}")
-        return True 
+        print(f"[DEBUG] JWT verified. Client Key: {client_key}")
+        return True
     except DecodeError as e:
         print(f"[❌] JWT verification failed: {str(e)}")
-        return False 
+        return False

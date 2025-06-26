@@ -9,6 +9,8 @@ from deps import get_db
 from models.installation import Installation
 from sqlalchemy.orm import Session
 from fastapi import Depends
+from core.tenants import TENANT_STORE
+
 router = APIRouter()
 
 @router.get("/atlassian-connect.json")
@@ -70,6 +72,13 @@ async def on_installed(request: Request, db: Session = Depends(get_db)):
 
     print(f"[✅] Installed by: {workspace_name} ({installed_by})")
 
+    TENANT_STORE[client_key] = {
+        "clientKey": client_key,
+        "sharedSecret": shared_secret,
+        "baseUrl": base_api_url,
+        "user": workspace_name
+    }
+    
     existing = db.query(Installation).filter_by(client_key=client_key).first()
     if existing:
         existing.shared_secret = shared_secret
@@ -105,17 +114,6 @@ async def test_endpoint(request: TestRequest):
             await handle_file_review(f, request.workspace, request.repo_slug, request.pr_id)
 
         return {"status": "PR handled successfully"}
-
-    except Exception as e:
-        print("[ERROR]", e)
-        raise HTTPException(status_code=500, detail="Webhook processing failed")
-    
-
-@router.post("/test/inline")
-async def test_inline_comment():
-    try:
-        pass
-        #await test_api()
 
     except Exception as e:
         print("[ERROR]", e)
