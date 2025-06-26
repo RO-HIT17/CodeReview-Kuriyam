@@ -87,25 +87,25 @@ async def on_installed(request: Request, db: Session = Depends(get_db)):
         "workspaceName": workspace_name,    
     }
     
-    existing = db.query(Installation).filter_by(client_key=client_key).first()
-    if existing:
-        existing.shared_secret = shared_secret
-        existing.base_api_url = base_api_url
-        existing.workspace_uuid = workspace_uuid
-        existing.workspace_name = workspace_name
-        existing.installed_by_user = installed_by
-    else:
-        new_install = Installation(
-            client_key=client_key,
-            shared_secret=shared_secret,
-            base_api_url=base_api_url,
-            workspace_uuid=workspace_uuid,
-            workspace_name=workspace_name,
-            installed_by_user=installed_by,
-        )
-        db.add(new_install)
+    # existing = db.query(Installation).filter_by(client_key=client_key).first()
+    # if existing:
+    #     existing.shared_secret = shared_secret
+    #     existing.base_api_url = base_api_url
+    #     existing.workspace_uuid = workspace_uuid
+    #     existing.workspace_name = workspace_name
+    #     existing.installed_by_user = installed_by
+    # else:
+    #     new_install = Installation(
+    #         client_key=client_key,
+    #         shared_secret=shared_secret,
+    #         base_api_url=base_api_url,
+    #         workspace_uuid=workspace_uuid,
+    #         workspace_name=workspace_name,
+    #         installed_by_user=installed_by,
+    #     )
+    #     db.add(new_install)
 
-    db.commit()
+    # db.commit()
 
     return JSONResponse(content={"message": "Installation stored successfully"})
 
