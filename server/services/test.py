@@ -1,55 +1,48 @@
-import time
-import jwt  # PyJWT
-import httpx
-from urllib.parse import urlencode, urlparse
-from core.config import BITBUCKET_CLIENT_KEY as CLIENT_KEY,BITBUCKET_SHARED_SECRET as SHARED_SECRET
-
+import time, jwt, hashlib, httpx
+from core.config import BITBUCKET_SHARED_SECRET
+BITBUCKET_CLIENT_KEY="5499549"
 def generate_qsh(method, path, query=""):
     canonical_request = f"{method.upper()}&{path}&{query}"
-    import hashlib
-    return hashlib.sha256(canonical_request.encode("utf-8")).hexdigest()
+    return hashlib.sha256(canonical_request.encode()).hexdigest()
 
-def generate_jwt(method, url):
-    issued_at = int(time.time())
-    exp = issued_at + 180  # expires in 3 minutes
+def create_jwt():
+    now = int(time.time())
+    exp = now + 180
+    qsh = generate_qsh("POST", "/site/oauth2/access_token")  # Must match
 
     payload = {
-        "iss": CLIENT_KEY,
-        "iat": issued_at,
+        "iss": BITBUCKET_CLIENT_KEY,
+        "iat": now,
         "exp": exp,
-        "qsh": generate_qsh(method, url),
+        "qsh": qsh
     }
 
-    token = jwt.encode(payload, SHARED_SECRET, algorithm="HS256")
+    token = jwt.encode(payload, BITBUCKET_SHARED_SECRET, algorithm="HS256")
     return token
 
-async def post_inline_comment():
-    method = "POST"
-    url = "https://api.bitbucket.org/2.0/repositories/kuriyamcodereview/code-review-tests/pullrequests/46/comments"
-
-    jwt_token = generate_jwt(method, url)
-    print("Token:", jwt_token)
+async def get_oauth_token_from_jwt():
+    jwt_token = create_jwt()
+    print("[DEBUG] JWT Token:", jwt_token)
     headers = {
         "Authorization": f"JWT {jwt_token}",
-        "Content-Type": "application/json",
+        "Content-Type": "application/x-www-form-urlencoded"
     }
 
-    payload = {
-        "inline": {
-            "path": "test.js",
-            "to": 4
-        },
-        "content": {
-            "raw": "bruh"
-        }
+    data = {
+        "grant_type": "urn:bitbucket:oauth2:jwt"
     }
 
     async with httpx.AsyncClient() as client:
-        response = await client.post(url, json=payload, headers=headers)
+        response = await client.post("https://bitbucket.org/site/oauth2/access_token", data=data, headers=headers)
+        print(response.status_code)
+        print(response.json())
+        return response.json().get("access_token")
 
-    print(f"[✅] Status: {response.status_code}")
-    print(f"[✅] Response: {response.text}")
-    print(f"[✅] Headers: {response.headers}")
-    print(f"[✅] URL: {response.url}")
-    print(f"[✅] Request body: {response.request.content}")
-    print(response.text)
+async def test_api():
+    token = await get_oauth_token_from_jwt()
+    print("[DEBUG] Access Token:", token)
+    headers = {"Authorization": f"Bearer {token}"}
+    async with httpx.AsyncClient() as client:
+        r = await client.get("https://api.bitbucket.org/2.0/user", headers=headers)
+        print(r.status_code)
+        print(r.text)
