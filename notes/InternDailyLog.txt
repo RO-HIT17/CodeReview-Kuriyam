@@ -451,3 +451,6 @@ Check for wasy to imporve the model with different dataset and also tuning the c
 Same thing with the feedback model and wasy to incrementally train it
 Complete the answers to all the 
 Slight Change in the overall architecture
+
+Connect Apps doesnt seem to work out. 
+Checking OAuth Consumers
