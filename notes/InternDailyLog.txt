@@ -454,3 +454,5 @@ Slight Change in the overall architecture
 
 Connect Apps doesnt seem to work out. 
 Checking OAuth Consumers
+
+Need to check for ways to scale this and improve on this
