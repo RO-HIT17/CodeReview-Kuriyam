@@ -4,12 +4,12 @@ import json
 from services.bitbucket_review import  fetch_pr_diff, handle_file_review
 from utils.bitbucket_utils import parse_diff
 from models.schemas import TestRequest
-from utils.verify_jwt import verify_bitbucket_request
+from middleware.verify_jwt import verify_bitbucket_request
 from deps import get_db
 from models.installation import Installation
 from sqlalchemy.orm import Session
 from fastapi import Depends
-from core.tenants import TENANT_STORE
+from core.tenants import TENANT_STORE,BITBUCKET_CONNECT_APP_DATA
 
 router = APIRouter()
 
@@ -77,6 +77,14 @@ async def on_installed(request: Request, db: Session = Depends(get_db)):
         "sharedSecret": shared_secret,
         "baseUrl": base_api_url,
         "user": workspace_name
+    }
+    
+    BITBUCKET_CONNECT_APP_DATA["data"] = {
+        "clientKey": client_key,
+        "sharedSecret": shared_secret,
+        "baseApiUrl": base_api_url,
+        "workspaceUuid": workspace_uuid,
+        "workspaceName": workspace_name,    
     }
     
     existing = db.query(Installation).filter_by(client_key=client_key).first()
