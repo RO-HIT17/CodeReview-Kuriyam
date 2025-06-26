@@ -10,7 +10,7 @@ from models.installation import Installation
 from sqlalchemy.orm import Session
 from fastapi import Depends
 from core.tenants import TENANT_STORE,BITBUCKET_CONNECT_APP_DATA
-
+from core.config import BITBUCKET_KEY
 router = APIRouter()
 
 @router.get("/atlassian-connect.json")
@@ -24,9 +24,11 @@ async def serve_manifest():
 async def bitbucket_webhook(request: Request):
     headers = request.headers
     event = headers.get("X-Event-Key")
-    
-    success = verify_bitbucket_request(request)
-    
+    print("TENENT_STORE contents:", TENANT_STORE) 
+    print("BITBUCKET_CONNECT_APP_DATA contents:", BITBUCKET_CONNECT_APP_DATA)   
+    full_url = str(request.url)
+    method = request.method
+    success, client_key, claims = verify_bitbucket_request(request)
     if not success:
         raise HTTPException(status_code=401, detail="JWT verification failed")
 
