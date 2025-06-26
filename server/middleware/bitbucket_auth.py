@@ -14,6 +14,8 @@ def get_bitbucket_access_token() -> dict:
     shared_secret = BITBUCKET_CONNECT_APP_DATA["data"]["sharedSecret"]
     sub=BITBUCKET_CONNECT_APP_DATA["data"]["clientKey"]
     
+    print(f"[DEBUG] Generating JWT for Bitbucket access token with app_key: {app_key}, sub: {sub}")
+    
     issued_at = int(time.time())
     expiry = issued_at + 180  
 
