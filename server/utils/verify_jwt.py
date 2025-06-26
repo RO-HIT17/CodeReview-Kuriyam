@@ -1,7 +1,6 @@
 from atlassian_jwt import Authenticator, DecodeError
 from core.config import BITBUCKET_CLIENT_KEY, BITBUCKET_SHARED_SECRET 
 
-
 tenant_info_store = {
     BITBUCKET_CLIENT_KEY: {
         "clientKey": BITBUCKET_CLIENT_KEY,

@@ -23,9 +23,8 @@ async def bitbucket_webhook(request: Request):
     headers = request.headers
     event = headers.get("X-Event-Key")
     
-    full_url = str(request.url)
-    method = request.method
     success, client_key, claims = verify_bitbucket_request(request)
+    
     if not success:
         raise HTTPException(status_code=401, detail="JWT verification failed")
 
@@ -67,15 +66,11 @@ async def on_installed(request: Request):
     base_url = data.get("baseUrl")
     user = data.get("principal", {}).get("username")
 
-
-    print("Data received from Bitbucket installation:", json.dumps(data, indent=2))
     print(f"[✅] App installed by: {user}")
     print(f"[🔐] Client key: {client_key}")
     print(f"[🔐] Shared secret: {shared_secret}")
     print(f"[🔗] Base URL: {base_url}")
 
-    # 🗃️ Store this securely in your DB (keyed by clientKey)
-    # e.g. db.save(client_key, shared_secret)
 
     return JSONResponse(content={"message": "Installation handled"})
 
@@ -97,40 +92,6 @@ async def test_endpoint(request: TestRequest):
         print("[ERROR]", e)
         raise HTTPException(status_code=500, detail="Webhook processing failed")
     
-#code="nat5cfy46sdKGmGC8v"
-
-@router.get("/oauth/login")
-def login():
-    redirect_uri = "https://666f-2405-201-e048-7046-3563-b3b6-b29c-a53d.ngrok-free.app/bitbucket/oauth/callback"
-    auth_url = (
-        "https://bitbucket.org/site/oauth2/authorize"
-        f"?client_id={BITBUCKET_CLIENT_ID}&response_type=code"
-        f"&redirect_uri={redirect_uri}"
-    )
-    return RedirectResponse(auth_url)
-
-@router.get("/oauth/callback")
-async def oauth_callback(request: Request):
-    code = request.query_params.get("code")
-    redirect_uri = "https://666f-2405-201-e048-7046-3563-b3b6-b29c-a53d.ngrok-free.app/bitbucket/oauth/callback"
-
-    token_url = "https://bitbucket.org/site/oauth2/access_token"
-    async with httpx.AsyncClient() as client:
-        response = await client.post(
-            token_url,
-            data={
-                "grant_type": "authorization_code",
-                "code": code,
-                "redirect_uri": redirect_uri
-            },
-            auth=(BITBUCKET_CLIENT_ID, BITBUCKET_CLIENT_SECRET)
-        )
-    token_data = response.json()
-    access_token = token_data.get("access_token")
-    refresh_token = token_data.get("refresh_token")
-
-    print("[✅] Access Token:", access_token)
-    return {"access_token": access_token, "refresh_token": refresh_token}    
 
 @router.post("/test/inline")
 async def test_inline_comment():
