@@ -67,6 +67,8 @@ async def on_installed(request: Request):
     base_url = data.get("baseUrl")
     user = data.get("principal", {}).get("username")
 
+
+    print("Data received from Bitbucket installation:", json.dumps(data, indent=2))
     print(f"[✅] App installed by: {user}")
     print(f"[🔐] Client key: {client_key}")
     print(f"[🔐] Shared secret: {shared_secret}")
