@@ -8,7 +8,7 @@ from utils.verify_jwt import verify_bitbucket_request
 from core.config import BITBUCKET_CLIENT_ID, BITBUCKET_CLIENT_SECRET
 import httpx
 from fastapi.responses import RedirectResponse
-
+from services.test import post_inline_comment
 router = APIRouter()
 
 @router.get("/atlassian-connect.json")
@@ -129,3 +129,12 @@ async def oauth_callback(request: Request):
 
     print("[✅] Access Token:", access_token)
     return {"access_token": access_token, "refresh_token": refresh_token}    
+
+@router.post("/test/inline")
+async def test_inline_comment():
+    try:
+        await post_inline_comment()
+
+    except Exception as e:
+        print("[ERROR]", e)
+        raise HTTPException(status_code=500, detail="Webhook processing failed")
