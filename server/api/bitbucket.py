@@ -26,9 +26,8 @@ async def bitbucket_webhook(request: Request):
     event = headers.get("X-Event-Key")
     print("TENENT_STORE contents:", TENANT_STORE) 
     print("BITBUCKET_CONNECT_APP_DATA contents:", BITBUCKET_CONNECT_APP_DATA)   
-    full_url = str(request.url)
-    method = request.method
-    success, client_key, claims = verify_bitbucket_request(request)
+    
+    success = verify_bitbucket_request(request)
     if not success:
         raise HTTPException(status_code=401, detail="JWT verification failed")
 
@@ -77,8 +76,6 @@ async def on_installed(request: Request, db: Session = Depends(get_db)):
     TENANT_STORE[client_key] = {
         "clientKey": client_key,
         "sharedSecret": shared_secret,
-        "baseUrl": base_api_url,
-        "user": workspace_name
     }
     
     BITBUCKET_CONNECT_APP_DATA["data"] = {
