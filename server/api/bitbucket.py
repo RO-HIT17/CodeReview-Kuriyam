@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import JSONResponse
 import json
-from services.bitbucket_review import  fetch_pr_diff, handle_file_review
+from services.bitbucket_review import  fetch_pr_diff, handle_file_review 
 from utils.bitbucket_utils import parse_diff
 from models.schemas import TestRequest
 from middleware.verify_jwt import verify_bitbucket_request
@@ -53,6 +53,7 @@ async def bitbucket_webhook(request: Request):
 
         for file in files:
             await handle_file_review(file, workspace, repo_slug, pr_id)
+
 
         return {"status": "PR handled successfully"}
 

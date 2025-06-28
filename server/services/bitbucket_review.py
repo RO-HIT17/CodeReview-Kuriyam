@@ -37,7 +37,7 @@ async def handle_file_review(file_entry, workspace, repo_slug, pr_id):
             return
 
         suggestions = json.loads("[" + ",".join(json_objects) + "]")
-        matched = match_comments_to_lines(added_lines, suggestions)
+        matched = match_comments_to_lines(added_lines, suggestions,pr_id, workspace, repo_slug)
 
         print(f"[📌] {len(matched)} comments matched in {file_path}")
         print(f"[📌] Suggestions: {json.dumps(suggestions, indent=2)}")
@@ -120,7 +120,7 @@ async def post_bitbucket_inline_comment(
 
 async def fetch_pr_diff(diff_url: str) -> str:
     access_token = get_bitbucket_access_token()
-    
+    print("Access Token : ",access_token)
     headers = {
         "Authorization": f"Bearer {access_token}"
     }
@@ -131,3 +131,53 @@ async def fetch_pr_diff(diff_url: str) -> str:
         return response.text
     else:
         raise Exception(f"Failed to fetch diff: {response.status_code} - {response.text}")
+
+async def handle_general_review_comment(files: list, workspace: str, repo_slug: str, pr_id: int):
+    if not files:
+        print("[ℹ️] No files to review, skipping general comment.")
+        return
+
+    comments_url = f"https://api.bitbucket.org/2.0/repositories/{workspace}/{repo_slug}/pullrequests/{pr_id}/comments"
+    
+    all_added_lines = []
+    for file in files:
+        all_added_lines.extend(file["added_lines"])
+
+    if not all_added_lines:
+        print("[ℹ️] No added lines found, skipping general comment.")
+        return
+
+    raw_lines = [line["content"] for line in all_added_lines]
+    prompt = build_review_prompt(raw_lines)
+
+    print("[🤖] Calling LLM for general review comment...")
+
+    try:
+        async with httpx.AsyncClient(timeout=60) as client:
+            response = await client.post(
+                OLLAMA_URL,
+                json={"model": MODEL_NAME, "prompt": prompt, "stream": False}
+            )
+        response.raise_for_status()
+        raw_output = response.json().get("response", "")
+        
+        json_objects = re.findall(r'{\s*"line_snippet"\s*:\s*".+?",\s*"comment"\s*:\s*".+?"\s*}', raw_output)
+
+        if not json_objects:
+            print("[❌] No LLM comments for general review")
+            return
+
+        suggestions = json.loads("[" + ",".join(json_objects) + "]")
+        
+        matched = match_comments_to_lines(all_added_lines, suggestions)
+        
+        print(f"[📌] {len(matched)} comments matched in general review")
+        print(f"[📌] Suggestions: {json.dumps(suggestions, indent=2)}")
+        print(f"[📌] Matched comments: {json.dumps(matched, indent=2)}")
+
+        if matched:
+            message = "\n".join([f"{m['line_number']}: {m['comment']}" for m in matched])
+            await post_bitbucket_general_comment(comments_url, message)
+
+    except Exception as e:
+        print(f"[🔥] Error posting general review comment: {e}")

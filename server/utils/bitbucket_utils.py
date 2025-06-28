@@ -1,4 +1,6 @@
 import re
+from core.config import NGROK_URL
+from feedback.store import store_feedback_draft
 
 def parse_diff(diff_text):
     files = []
@@ -43,28 +45,40 @@ def parse_diff(diff_text):
 
     return files
 
-def match_comments_to_lines(diff_lines, suggestions):
+def match_comments_to_lines(diff_lines, suggestions, pr_number, owner, repo):
     def normalize(line):
         return line.strip().replace(" ", "").replace(";", "")
+    
     matched = []
     used = set()
 
     for s in suggestions:
-        target = normalize(s["line_snippet"])
+        raw_line = s["line_snippet"]
+        target = normalize(raw_line)
+        original_comment = s["comment"].strip()
+
+        feedback_id = store_feedback_draft(pr_number, "Nil", raw_line)
+
         for entry in diff_lines:
             entry_line = normalize(entry["content"])
             if (entry_line, entry["line_number"]) in used:
                 continue
             if target in entry_line or entry_line in target:
+                feedback_prompt = (
+                    f"\n\n**Was this helpful?**\n\n"
+                    f"[👍 Yes]({NGROK_URL}/feedback?vote=up&id={feedback_id}&redirect=https://bitbucket.org/{owner}/{repo}/pull-requests/{pr_number})  \n"
+                    f"[👎 No]({NGROK_URL}/feedback?vote=down&id={feedback_id}&redirect=https://bitbucket.org/{owner}/{repo}/pull-requests/{pr_number})"
+                ).strip()
+
                 matched.append({
-                    "comment": s["comment"],
+                    "comment": f"{original_comment}\n\n{feedback_prompt}",
                     "line_number": entry["line_number"],
                     "content": entry["content"]
                 })
                 used.add((entry_line, entry["line_number"]))
                 break
+
     return matched
-        
 
 def build_review_prompt(added_lines: list[str]) -> str:
     """
