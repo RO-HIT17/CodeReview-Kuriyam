@@ -27,7 +27,18 @@ def save_feedbacks(data: list):
         json.dump(data, f, indent=2)
 
 
-def store_feedback_draft(pr, issue, diff_text):
+def store_feedback_draft(pr, issue, diff_text, source, redirect_link, repo):
+    """
+    Stores a draft feedback item with additional metadata.
+    
+    Args:
+        pr (int): Pull Request number
+        issue (int): Issue number or ID
+        diff_text (str): Diff/patch content
+        source (str): "github" or "bitbucket"
+        redirect_link (str): URL to PR or issue
+        repo (str): Repository name
+    """
     feedbacks = load_feedbacks()
     feedback_id = str(uuid.uuid4())
     feedbacks.append({
@@ -38,6 +49,9 @@ def store_feedback_draft(pr, issue, diff_text):
         "vote": None,
         "ip": None,
         "diff": diff_text,
+        "platform": source,               
+        "redirect": redirect_link, 
+        "repo": repo,                   
         "approved": False
     })
     save_feedbacks(feedbacks)

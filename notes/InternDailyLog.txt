@@ -534,7 +534,9 @@ check how this works on a whole
 65RRjbrW-opjMG2TT910ArRzkNR9SuDXiG0NAaalsTMaTk3v80EzXJgMeYiLcEwhT_1vtquc672irk7c-ga3JysFe9c2HH2GHQO9qglMkQ==
 
 TODO
-1.Improve logic to handle mutiple workspaces
+1.Improve logic to handle mutiple workspaces - done
+2.Add the required details in feedback page - currently no prefix let it be and add UI
+
 2.Fix frontend side authentication logic and implementation
 3.Fix integration of current backend   
 4.Check the workflow and end to end and also check wheather all taska and features have been implemented throughly

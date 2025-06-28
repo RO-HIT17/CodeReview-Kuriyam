@@ -60,8 +60,8 @@ def match_comments_to_positions(diff_blocks, suggestions, owner, repo, pr_number
     for suggestion in suggestions:
         raw_line = suggestion.get("line_snippet", "").strip()
         comment = suggestion.get("comment", "").strip()
-        feedback_id = store_feedback_draft(pr_number, "Nil", raw_line)
- 
+        feedback_id = store_feedback_draft(pr_number, "Nil", raw_line,"github",f"https://github.com/{owner}/{repo}/pull/{pr_number}",repo)
+
         if not raw_line or not comment or not feedback_id:
             continue
 
@@ -80,8 +80,8 @@ def match_comments_to_positions(diff_blocks, suggestions, owner, repo, pr_number
             if normalized_entry_line == normalized_suggestion_line or normalized_suggestion_line in normalized_entry_line:
                 feedback_prompt = (
                     f"\n\n**Was this helpful?**\n"
-                    f"[👍 Yes]({NGROK_URL}/feedback?vote=up&id={feedback_id}&redirect=https://github.com/{owner}/{repo}/pull/{pr_number})  \n"
-                    f"[👎 No]({NGROK_URL}/feedback?vote=down&id={feedback_id}&redirect=https://github.com/{owner}/{repo}/pull/{pr_number})"
+                    f"[👍 Yes]({NGROK_URL}/feedback?vote=up&id={feedback_id}&redirect=https://github.com/{owner}/{repo}/pull/{pr_number}&platform=github&repo={repo})  \n"
+                    f"[👎 No]({NGROK_URL}/feedback?vote=down&id={feedback_id}&redirect=https://github.com/{owner}/{repo}/pull/{pr_number}&platform=github&repo={repo})"
                 ).strip()
 
                 matched_results.append({
