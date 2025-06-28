@@ -74,7 +74,7 @@ async def handle_pr_review(owner: str, repo: str, pr_number: int, installation_i
             suggestions = json.loads("[" + ",".join(json_objects) + "]")
             print(f"💡 SUGGESTIONS FOR {filename.upper()}:", suggestions)
 
-            matched = match_comments_to_positions(file_entry["diff"], suggestions)
+            matched = match_comments_to_positions(file_entry["diff"], suggestions,owner, repo, pr_number)
 
             print(f"📌 MATCHED COMMENTS FOR {filename.upper()}:", matched)
             print(f"🔢 COUNT OF MATCHED COMMENTS FOR {filename.upper()}: {len(matched)}")

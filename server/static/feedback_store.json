@@ -68,5 +68,55 @@
     "ip": "2405:201:e048:7046:d48f:3b0:7cbe:19a6",
     "diff": "File: test_prs/test.js\n-function findMax(arr) {\n-  let max = 0;\n-  for (let i = 0; i < arr.length; i++) {\n-    arr.sort();\n-    if (arr[i] > max) {\n-      max = arr[i];\n-    }\n-  }\n-  return max;\n+function fetchData(url) {\n+  fetch(url).then(res => {\n+    res.json().then(data => {\n+      console.log(\"Data received:\", data);\n+    }).catch(err => {\n+      console.log(\"Error parsing JSON\");\n+    });\n+  }).catch(err => {\n+    console.log(\"Network error\");\n+  });",
     "approved": false
+  },
+  {
+    "id": "22c24693-4d0b-4ad1-bcfa-5c09a14a1a02",
+    "timestamp": "2025-06-28T19:46:32.706223",
+    "pr": 59,
+    "issue": "Nil",
+    "vote": "up",
+    "ip": "2405:201:e048:7046:75df:7111:977:2f2c",
+    "diff": "+arr.sort();",
+    "approved": false
+  },
+  {
+    "id": "6add5a59-920e-4446-a520-a58306b44682",
+    "timestamp": "2025-06-28T19:46:32.716215",
+    "pr": 59,
+    "issue": "Nil",
+    "vote": "down",
+    "ip": "2405:201:e048:7046:75df:7111:977:2f2c",
+    "diff": "+if (arr[i] > max) {",
+    "approved": false
+  },
+  {
+    "id": "767f68b1-4f77-4523-bb5e-3723bd2f7353",
+    "timestamp": "2025-06-28T20:11:15.833550",
+    "pr": 63,
+    "issue": "Nil",
+    "vote": "up",
+    "ip": "2405:201:e048:7046:75df:7111:977:2f2c",
+    "diff": "fetchData(url)",
+    "approved": false
+  },
+  {
+    "id": "d055a2f1-dd12-41cc-b2ec-44409319ae91",
+    "timestamp": "2025-06-28T20:11:15.859262",
+    "pr": 63,
+    "issue": "Nil",
+    "vote": null,
+    "ip": null,
+    "diff": "res.json()",
+    "approved": false
+  },
+  {
+    "id": "67e85b76-17ca-457c-b63b-a89b83dd7d10",
+    "timestamp": "2025-06-28T20:11:15.888863",
+    "pr": 63,
+    "issue": "Nil",
+    "vote": null,
+    "ip": null,
+    "diff": ".catch(err => { ... })",
+    "approved": false
   }
 ]

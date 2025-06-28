@@ -1,3 +1,7 @@
+from fastapi import HTTPException
+from core.config import NGROK_URL
+from feedback.store import store_feedback_draft
+
 def extract_diff_blocks(patch: str):
     diff_blocks = []
     position = 0
@@ -46,7 +50,7 @@ def build_review_prompt(added_lines: list[str]) -> str:
         {diff_text}
         """.strip()
 
-def match_comments_to_positions(diff_blocks, suggestions):
+def match_comments_to_positions(diff_blocks, suggestions, owner, repo, pr_number):
     def normalize_line(line: str) -> str:
         return line.lstrip("+").strip().replace(" ", "")
 
@@ -56,7 +60,9 @@ def match_comments_to_positions(diff_blocks, suggestions):
     for suggestion in suggestions:
         raw_line = suggestion.get("line_snippet", "").strip()
         comment = suggestion.get("comment", "").strip()
-        if not raw_line or not comment:
+        feedback_id = store_feedback_draft(pr_number, "Nil", raw_line)
+ 
+        if not raw_line or not comment or not feedback_id:
             continue
 
         normalized_suggestion_line = normalize_line(raw_line)
@@ -72,8 +78,14 @@ def match_comments_to_positions(diff_blocks, suggestions):
                 continue
 
             if normalized_entry_line == normalized_suggestion_line or normalized_suggestion_line in normalized_entry_line:
+                feedback_prompt = (
+                    f"\n\n**Was this helpful?**\n"
+                    f"[👍 Yes]({NGROK_URL}/feedback?vote=up&id={feedback_id}&redirect=https://github.com/{owner}/{repo}/pull/{pr_number})  \n"
+                    f"[👎 No]({NGROK_URL}/feedback?vote=down&id={feedback_id}&redirect=https://github.com/{owner}/{repo}/pull/{pr_number})"
+                ).strip()
+
                 matched_results.append({
-                    "comment": comment,
+                    "comment": f"{comment}\n\n{feedback_prompt}",
                     "position": position,
                     "line": entry.get("line", "").lstrip("+").strip(),
                 })
