@@ -5,14 +5,14 @@ import requests
 from core.config import BITBUCKET_KEY
 from core.tenants import BITBUCKET_CONNECT_APP_DATA
  
-def get_bitbucket_access_token() -> dict:
+def get_bitbucket_access_token(workspace_name : str) -> dict:
     
     method = "GET"
     uri_path = "/2.0/user"
     
     app_key = BITBUCKET_KEY
-    shared_secret = BITBUCKET_CONNECT_APP_DATA["data"]["sharedSecret"]
-    sub=BITBUCKET_CONNECT_APP_DATA["data"]["clientKey"]
+    shared_secret = BITBUCKET_CONNECT_APP_DATA[workspace_name]["sharedSecret"]
+    sub=BITBUCKET_CONNECT_APP_DATA[workspace_name]["clientKey"]
     
     print(f"[DEBUG] Generating JWT for Bitbucket access token with app_key: {app_key}, sub: {sub}")
     
