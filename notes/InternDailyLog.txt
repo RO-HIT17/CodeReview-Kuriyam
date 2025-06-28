@@ -427,19 +427,19 @@ Complete the frontend and appropirate authentication
 Complete the backend and frontend integration
 
 First setup the bitbucket app with pass and user name - done
-then remove it and complete the whole server 
+then remove it and complete the whole server - done
 then move on to frontend authentication
 then come back to backend and frontend integration
 
-Bitbucket check for issue and feedback and codellama logic
+Bitbucket check for issue and feedback and codellama logic - done
 Also check for different cases like mutiple files combined commit and thin of other tests and cases that can porlly happen
 ->Also check if bitbucket app works across mutiple repos
 Check for the feedback mechanishm finetuning - LoRA + SFT need to work on this
 Check for impriving finetuned model
 Check for wasy to delpoy the model and the app
 
-Fix the jwt auth things
-Ask if other 2 features are need in bitbuket as in github
+Fix the jwt auth things - done
+Ask if other 2 features are need in bitbuket as in github - done 
 Finish Frontedn with proper en and Oauth to connec it with github and bitbucket
 Check how the logic works for installation aacross repository (may deviate from current logic)
 Integrate existin backend
@@ -504,8 +504,39 @@ So Connect app is the vest choice as only then we can list it in the market plac
 we may need this
 https://developer.atlassian.com/cloud/bitbucket/install-an-app-from-your-site/
 
-Need to check refesh tokens
+Need to check refesh tokens -> currently has 3 min expiration time
 And finally check wheather all the tasks have been completed
 
-Add database to handle multiple installation ids
-Need to add DB to maintain them
+Add database to handle multiple installation ids -> maynot be need as of now
+Need to add DB to maintain them -> only if extended to multiple workspaces
+
+--------
+June 27
+Fixed up authentication issue by changeint the tenant store info
+
+------------------------------END OF WEEK 4---------------------------------------
+
+June 28
+
+Big Bucket issue mapping feature-Chech jira -> not available
+#Ref
+https://community.atlassian.com/forums/Bitbucket-questions/Issue-Tracker-Option-Not-Visible-in-Free-Bitbucket-Repository/qaq-p/2894875
+https://support.atlassian.com/bitbucket-cloud/docs/use-the-issue-tracker/
+
+Big bucket Feedback feature -> done
+github in-line feedback link/Make the issue feedback comment general to fix this - done
+Oauth storing the tenant imformation in DB - To fix remove the reload -> done
+
+instead of using logins and passwords use github and oauth Bitbucket login accounts directly
+Neet to learn how to integrate all this to the backend
+
+check how this works on a whole  
+65RRjbrW-opjMG2TT910ArRzkNR9SuDXiG0NAaalsTMaTk3v80EzXJgMeYiLcEwhT_1vtquc672irk7c-ga3JysFe9c2HH2GHQO9qglMkQ==
+
+TODO
+1.Improve logic to handle mutiple workspaces
+2.Fix frontend side authentication logic and implementation
+3.Fix integration of current backend   
+4.Check the workflow and end to end and also check wheather all taska and features have been implemented throughly
+
+

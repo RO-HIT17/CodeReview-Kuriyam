@@ -1,0 +1,57 @@
+Data received from installation: {
+  "key": "code-review-bot",
+  "publicKey": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCBFq+6Iq5J9AZzTZQfZEba9udHTIJToJnoDvWVHk8jKZIrMrVT1oJoAec84+nBhiO/8neqvbTlD7MeIb5aTDZo8YVhBKmQuEJ5RY56EakoR4x5oILsz/Ki5O4nGWSeTCCG1hj4heVsUi77umkYG5sZyHKNO+P+SwctTH1GEBDwswIDAQAB",  
+  "clientKey": "connection:5499624",
+  "baseUrl": "https://bitbucket.org",
+  "productType": "bitbucket",
+  "eventType": "installed",
+  "sharedSecret": "ATBCyqN/0UEa+kHT+nMHAi1QlDbCIRcS7v+V1N09ragJMIM8MHeB832A98D",
+  "actor": {
+    "type": "user",
+    "uuid": "c73ce4f6-e27f-496c-89b9-cd20d76d6e70",
+    "account_id": "712020:0b7fffa0-95aa-44b1-9d69-969cb17e4ba6"
+  },
+  "baseApiUrl": "https://api.bitbucket.org",
+  "principal": {
+    "display_name": "kuriyamcodereview",
+    "links": {
+      "self": {
+        "href": "https://api.bitbucket.org/2.0/workspaces/%7Beaba83d3-68fb-4436-8f11-2636200f7974%7D"
+      },
+      "avatar": {
+        "href": "https://bitbucket.org/account/kuriyamcodereview/avatar/"
+      },
+      "html": {
+        "href": "https://bitbucket.org/%7Beaba83d3-68fb-4436-8f11-2636200f7974%7D/"
+      }
+    },
+    "created_on": "2025-06-17T08:34:36.341433+00:00",
+    "is_active": true,
+    "type": "team",
+    "uuid": "{eaba83d3-68fb-4436-8f11-2636200f7974}",
+    "has_2fa_enabled": null,
+    "properties": {},
+    "username": "kuriyamcodereview"
+  },
+  "user": {
+    "display_name": "kuriyamcodereview",
+    "links": {
+      "self": {
+        "href": "https://api.bitbucket.org/2.0/workspaces/%7Beaba83d3-68fb-4436-8f11-2636200f7974%7D"
+      },
+      "avatar": {
+        "href": "https://bitbucket.org/account/kuriyamcodereview/avatar/"
+      },
+      "html": {
+        "href": "https://bitbucket.org/%7Beaba83d3-68fb-4436-8f11-2636200f7974%7D/"
+      }
+    },
+    "created_on": "2025-06-17T08:34:36.341433+00:00",
+    "is_active": true,
+    "type": "team",
+    "uuid": "{eaba83d3-68fb-4436-8f11-2636200f7974}",
+    "has_2fa_enabled": null,
+    "properties": {},
+    "username": "kuriyamcodereview"
+  }
+}

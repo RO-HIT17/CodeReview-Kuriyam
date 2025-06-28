@@ -1,16 +1,16 @@
-from fastapi import APIRouter, Request, HTTPException
-from fastapi.responses import JSONResponse
 import json
+
+from fastapi import APIRouter, Request, HTTPException , Depends
+from fastapi.responses import JSONResponse
+
 from services.bitbucket_review import  fetch_pr_diff, handle_file_review 
 from utils.bitbucket_utils import parse_diff
 from models.schemas import TestRequest
 from middleware.verify_jwt import verify_bitbucket_request
-from deps import get_db
-from models.installation import Installation
-from sqlalchemy.orm import Session
-from fastapi import Depends
+
+
 from core.tenants import TENANT_STORE,BITBUCKET_CONNECT_APP_DATA
-from core.config import BITBUCKET_KEY
+
 router = APIRouter()
 
 @router.get("/atlassian-connect.json")
@@ -24,8 +24,9 @@ async def serve_manifest():
 async def bitbucket_webhook(request: Request):
     headers = request.headers
     event = headers.get("X-Event-Key")
-    print("TENENT_STORE contents:", TENANT_STORE) 
-    print("BITBUCKET_CONNECT_APP_DATA contents:", BITBUCKET_CONNECT_APP_DATA)   
+    
+    print("TENENT_STORE contents:", json.dumps(TENANT_STORE, indent=2))
+    print("BITBUCKET_CONNECT_APP_DATA contents:", json.dumps(BITBUCKET_CONNECT_APP_DATA, indent=2)) 
     
     success = verify_bitbucket_request(request)
     if not success:
@@ -62,7 +63,7 @@ async def bitbucket_webhook(request: Request):
         raise HTTPException(status_code=500, detail="Webhook processing failed")
 
 @router.post("/installed")
-async def on_installed(request: Request, db: Session = Depends(get_db)):
+async def on_installed(request: Request):
     data = await request.json()
 
     client_key = data.get("clientKey")
@@ -85,6 +86,7 @@ async def on_installed(request: Request, db: Session = Depends(get_db)):
         "baseApiUrl": base_api_url,
         "workspaceUuid": workspace_uuid,
         "workspaceName": workspace_name,    
+        "installedByUser": installed_by,
     }
     
     # existing = db.query(Installation).filter_by(client_key=client_key).first()
