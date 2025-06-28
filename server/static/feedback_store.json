@@ -138,5 +138,44 @@
     "ip": null,
     "diff": "res.json().then(data => {",
     "approved": false
+  },
+  {
+    "id": "595a0ea3-be24-4c46-9a59-c81813064b6c",
+    "timestamp": "2025-06-28T21:34:10.849104",
+    "pr": 63,
+    "issue": "Nil",
+    "vote": null,
+    "ip": null,
+    "diff": "+arr.sort(); // Unnecessary and wrong",
+    "platform": "github",
+    "redirect": "https://github.com/RO-HIT17/CodeReview-Kuriyam/pull/63",
+    "repo": "CodeReview-Kuriyam",
+    "approved": false
+  },
+  {
+    "id": "b19b0615-baa9-4fd8-bdd3-2b977c8fe111",
+    "timestamp": "2025-06-28T21:34:10.876754",
+    "pr": 63,
+    "issue": "Nil",
+    "vote": null,
+    "ip": null,
+    "diff": "+  if (arr[i] > max) {",
+    "platform": "github",
+    "redirect": "https://github.com/RO-HIT17/CodeReview-Kuriyam/pull/63",
+    "repo": "CodeReview-Kuriyam",
+    "approved": false
+  },
+  {
+    "id": "cea5f0c9-c78e-4867-9adb-7f076ece193d",
+    "timestamp": "2025-06-28T21:34:10.901397",
+    "pr": 63,
+    "issue": "Nil",
+    "vote": null,
+    "ip": null,
+    "diff": "+return max;",
+    "platform": "github",
+    "redirect": "https://github.com/RO-HIT17/CodeReview-Kuriyam/pull/63",
+    "repo": "CodeReview-Kuriyam",
+    "approved": false
   }
 ]

@@ -1,12 +1,18 @@
 from fastapi import APIRouter, Query, Request
 from fastapi.responses import RedirectResponse, HTMLResponse
 from feedback.store import load_feedbacks, save_feedbacks
-from datetime import datetime
 
 router = APIRouter()
 
 @router.get("/feedback")
-async def collect_feedback(vote: str = Query(...), id: str = Query(...), redirect: str = Query(...), request: Request = None):
+async def collect_feedback(
+    vote: str = Query(...),
+    id: str = Query(...),
+    redirect: str = Query(...),
+    platform: str = Query(None),
+    repo: str = Query(None),
+    request: Request = None,
+):
     user_ip = request.client.host
     feedbacks = load_feedbacks()
 
@@ -15,14 +21,21 @@ async def collect_feedback(vote: str = Query(...), id: str = Query(...), redirec
             if fb["vote"] is None:
                 fb["vote"] = vote
                 fb["ip"] = user_ip
+                if platform:
+                    fb["platform"] = platform
+                if repo:
+                    fb["repo"] = repo
+                fb["redirect"] = redirect
                 save_feedbacks(feedbacks)
             break
 
     return RedirectResponse(url=redirect)
 
+
 @router.get("/feedback-list")
 async def list_feedback():
     return load_feedbacks()
+
 
 @router.post("/approve-feedback")
 async def approve_feedback(pr: int, issue: int, timestamp: str):
@@ -33,6 +46,7 @@ async def approve_feedback(pr: int, issue: int, timestamp: str):
             break
     save_feedbacks(feedbacks)
     return {"message": "Feedback approved."}
+
 
 @router.get("/admin", response_class=HTMLResponse)
 async def admin_panel():
@@ -60,25 +74,32 @@ async def admin_panel():
                     <th>Issue</th>
                     <th>Vote</th>
                     <th>IP</th>
+                    <th>Platform</th>
+                    <th>Repo</th>
+                    <th>Redirect</th>
                     <th>Status</th>
                     <th>Action</th>
                 </tr>
     """
 
     for fb in feedbacks:
-        status = "✅ Approved" if fb["approved"] else "❌ Pending"
-        css_class = "approved" if fb["approved"] else "pending"
+        status = "✅ Approved" if fb.get("approved") else "❌ Pending"
+        css_class = "approved" if fb.get("approved") else "pending"
         approve_link = (
             f"/approve-feedback?pr={fb['pr']}&issue={fb['issue']}&timestamp={fb['timestamp']}"
-            if not fb["approved"] else "-"
+            if not fb.get("approved") else "-"
         )
+
         html += f"""
             <tr>
-                <td>{fb['timestamp']}</td>
-                <td>{fb['pr']}</td>
-                <td>{fb['issue']}</td>
-                <td>{fb['vote']}</td>
-                <td>{fb['ip']}</td>
+                <td>{fb.get('timestamp', '-')}</td>
+                <td>{fb.get('pr', '-')}</td>
+                <td>{fb.get('issue', '-')}</td>
+                <td>{fb.get('vote', '-')}</td>
+                <td>{fb.get('ip', '-')}</td>
+                <td>{fb.get('platform', '-')}</td>
+                <td>{fb.get('repo', '-')}</td>
+                <td><a href="{fb.get('redirect', '#')}" target="_blank">🔗</a></td>
                 <td class="{css_class}">{status}</td>
                 <td>{f'<a href="{approve_link}">Approve</a>' if approve_link != '-' else '-'}</td>
             </tr>

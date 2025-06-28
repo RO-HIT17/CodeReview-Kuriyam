@@ -57,7 +57,7 @@ def match_comments_to_lines(diff_lines, suggestions, pr_number, owner, repo):
         target = normalize(raw_line)
         original_comment = s["comment"].strip()
 
-        feedback_id = store_feedback_draft(pr_number, "Nil", raw_line)
+        feedback_id = store_feedback_draft(pr_number, "Nil", raw_line,"bitbucket", f"https://bitbucket.org/{owner}/{repo}/pull-requests/{pr_number}", repo)
 
         for entry in diff_lines:
             entry_line = normalize(entry["content"])
@@ -66,8 +66,8 @@ def match_comments_to_lines(diff_lines, suggestions, pr_number, owner, repo):
             if target in entry_line or entry_line in target:
                 feedback_prompt = (
                     f"\n\n**Was this helpful?**\n\n"
-                    f"[👍 Yes]({NGROK_URL}/feedback?vote=up&id={feedback_id}&redirect=https://bitbucket.org/{owner}/{repo}/pull-requests/{pr_number})  \n"
-                    f"[👎 No]({NGROK_URL}/feedback?vote=down&id={feedback_id}&redirect=https://bitbucket.org/{owner}/{repo}/pull-requests/{pr_number})"
+                    f"[👍 Yes]({NGROK_URL}/feedback?vote=up&id={feedback_id}&redirect=https://bitbucket.org/{owner}/{repo}/pull-requests/{pr_number}&platform=bitbucket&repo={repo})  \n"
+                    f"[👎 No]({NGROK_URL}/feedback?vote=down&id={feedback_id}&redirect=https://bitbucket.org/{owner}/{repo}/pull-requests/{pr_number}&platform=bitbucket&repo={repo})"
                 ).strip()
 
                 matched.append({

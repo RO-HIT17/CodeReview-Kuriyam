@@ -100,7 +100,7 @@ async def handle_pr_review(owner: str, repo: str, pr_number: int, installation_i
                 f"File: {entry['filename']}\n" + "\n".join([x['line'] for x in entry['diff']])
                 for entry in all_diff_blocks
             ])
-            feedback_id = store_feedback_draft(pr_number, issue_number, diff_text)
+            feedback_id = store_feedback_draft(pr_number, issue_number, diff_text,"github",f"https://github.com/{owner}/{repo}/pull/{pr_number}",repo)
 
             issue_title, issue_body = await get_issue_details(owner, repo, issue_number, installation_id)
             prompt = build_issue_check_prompt(issue_title,issue_body, diff_text)
@@ -111,8 +111,8 @@ async def handle_pr_review(owner: str, repo: str, pr_number: int, installation_i
                 This PR tries to address issue #{issue_number}.
                 {(llama_output.lstrip()).rstrip()}
                 **Was this helpful?**
-                [👍 Yes]({NGROK_URL}/feedback?vote=up&id={feedback_id}&redirect=https://github.com/{owner}/{repo}/pull/{pr_number})  
-                [👎 No]({NGROK_URL}/feedback?vote=down&id={feedback_id}&redirect=https://github.com/{owner}/{repo}/pull/{pr_number})
+                [👍 Yes]({NGROK_URL}/feedback?vote=up&id={feedback_id}&redirect=https://github.com/{owner}/{repo}/pull/{pr_number}&platform=github&repo={repo})  
+                [👎 No]({NGROK_URL}/feedback?vote=down&id={feedback_id}&redirect=https://github.com/{owner}/{repo}/pull/{pr_number}&platform=github&repo={repo})
                 """).strip()
 
 
