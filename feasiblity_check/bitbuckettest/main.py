@@ -46,7 +46,7 @@ async def bitbucket_webhook(request: Request):
 
         # Fetch and parse the diff
         print("[INFO] Fetching PR diff...")
-        diff_text = await fetch_pr_diff(diff_url)
+        diff_text = await fetch_pr_diff(workspace,diff_url)
         print("[DEBUG] Diff fetched:\n", diff_text[:500], "...\n[INFO] Diff truncated for preview")
 
         # Example: post an inline comment on line 3 of a file named `test.py`

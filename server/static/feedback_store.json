@@ -118,5 +118,25 @@
     "ip": null,
     "diff": ".catch(err => { ... })",
     "approved": false
+  },
+  {
+    "id": "1d5be9fb-5625-4a4b-b009-ebba695d8dc8",
+    "timestamp": "2025-06-28T21:01:13.610377",
+    "pr": 64,
+    "issue": "Nil",
+    "vote": "up",
+    "ip": "2405:201:e048:7046:75df:7111:977:2f2c",
+    "diff": "fetch(url).then(res => {",
+    "approved": false
+  },
+  {
+    "id": "7f57295a-90f7-4a3e-9bec-b7110e46488e",
+    "timestamp": "2025-06-28T21:01:13.634467",
+    "pr": 64,
+    "issue": "Nil",
+    "vote": null,
+    "ip": null,
+    "diff": "res.json().then(data => {",
+    "approved": false
   }
 ]

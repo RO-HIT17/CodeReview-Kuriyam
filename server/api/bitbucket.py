@@ -1,6 +1,6 @@
 import json
 
-from fastapi import APIRouter, Request, HTTPException , Depends
+from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import JSONResponse
 
 from services.bitbucket_review import  fetch_pr_diff, handle_file_review 
@@ -8,8 +8,7 @@ from utils.bitbucket_utils import parse_diff
 from models.schemas import TestRequest
 from middleware.verify_jwt import verify_bitbucket_request
 
-
-from core.tenants import TENANT_STORE,BITBUCKET_CONNECT_APP_DATA
+from core.tenants import BITBUCKET_CONNECT_APP_DATA
 
 router = APIRouter()
 
@@ -25,7 +24,6 @@ async def bitbucket_webhook(request: Request):
     headers = request.headers
     event = headers.get("X-Event-Key")
     
-    print("TENENT_STORE contents:", json.dumps(TENANT_STORE, indent=2))
     print("BITBUCKET_CONNECT_APP_DATA contents:", json.dumps(BITBUCKET_CONNECT_APP_DATA, indent=2)) 
     
     success = verify_bitbucket_request(request)
@@ -46,7 +44,7 @@ async def bitbucket_webhook(request: Request):
         workspace, repo_slug = repo_full_name.split("/")
 
         diff_url = pr["links"]["diff"]["href"]
-        diff_text = await fetch_pr_diff(diff_url)
+        diff_text = await fetch_pr_diff(workspace,diff_url)
         print("[✅] PR diff fetched")
 
         files = parse_diff(diff_text)
@@ -75,47 +73,26 @@ async def on_installed(request: Request):
 
     print(f"[✅] Installed by: {workspace_name} ({installed_by})")
 
-    TENANT_STORE[client_key] = {
+    BITBUCKET_CONNECT_APP_DATA[workspace_name] = {
+    "clientKey": client_key,
+    "sharedSecret": shared_secret,
+    "baseApiUrl": base_api_url,
+    "workspaceUuid": workspace_uuid,
+    "workspaceName": workspace_name,
+    "installedByUser": installed_by,
+    "tenant": {
         "clientKey": client_key,
-        "sharedSecret": shared_secret,
+        "sharedSecret": shared_secret
     }
+}
     
-    BITBUCKET_CONNECT_APP_DATA["data"] = {
-        "clientKey": client_key,
-        "sharedSecret": shared_secret,
-        "baseApiUrl": base_api_url,
-        "workspaceUuid": workspace_uuid,
-        "workspaceName": workspace_name,    
-        "installedByUser": installed_by,
-    }
-    
-    # existing = db.query(Installation).filter_by(client_key=client_key).first()
-    # if existing:
-    #     existing.shared_secret = shared_secret
-    #     existing.base_api_url = base_api_url
-    #     existing.workspace_uuid = workspace_uuid
-    #     existing.workspace_name = workspace_name
-    #     existing.installed_by_user = installed_by
-    # else:
-    #     new_install = Installation(
-    #         client_key=client_key,
-    #         shared_secret=shared_secret,
-    #         base_api_url=base_api_url,
-    #         workspace_uuid=workspace_uuid,
-    #         workspace_name=workspace_name,
-    #         installed_by_user=installed_by,
-    #     )
-    #     db.add(new_install)
-
-    # db.commit()
-
     return JSONResponse(content={"message": "Installation stored successfully"})
 
 
 @router.post("/test")
 async def test_endpoint(request: TestRequest):
     try:
-        diff_text = await fetch_pr_diff(request.diff_url)
+        diff_text = await fetch_pr_diff(request.workspace,request.diff_url)
         print("[✅] PR diff fetched (preview):", diff_text[:500])
         files = parse_diff(diff_text)
         print(f"[DEBUG] Parsed files : {files}")

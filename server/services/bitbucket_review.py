@@ -4,7 +4,6 @@ from core.config import OLLAMA_URL, MODEL_NAME
 from utils.bitbucket_utils import build_review_prompt, match_comments_to_lines
 import json
 import re
-from typing import Optional
 from middleware.bitbucket_auth import get_bitbucket_access_token
 
 async def handle_file_review(file_entry, workspace, repo_slug, pr_id):
@@ -57,8 +56,8 @@ async def handle_file_review(file_entry, workspace, repo_slug, pr_id):
         print(f"[🔥] Error reviewing {file_path}: {e}")
         
         
-async def post_bitbucket_general_comment(comments_url: str, message: str):
-    access_token = get_bitbucket_access_token()
+async def post_bitbucket_general_comment(workspace_name : str,comments_url: str, message: str):
+    access_token = get_bitbucket_access_token(workspace_name)
     
     headers = {
         "Content-Type": "application/json",
@@ -90,7 +89,7 @@ async def post_bitbucket_inline_comment(
     line: int,
     message: str,
 ):
-    access_token = get_bitbucket_access_token()
+    access_token = get_bitbucket_access_token(workspace)
     
     headers = {
         "Authorization": f"Bearer {access_token}"
@@ -118,8 +117,8 @@ async def post_bitbucket_inline_comment(
         print(f"[❌] Failed to post inline comment: {response.status_code}, {response.text}")
         raise HTTPException(status_code=500, detail="Bitbucket inline comment failed")
 
-async def fetch_pr_diff(diff_url: str) -> str:
-    access_token = get_bitbucket_access_token()
+async def fetch_pr_diff(workspace: str,diff_url: str) -> str:
+    access_token = get_bitbucket_access_token(workspace)
     print("Access Token : ",access_token)
     headers = {
         "Authorization": f"Bearer {access_token}"
@@ -177,7 +176,7 @@ async def handle_general_review_comment(files: list, workspace: str, repo_slug: 
 
         if matched:
             message = "\n".join([f"{m['line_number']}: {m['comment']}" for m in matched])
-            await post_bitbucket_general_comment(comments_url, message)
+            await post_bitbucket_general_comment(workspace,comments_url, message)
 
     except Exception as e:
         print(f"[🔥] Error posting general review comment: {e}")
