@@ -41,6 +41,11 @@ export default function LoginPage() {
               </Button>
             </Link>
           </div>
+          <div className="text-center mt-4">
+            <Link href="/admin/login">
+              <Button variant="ghost" size="sm" className="text-xs text-muted-foreground hover:text-primary">Admin Login</Button>
+            </Link>
+          </div>
         </CardContent>
       </Card>
     </div>
