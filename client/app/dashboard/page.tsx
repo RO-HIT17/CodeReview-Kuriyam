@@ -51,7 +51,7 @@ export default async function DashboardPage() {
                 <CardDescription>Link your external repository accounts to manage them here</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <Link href="/auth/github">
+                <Link href="https://github.com/apps/KuriyamCodeReview/installations/new">
                   <Button variant="outline" className="w-full justify-start">
                     <Github className="h-4 w-4 mr-2" />
                     Connect GitHub
