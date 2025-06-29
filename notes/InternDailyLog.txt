@@ -551,3 +551,5 @@ Frontend
 1.Add proper login and register
 2.Add redirect links in the apps - and check other settings
 3.Check if apps are installted properly
+
+4.implement jwt
