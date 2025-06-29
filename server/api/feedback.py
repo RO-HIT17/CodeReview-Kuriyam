@@ -58,10 +58,10 @@ async def approve_feedback(payload: Feedback):
     feedbacks = load_feedbacks()
     for entry in feedbacks:
         if entry["pr"] == payload.pr and entry["issue"] == payload.issue and entry["timestamp"] == payload.timestamp:
-            entry["approved"] = False
+            entry["rejected"] = True
             break
     save_feedbacks(feedbacks)
-    return {"message": "Feedback approved."}
+    return {"message": "Feedback rejected."}
 
 @router.get("/admin", response_class=HTMLResponse)
 async def admin_panel():
