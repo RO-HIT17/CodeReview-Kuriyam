@@ -542,3 +542,12 @@ TODO
 4.Check the workflow and end to end and also check wheather all taska and features have been implemented throughly
 
 
+https://bitbucket.org/site/addons/authorize?addonKey=code-review-bot
+
+https://github.com/apps/KuriyamCodeReview/installations/new
+
+June 29:
+Frontend
+1.Add proper login and register
+2.Add redirect links in the apps - and check other settings
+3.Check if apps are installted properly
