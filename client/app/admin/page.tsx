@@ -8,35 +8,16 @@ import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, XCircle, Clock } from "lucide-react";
 import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuLink } from "@/components/ui/navigation-menu";
 
-// Placeholder fetch function (replace with real API call)
+// Real API call to fetch feedback
 async function fetchFeedback() {
-  // Simulate API call
-  return [
-    {
-      id: "d96ee7c4-7352-405f-b286-0ff58764a551",
-      timestamp: "2025-06-24T22:58:21.531732",
-      pr: 53,
-      issue: "52",
-      vote: null,
-      ip: null,
-      source: "github",
-      repo: "octocat/Hello-World",
-      repoUrl: "https://github.com/octocat/Hello-World",
-      approved: false,
-    },
-    {
-      id: "584b2fa2-7d80-42ad-a9be-ff1755e73799",
-      timestamp: "2025-06-24T23:10:20.788226",
-      pr: 55,
-      issue: "54",
-      vote: null,
-      ip: null,
-      source: "bitbucket",
-      repo: "team/repo",
-      repoUrl: "https://bitbucket.org/team/repo",
-      approved: false,
-    },
-  ];
+  try {
+    const response = await fetch('http://localhost:8000/feedback-list');
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching feedback:', error);
+    return [];
+  }
 }
 
 export default function AdminPanel() {
@@ -56,17 +37,57 @@ export default function AdminPanel() {
     }
   }, [router]);
 
-  const handleApprove = (id: string) => {
-    setData((prev) => prev.map((item) => item.id === id ? { ...item, approved: true, rejected: false } : item));
-    setActionMsg("Approved successfully.");
-    setTimeout(() => setActionMsg(""), 2000);
-    // TODO: Send approve API call
+  const handleApprove = async (pr: number, issue: string, timestamp: string) => {
+    try {
+      const response = await fetch('http://localhost:8000/approve-feedback', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ pr, issue, timestamp }),
+      });
+      
+      if (response.ok) {
+        setData((prev) => prev.map((item) => 
+          item.pr === pr && item.issue === issue && item.timestamp === timestamp 
+            ? { ...item, approved: true, rejected: false } 
+            : item
+        ));
+        setActionMsg("Approved successfully.");
+        setTimeout(() => setActionMsg(""), 2000);
+      }
+    } catch (error) {
+      console.error('Error approving feedback:', error);
+      setActionMsg("Error approving feedback.");
+      setTimeout(() => setActionMsg(""), 2000);
+    }
   };
-  const handleReject = (id: string) => {
-    setData((prev) => prev.map((item) => item.id === id ? { ...item, approved: false, rejected: true } : item));
-    setActionMsg("Rejected successfully.");
-    setTimeout(() => setActionMsg(""), 2000);
-    // TODO: Send reject API call
+
+  const handleReject = async (pr: number, issue: string, timestamp: string) => {
+    try {
+      // Assuming there's a similar reject endpoint
+      const response = await fetch('http://localhost:8000/reject-feedback', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ pr, issue, timestamp }),
+      });
+      
+      if (response.ok) {
+        setData((prev) => prev.map((item) => 
+          item.pr === pr && item.issue === issue && item.timestamp === timestamp 
+            ? { ...item, approved: false, rejected: true } 
+            : item
+        ));
+        setActionMsg("Rejected successfully.");
+        setTimeout(() => setActionMsg(""), 2000);
+      }
+    } catch (error) {
+      console.error('Error rejecting feedback:', error);
+      setActionMsg("Error rejecting feedback.");
+      setTimeout(() => setActionMsg(""), 2000);
+    }
   };
 
   if (loading) return <div className="p-8">Loading...</div>;
@@ -116,7 +137,7 @@ export default function AdminPanel() {
                       <TableCell>{item.issue}</TableCell>
                       <TableCell>{item.vote || "None"}</TableCell>
                       <TableCell>{item.ip || "None"}</TableCell>
-                      <TableCell className="capitalize">{item.source}</TableCell>
+                      <TableCell className="capitalize">{item.platform}</TableCell>
                       <TableCell>{item.repo}</TableCell>
                       <TableCell>
                         {item.approved ? (
@@ -130,13 +151,13 @@ export default function AdminPanel() {
                       <TableCell>
                         {!item.approved && !item.rejected && (
                           <div className="flex gap-2">
-                            <Button size="sm" onClick={() => handleApprove(item.id)} className="bg-green-600 hover:bg-green-700 text-white">Approve</Button>
-                            <Button size="sm" variant="destructive" onClick={() => handleReject(item.id)}>Reject</Button>
+                            <Button size="sm" onClick={() => handleApprove(item.pr, item.issue, item.timestamp)} className="bg-green-600 hover:bg-green-700 text-white">Approve</Button>
+                            <Button size="sm" variant="destructive" onClick={() => handleReject(item.pr, item.issue, item.timestamp)}>Reject</Button>
                           </div>
                         )}
                       </TableCell>
                       <TableCell>
-                        <Button size="sm" variant="link" onClick={() => window.open(item.repoUrl, "_blank")}>Go to Repo</Button>
+                        <Button size="sm" variant="link" onClick={() => window.open(item.redirect, "_blank")}>Go to Repo</Button>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -148,4 +169,4 @@ export default function AdminPanel() {
       </div>
     </div>
   );
-} 
+}
