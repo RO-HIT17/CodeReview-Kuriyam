@@ -1,19 +1,44 @@
+"use client"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Github, GitBranch, Plus, Settings, LogOut, ExternalLink } from "lucide-react"
 import Link from "next/link"
-import { getSession, getIntegratedRepositories } from "@/lib/auth"
-import { redirect } from "next/navigation"
-
+import type { Repository } from "@/lib/definitions"
 export default async function DashboardPage() {
-  const session = await getSession()
-
-  if (!session) {
-    redirect("/")
+  
+  async function getIntegratedRepositories(userId: string): Promise<Repository[]> {
+    // In a real application, this would query your database
+    // For demo purposes, return mock data
+    return [
+      {
+        id: "1",
+        name: "my-awesome-app",
+        description: "A full-stack web application built with Next.js",
+        provider: "github",
+        private: false,
+        url: "https://github.com/user/my-awesome-app",
+        language: "TypeScript",
+        stars: 25,
+        forks: 8,
+      },
+      {
+        id: "2",
+        name: "secret-project",
+        description: "Private repository for internal tools",
+        provider: "bitbucket",
+        private: true,
+        url: "https://bitbucket.org/user/secret-project",
+        language: "Python",
+        stars: 0,
+        forks: 0,
+      },
+    ]
   }
+  
 
-  const repositories = await getIntegratedRepositories(session.userId)
+  const repositories = await getIntegratedRepositories("1")
+  const name = localStorage.getItem("name")
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -26,7 +51,7 @@ export default async function DashboardPage() {
               <h1 className="text-xl font-semibold">Kuriyam - Code Reviewer</h1>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-muted-foreground">Welcome, {session.user.name}</span>
+              <span className="text-sm text-muted-foreground">Welcome, {name}</span>
                 <Link href="/">
                 <Button variant="outline" size="sm">
                   <LogOut className="h-4 w-4 mr-2" />

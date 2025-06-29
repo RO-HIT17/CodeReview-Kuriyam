@@ -16,6 +16,7 @@ def get_db():
 from pydantic import BaseModel
 
 class AuthRequest(BaseModel):
+    name: str = None  # Optional for login, required for registration
     email: str
     password: str
 
@@ -27,7 +28,7 @@ def register(payload: AuthRequest, db: Session = Depends(get_db)):
     if get_user_by_email(db, payload.email):
         raise HTTPException(status_code=400, detail="User already exists")
 
-    user = create_user(db, payload.email, payload.password)
+    user = create_user(db, payload.name,payload.email, payload.password)
     return {"message": "User registered", "email": user.email}
 
 
@@ -39,6 +40,7 @@ def login(payload: AuthRequest, db: Session = Depends(get_db)):
     
     return {
         "message": "Login successful",
+        "name": user.name,
         "email": user.email,
         "is_admin": user.is_admin
     }

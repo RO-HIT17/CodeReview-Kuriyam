@@ -38,8 +38,9 @@ export default function LoginPage() {
       if (response.ok) {
         const data = await response.json()
         // Store token or handle successful login
+        localStorage.setItem('name', data.name)
         localStorage.setItem('token', data.token)
-        router.push('/dashboard') // Redirect to dashboard or appropriate page
+        router.push('/dashboard') 
       } else {
         const errorData = await response.json()
         setError(errorData.message || 'Login failed')
