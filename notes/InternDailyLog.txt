@@ -548,9 +548,13 @@ https://github.com/apps/KuriyamCodeReview/installations/new
 
 June 29:
 Frontend
-1.Add proper login and register
-2.Add redirect links in the apps - and check other settings
-3.Check if apps are installted properly
+1.Add proper login and register - done
 
-4.implement jwt
-5.add the approved field in admin page
+PENDING
+3.add other dashboard features( check integrated repos) - pending (maintain installations ids uniquely for each user and get the repos)
+commom dict or along with redirect url but need to store them in frontend to check whose user id is reuired like map eith user name and stuff  
+4.Add redirect links in the apps - and check other settings (use pop up and polling along wotj prod url)
+5.Check if apps are installted properly
+
+6.implement jwt 
+7.add the approved field in admin page - done

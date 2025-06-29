@@ -3,7 +3,7 @@ from services.github_review import handle_pr_review
 import hmac, hashlib
 from models.schemas import PRReviewRequest
 from core.config import WEBHOOK_SECRET
-
+from core.tenants import GITHUB_REPO_DATA
 router = APIRouter()
 
 def verify_signature(payload: bytes, signature: str):
@@ -21,14 +21,19 @@ async def github_webhook(request: Request, x_hub_signature_256: str = Header(Non
     payload = await request.json()
     action = payload.get("action")
     event = payload.get("pull_request")
-
+    
+    pr_number = event["number"]
+    repo = payload["repository"]["name"]
+    owner = payload["repository"]["owner"]["login"]
+    installation_id = payload["installation"]["id"]
+    
+    GITHUB_REPO_DATA[owner]= installation_id
+    
+    
     print(f"Received GitHub webhook: action={action}")
     
     if action == "opened" and event:
-        pr_number = event["number"]
-        repo = payload["repository"]["name"]
-        owner = payload["repository"]["owner"]["login"]
-        installation_id = payload["installation"]["id"]
+        
         
         try:
             await handle_pr_review(owner, repo, pr_number,installation_id)
