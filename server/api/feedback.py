@@ -5,7 +5,7 @@ from pydantic import BaseModel
 router = APIRouter()
 
 class Feedback(BaseModel):
-    pr: str
+    pr: int
     issue: str
     timestamp: str
     
