@@ -87,7 +87,8 @@
     "vote": "down",
     "ip": "2405:201:e048:7046:75df:7111:977:2f2c",
     "diff": "+if (arr[i] > max) {",
-    "approved": false
+    "approved": false,
+    "rejected": true
   },
   {
     "id": "767f68b1-4f77-4523-bb5e-3723bd2f7353",
