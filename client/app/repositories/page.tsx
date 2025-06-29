@@ -19,7 +19,7 @@ const mockRepositories = [
     language: "TypeScript",
     stars: 42,
     forks: 12,
-  },
+  }, 
   {
     id: 2,
     name: "secret-sauce",
