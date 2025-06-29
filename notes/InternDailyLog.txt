@@ -553,3 +553,4 @@ Frontend
 3.Check if apps are installted properly
 
 4.implement jwt
+5.add the approved field in admin page
