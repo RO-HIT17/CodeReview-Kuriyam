@@ -28,7 +28,7 @@ Base.metadata.create_all(bind=engine)
 def create_admin():
     db = SessionLocal()
     if not get_user_by_email(db, "admin@codereviewai.com"):
-        create_user(db, "admin@codereviewai.com", "admin123", is_admin=True)
+        create_user(db, "admin","admin@codereviewai.com", "admin123", is_admin=True)
     db.close()
 
 # Include routers
