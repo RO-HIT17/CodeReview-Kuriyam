@@ -7,22 +7,49 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuLink } from "@/components/ui/navigation-menu";
 
-const ADMIN_USER = "admin";
-const ADMIN_PASS = "admin123";
-
 export default function AdminLoginPage() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (username === ADMIN_USER && password === ADMIN_PASS) {
-      localStorage.setItem("isAdmin", "true");
-      router.push("/admin");
-    } else {
-      setError("Invalid credentials");
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const response = await fetch('http://localhost:8000/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        
+        if (data.is_admin) {
+          localStorage.setItem("isAdmin", "true");
+          localStorage.setItem("token", data.token);
+          localStorage.setItem("name", data.name);
+          router.push("/admin");
+        } else {
+          setError("Access denied. Admin privileges required.");
+        }
+      } else {
+        const errorData = await response.json();
+        setError(errorData.message || "Invalid credentials");
+      }
+    } catch (error) {
+      setError("Network error. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -45,9 +72,10 @@ export default function AdminLoginPage() {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <Input
-                placeholder="Username"
-                value={username}
-                onChange={e => setUsername(e.target.value)}
+                placeholder="Email"
+                type="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
                 required
               />
               <Input
@@ -58,11 +86,13 @@ export default function AdminLoginPage() {
                 required
               />
               {error && <div className="text-red-500 text-sm text-center">{error}</div>}
-              <Button type="submit" className="w-full">Login</Button>
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? "Logging in..." : "Login"}
+              </Button>
             </form>
           </CardContent>
         </Card>
       </div>
     </div>
   );
-} 
+}
