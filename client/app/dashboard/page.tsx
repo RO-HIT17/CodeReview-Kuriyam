@@ -58,7 +58,7 @@ export default async function DashboardPage() {
                     <ExternalLink className="h-4 w-4 ml-auto" />
                   </Button>
                 </Link>
-                <Link href="/auth/bitbucket">
+                <Link href="https://bitbucket.org/site/addons/authorize?addon_key=code-review-bot">
                   <Button variant="outline" className="w-full justify-start">
                     <GitBranch className="h-4 w-4 mr-2" />
                     Connect Bitbucket
