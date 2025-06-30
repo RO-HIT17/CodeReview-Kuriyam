@@ -7,8 +7,12 @@ from services.bitbucket_review import  fetch_pr_diff, handle_file_review
 from utils.bitbucket_utils import parse_diff
 from models.schemas import TestRequest
 from middleware.verify_jwt import verify_bitbucket_request
+from fastapi import Depends
+from services.auth_service import get_current_user
+from db.database import get_db
+from sqlalchemy.orm import Session
 
-from core.tenants import BITBUCKET_CONNECT_APP_DATA
+from core.tenants import BITBUCKET_CONNECT_APP_DATA, BITBUCKET_NEW_REPO_DATA
 
 router = APIRouter()
 
@@ -70,7 +74,18 @@ async def on_installed(request: Request):
     workspace_uuid = data.get("principal", {}).get("uuid", "").strip("{}")
     workspace_name = data.get("principal", {}).get("username")
     installed_by = data.get("actor", {}).get("account_id")
+    created_at = data.get("principal", {}).get("created_on")
 
+    BITBUCKET_NEW_REPO_DATA["data"] = {
+        "clientKey": client_key,
+        "sharedSecret": shared_secret,
+        "baseApiUrl": base_api_url,
+        "workspaceUuid": workspace_uuid,    
+        "workspaceName": workspace_name,
+        "installedByUser": installed_by,   
+        "createdAt": created_at,
+    }
+    
     print(f"[✅] Installed by: {workspace_name} ({installed_by})")
 
     BITBUCKET_CONNECT_APP_DATA[workspace_name] = {
@@ -105,3 +120,22 @@ async def test_endpoint(request: TestRequest):
     except Exception as e:
         print("[ERROR]", e)
         raise HTTPException(status_code=500, detail="Webhook processing failed")
+
+
+@router.post("/workspaces")
+async def get_workspaces(user = Depends(get_current_user),db: Session = Depends(get_db)):
+    try:
+        if BITBUCKET_NEW_REPO_DATA:
+            user.bitbucket_repo_data = BITBUCKET_NEW_REPO_DATA["data"]
+            db.commit()
+
+            return JSONResponse(content={
+                "data": BITBUCKET_NEW_REPO_DATA["data"]
+            })
+        else :
+            return JSONResponse(content={
+                "data": None
+            })    
+    except Exception as e:
+        print("[ERROR]", e)
+        raise HTTPException(status_code=500, detail="Failed to update workspaces")

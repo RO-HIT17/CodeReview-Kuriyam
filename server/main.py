@@ -21,7 +21,6 @@ app.add_middleware(
 
 Base.metadata.create_all(bind=engine)
 
-
 @app.on_event("startup")
 def create_admin():
     db = SessionLocal()

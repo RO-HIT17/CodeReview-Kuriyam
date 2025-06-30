@@ -10,13 +10,15 @@ from db.database import get_db
 def get_user_by_email(db: Session, email: str):
     return db.query(models.User).filter(models.User.email == email).first()
 
-def create_user(db: Session, name : str,email: str, password: str, is_admin=False , github_installation_id=None):
+def create_user(db: Session, name : str,email: str, password: str, is_admin=False , github_installation_id=None,bitbucket_repo_data={}):
     user = models.User(
         name=name,
         email=email,
         hashed_password=hash_password(password),
         is_admin=is_admin,
-        github_installation_id=github_installation_id
+        github_installation_id=github_installation_id,
+        bitbucket_repo_data=bitbucket_repo_data
+        
     )
     db.add(user)
     db.commit()
