@@ -23,7 +23,7 @@ function DashboardPage() {
     if (installationId) {
       try {
         const token = localStorage.getItem('token') 
-        const response = await fetch(`http://localhost:8000/github/formatted-repos?installation_id=${installationId}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/github/formatted-repos?installation_id=${installationId}`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -37,10 +37,10 @@ function DashboardPage() {
       }
     }
 
-    // Fetch Bitbucket workspaces (backend handles authentication)
+    // Fetch Bitbucket workspaces (NEXT_PUBLIC_BACKEND handles authentication)
     try {
       const token = localStorage.getItem('token') 
-      const response = await fetch(`http://localhost:8000/bitbucket/workspaces`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/bitbucket/workspaces`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -138,7 +138,7 @@ function DashboardPage() {
     const pollForBitbucketRepos = setInterval(async () => {
       try {
         const token = localStorage.getItem('token')
-        const response = await fetch(`http://localhost:8000/bitbucket/workspaces`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/bitbucket/workspaces`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,

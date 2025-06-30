@@ -12,7 +12,7 @@ import {withAuth} from "../hoc/withAuth";
 // Real API call to fetch feedback
 async function fetchFeedback() {
   try {
-    const response = await fetch('http://localhost:8000/feedback-list',{
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/feedback-list`,{
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -46,7 +46,7 @@ function AdminPanel() {
 
   const handleApprove = async (pr: number, issue: string, timestamp: string) => {
     try {
-      const response = await fetch('http://localhost:8000/approve-feedback', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/approve-feedback`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -74,7 +74,7 @@ function AdminPanel() {
   const handleReject = async (pr: number, issue: string, timestamp: string) => {
     try {
       // Assuming there's a similar reject endpoint
-      const response = await fetch('http://localhost:8000/reject-feedback', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/reject-feedback`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

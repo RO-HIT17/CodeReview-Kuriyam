@@ -24,7 +24,7 @@ export default function LoginPage() {
     const password = formData.get('password') as string
 
     try {
-      const response = await fetch('http://localhost:8000/auth/login', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
