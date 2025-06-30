@@ -93,6 +93,12 @@ function DashboardPage() {
   }
 
   const handleBitbucketConnect = () => {
+    const bitbucketUrl = "https://bitbucket.org/site/addons/authorize?addon_key=code-review-bot"
+    const popup = window.open(
+      bitbucketUrl,
+      'bitbucket-install',
+      'width=600,height=700,scrollbars=yes,resizable=yes'
+    )
     // For now, just show an alert or implement your bitbucket logic
     alert("Bitbucket integration coming soon!")
   }
