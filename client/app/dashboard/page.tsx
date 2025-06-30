@@ -17,39 +17,77 @@ function DashboardPage() {
   async function getIntegratedRepositories(): Promise<Repository[]> {
     const installationId = localStorage.getItem('github_installation_id')
     
-    if (!installationId) {
-      return []
+    let allRepos: Repository[] = []
+
+    // Fetch GitHub repos
+    if (installationId) {
+      try {
+        const token = localStorage.getItem('token') 
+        const response = await fetch(`http://localhost:8000/github/formatted-repos?installation_id=${installationId}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        const githubRepos = await response.json()
+        allRepos = [...allRepos, ...githubRepos]
+      } catch (error) {
+        console.error('Error fetching GitHub repositories:', error)
+      }
     }
 
+    // Fetch Bitbucket workspaces (backend handles authentication)
     try {
       const token = localStorage.getItem('token') 
-      const response = await fetch(`http://localhost:8000/github/formatted-repos?installation_id=${installationId}`, {
-        method: 'GET',
+      const response = await fetch(`http://localhost:8000/bitbucket/workspaces`, {
+        method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
-    });
-      const data = await response.json()
-      return data
+      });
+      
+      if (response.ok) {
+        const bitbucketData = await response.json()
+        console.log('Bitbucket API response:', bitbucketData)
+        
+        if (bitbucketData.data && Array.isArray(bitbucketData.data) && bitbucketData.data.length > 0) {
+          // Transform Bitbucket data to match Repository interface
+          const bitbucketRepos = bitbucketData.data.map((workspace: any) => ({
+            id: workspace.workspaceUuid || workspace.clientKey,
+            name: workspace.workspaceName || 'Bitbucket Workspace',
+            description: `Bitbucket workspace: ${workspace.workspaceName || 'Unknown'}`,
+            provider: "bitbucket",
+            private: true,
+            url: workspace.baseApiUrl || '#',
+            language: "Unknown",
+            stars: 0,
+            forks: 0,
+          }))
+          allRepos = [...allRepos, ...bitbucketRepos]
+        }
+      }
     } catch (error) {
-      console.error('Error fetching repositories:', error)
-      return []
+      console.error('Error fetching Bitbucket repositories:', error)
     }
+
+    return allRepos
   }
 
   const name = localStorage.getItem("name")
 
   useEffect(() => {
-    // Extract installation_id from URL parameters
+    // Extract installation_id from URL parameters (GitHub only)
     const installationId = searchParams.get('installation_id')
     const code = searchParams.get('code')
     
+    // Handle GitHub installation
     if (installationId) {
       localStorage.setItem('github_installation_id', installationId)
       console.log('GitHub installation ID stored:', installationId)
       
-      // Optional: Clean up URL
+      // Clean up URL
       const url = new URL(window.location.href)
       url.searchParams.delete('installation_id')
       url.searchParams.delete('code')
@@ -57,7 +95,7 @@ function DashboardPage() {
       window.history.replaceState({}, document.title, url.pathname)
     }
 
-    // Fetch repositories after installation_id is set
+    // Fetch repositories
     getIntegratedRepositories().then((repos) => {
       setRepositories(repos)
       setLoading(false)
@@ -93,14 +131,45 @@ function DashboardPage() {
   }
 
   const handleBitbucketConnect = () => {
-    const bitbucketUrl = "https://bitbucket.org/site/addons/authorize?addon_key=code-review-bot"
-    const popup = window.open(
-      bitbucketUrl,
-      'bitbucket-install',
-      'width=600,height=700,scrollbars=yes,resizable=yes'
-    )
-    // For now, just show an alert or implement your bitbucket logic
-    alert("Bitbucket integration coming soon!")
+    // Direct redirect to Bitbucket addon installation
+    window.open("https://bitbucket.org/site/addons/authorize?addon_key=code-review-bot", "_blank")
+    
+    // Set up polling to check for Bitbucket installation completion
+    const pollForBitbucketRepos = setInterval(async () => {
+      try {
+        const token = localStorage.getItem('token')
+        const response = await fetch(`http://localhost:8000/bitbucket/workspaces`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (response.ok) {
+          const bitbucketData = await response.json()
+          console.log('Polling - Bitbucket data:', bitbucketData)
+          
+          if (bitbucketData.data && Array.isArray(bitbucketData.data) && bitbucketData.data.length > 0) {
+            // Installation detected, refresh repositories
+            clearInterval(pollForBitbucketRepos)
+            console.log('Bitbucket installation detected, refreshing repos...')
+            getIntegratedRepositories().then((repos) => {
+              setRepositories(repos)
+              console.log('Updated repositories:', repos)
+            })
+          }
+        }
+      } catch (error) {
+        console.error('Error polling for Bitbucket repos:', error)
+      }
+    }, 10000)
+    
+    // Stop polling after 5 minutes
+    setTimeout(() => {
+      clearInterval(pollForBitbucketRepos)
+      console.log('Stopped polling for Bitbucket repos')
+    }, 120000)
   }
 
   return (
