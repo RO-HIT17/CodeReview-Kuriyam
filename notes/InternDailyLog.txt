@@ -556,5 +556,6 @@ commom dict or along with redirect url but need to store them in frontend to che
 4.Add redirect links in the apps - and check other settings (use pop up and polling along wotj prod url)
 5.Check if apps are installted properly
 
-6.implement jwt 
+6.implement jwt  and hoc
+
 7.add the approved field in admin page - done

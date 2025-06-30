@@ -2,7 +2,7 @@
   "key": "code-review-bot",
   "name": "Code Review Bot",
   "description": "A bot that reviews pull requests for code quality and security.",
-  "baseUrl": "https://0548-2405-201-e048-7046-78f5-9f2d-bc1d-d94a.ngrok-free.app",
+  "baseUrl": "https://0967-2405-201-e048-7046-8cf0-78b6-5e80-7bc3.ngrok-free.app",
   "authentication": {
     "type": "jwt"
   },
