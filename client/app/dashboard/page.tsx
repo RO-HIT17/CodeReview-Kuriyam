@@ -19,7 +19,6 @@ function DashboardPage() {
     
     let allRepos: Repository[] = []
 
-    // Fetch GitHub repos
     if (installationId) {
       try {
         const token = localStorage.getItem('token') 
@@ -37,7 +36,6 @@ function DashboardPage() {
       }
     }
 
-    // Fetch Bitbucket workspaces (NEXT_PUBLIC_BACKEND handles authentication)
     try {
       const token = localStorage.getItem('token') 
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/bitbucket/workspaces`, {
@@ -53,7 +51,6 @@ function DashboardPage() {
         console.log('Bitbucket API response:', bitbucketData)
         
         if (bitbucketData.data && Array.isArray(bitbucketData.data) && bitbucketData.data.length > 0) {
-          // Transform Bitbucket data to match Repository interface
           const bitbucketRepos = bitbucketData.data.map((workspace: any) => ({
             id: workspace.workspaceUuid || workspace.clientKey,
             name: workspace.workspaceName || 'Bitbucket Workspace',
@@ -78,16 +75,13 @@ function DashboardPage() {
   const name = localStorage.getItem("name")
 
   useEffect(() => {
-    // Extract installation_id from URL parameters (GitHub only)
     const installationId = searchParams.get('installation_id')
     const code = searchParams.get('code')
     
-    // Handle GitHub installation
     if (installationId) {
       localStorage.setItem('github_installation_id', installationId)
       console.log('GitHub installation ID stored:', installationId)
       
-      // Clean up URL
       const url = new URL(window.location.href)
       url.searchParams.delete('installation_id')
       url.searchParams.delete('code')
@@ -95,7 +89,6 @@ function DashboardPage() {
       window.history.replaceState({}, document.title, url.pathname)
     }
 
-    // Fetch repositories
     getIntegratedRepositories().then((repos) => {
       setRepositories(repos)
       setLoading(false)
@@ -107,7 +100,6 @@ function DashboardPage() {
     localStorage.removeItem("name");
     localStorage.removeItem("user_id");
     localStorage.removeItem("github_installation_id");
-    // Redirect will happen via the Link
   };
 
   const handleGitHubConnect = () => {
@@ -118,11 +110,9 @@ function DashboardPage() {
       'width=600,height=700,scrollbars=yes,resizable=yes'
     )
     
-    // Optional: Listen for popup close or message
     const checkClosed = setInterval(() => {
       if (popup?.closed) {
         clearInterval(checkClosed)
-        // Refresh repositories after installation
         getIntegratedRepositories().then((repos) => {
           setRepositories(repos)
         })
@@ -131,10 +121,8 @@ function DashboardPage() {
   }
 
   const handleBitbucketConnect = () => {
-    // Direct redirect to Bitbucket addon installation
     window.open("https://bitbucket.org/site/addons/authorize?addon_key=code-review-bot", "_blank")
     
-    // Set up polling to check for Bitbucket installation completion
     const pollForBitbucketRepos = setInterval(async () => {
       try {
         const token = localStorage.getItem('token')
@@ -151,7 +139,6 @@ function DashboardPage() {
           console.log('Polling - Bitbucket data:', bitbucketData)
           
           if (bitbucketData.data && Array.isArray(bitbucketData.data) && bitbucketData.data.length > 0) {
-            // Installation detected, refresh repositories
             clearInterval(pollForBitbucketRepos)
             console.log('Bitbucket installation detected, refreshing repos...')
             getIntegratedRepositories().then((repos) => {
@@ -165,7 +152,6 @@ function DashboardPage() {
       }
     }, 10000)
     
-    // Stop polling after 5 minutes
     setTimeout(() => {
       clearInterval(pollForBitbucketRepos)
       console.log('Stopped polling for Bitbucket repos')

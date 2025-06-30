@@ -9,7 +9,6 @@ import { CheckCircle2, XCircle, Clock } from "lucide-react";
 import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuLink } from "@/components/ui/navigation-menu";
 import {withAuth} from "../hoc/withAuth";
 
-// Real API call to fetch feedback
 async function fetchFeedback() {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/feedback-list`,{
@@ -73,7 +72,6 @@ function AdminPanel() {
 
   const handleReject = async (pr: number, issue: string, timestamp: string) => {
     try {
-      // Assuming there's a similar reject endpoint
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/reject-feedback`, {
         method: 'POST',
         headers: {
