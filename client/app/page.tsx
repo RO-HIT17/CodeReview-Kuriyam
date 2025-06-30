@@ -40,6 +40,7 @@ export default function LoginPage() {
         // Store token or handle successful login
         localStorage.setItem('name', data.name)
         localStorage.setItem('token', data.token)
+        localStorage.setItem("user_id", data.id)
         router.push('/dashboard') 
       } else {
         const errorData = await response.json()

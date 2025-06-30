@@ -98,7 +98,7 @@
     "vote": "up",
     "ip": "2405:201:e048:7046:75df:7111:977:2f2c",
     "diff": "fetchData(url)",
-    "approved": false
+    "approved": true
   },
   {
     "id": "d055a2f1-dd12-41cc-b2ec-44409319ae91",

@@ -42,6 +42,7 @@ def login(payload: AuthRequest, db: Session = Depends(get_db)):
 
     return {
         "message": "Login successful",
+        "user_id":user.id,
         "token": token,
         "name": user.name,
         "email": user.email,
