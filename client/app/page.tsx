@@ -40,6 +40,7 @@ export default function LoginPage() {
         localStorage.setItem('name', data.name)
         localStorage.setItem('token', data.token)
         localStorage.setItem("user_id", data.user_id)
+        localStorage.setItem("github_installation_id", data.github_installation_id) 
         router.push('/dashboard') 
       } else {
         const errorData = await response.json()

@@ -6,6 +6,18 @@ from core.config import WEBHOOK_SECRET
 from core.tenants import GITHUB_REPO_DATA
 import requests
 from utils.github_auth import get_installation_token
+from fastapi import Depends
+from services.auth_service import get_current_user
+from sqlalchemy.orm import Session
+from db.database import SessionLocal
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 router = APIRouter()
 
 def verify_signature(payload: bytes, signature: str):
@@ -57,7 +69,11 @@ async def review_pr_route(payload: PRReviewRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/formatted-repos")
-async def formatted_repos(installation_id: int):
+async def formatted_repos(installation_id: int,user = Depends(get_current_user),db: Session = Depends(get_db)):
+    
+    user.github_installation_id = installation_id
+    db.commit()
+    
     token = await get_installation_token(installation_id)
     headers = {
         "Authorization": f"Bearer {token}",
