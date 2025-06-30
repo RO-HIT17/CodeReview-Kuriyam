@@ -11,7 +11,12 @@ import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuL
 // Real API call to fetch feedback
 async function fetchFeedback() {
   try {
-    const response = await fetch('http://localhost:8000/feedback-list');
+    const response = await fetch('http://localhost:8000/feedback-list',{
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem("token")}`,
+    }});
     const data = await response.json();
     return data;
   } catch (error) {
@@ -25,6 +30,7 @@ export default function AdminPanel() {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionMsg, setActionMsg] = useState("");
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     if (typeof window !== "undefined" && localStorage.getItem("isAdmin") !== "true") {
@@ -43,6 +49,7 @@ export default function AdminPanel() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({ pr, issue, timestamp }),
       });
@@ -70,6 +77,7 @@ export default function AdminPanel() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({ pr, issue, timestamp }),
       });

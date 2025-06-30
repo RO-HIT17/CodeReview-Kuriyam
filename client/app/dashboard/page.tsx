@@ -40,6 +40,12 @@ export default async function DashboardPage() {
   const repositories = await getIntegratedRepositories("1")
   const name = localStorage.getItem("name")
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("name");
+    // Redirect will happen via the Link
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -53,7 +59,7 @@ export default async function DashboardPage() {
             <div className="flex items-center space-x-4">
               <span className="text-sm text-muted-foreground">Welcome, {name}</span>
                 <Link href="/">
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" onClick={handleLogout}>
                   <LogOut className="h-4 w-4 mr-2" />
                   Sign Out
                 </Button>

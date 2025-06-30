@@ -559,3 +559,15 @@ commom dict or along with redirect url but need to store them in frontend to che
 6.implement jwt  and hoc
 
 7.add the approved field in admin page - done
+
+8.change those into popups rahter than redirect
+-----
+June 30
+Final Test
+https://horrible-theatre-merit-mathematics.trycloudflare.com
+https://0967-2405-201-e048-7046-8cf0-78b6-5e80-7bc3.ngrok-free.app
+
+
+https://horrible-theatre-merit-mathematics.trycloudflare.com/dashboard?code=c8f1b038a949bbd51336&installation_id=73650583&setup_action=install
+
+i get this on redirect return maybe use this to fetch without using those webhooks

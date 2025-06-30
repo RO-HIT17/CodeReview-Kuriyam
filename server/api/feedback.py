@@ -2,6 +2,8 @@ from fastapi import APIRouter, Query, Request
 from fastapi.responses import RedirectResponse, HTMLResponse
 from feedback.store import load_feedbacks, save_feedbacks
 from pydantic import BaseModel 
+from fastapi import Depends
+from services.auth_service import get_current_user
 router = APIRouter()
 
 class Feedback(BaseModel):
@@ -39,12 +41,12 @@ async def collect_feedback(
 
 
 @router.get("/feedback-list")
-async def list_feedback():
+async def list_feedback(user = Depends(get_current_user)):
     return load_feedbacks()
 
 
 @router.post("/approve-feedback")
-async def approve_feedback(payload: Feedback):
+async def approve_feedback(payload: Feedback,user = Depends(get_current_user)):
     feedbacks = load_feedbacks()
     for entry in feedbacks:
         if entry["pr"] == payload.pr and entry["issue"] == payload.issue and entry["timestamp"] == payload.timestamp:
@@ -54,7 +56,7 @@ async def approve_feedback(payload: Feedback):
     return {"message": "Feedback approved."}
 
 @router.post("/reject-feedback")
-async def approve_feedback(payload: Feedback):
+async def approve_feedback(payload: Feedback,user = Depends(get_current_user)):
     feedbacks = load_feedbacks()
     for entry in feedbacks:
         if entry["pr"] == payload.pr and entry["issue"] == payload.issue and entry["timestamp"] == payload.timestamp:
