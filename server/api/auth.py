@@ -4,7 +4,7 @@ from db.database import SessionLocal
 from services.auth_service import get_user_by_email, create_user
 from utils.hash import verify_password
 from utils.email_validator import is_valid_email
-
+from utils.jwt_handler import create_access_token
 router = APIRouter()
 
 def get_db():
@@ -16,7 +16,7 @@ def get_db():
 from pydantic import BaseModel
 
 class AuthRequest(BaseModel):
-    name: str = None  # Optional for login, required for registration
+    name: str = None  
     email: str
     password: str
 
@@ -37,9 +37,12 @@ def login(payload: AuthRequest, db: Session = Depends(get_db)):
     user = get_user_by_email(db, payload.email)
     if not user or not verify_password(payload.password, user.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
-    
+
+    token = create_access_token({"sub": user.email})
+
     return {
         "message": "Login successful",
+        "token": token,
         "name": user.name,
         "email": user.email,
         "is_admin": user.is_admin
