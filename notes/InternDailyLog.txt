@@ -374,13 +374,13 @@ to check with stategeis for feedback finetuning
 TODO:
 Grouping:
 Fixing and Combining existing structure:
-Integrate all the bits and pieces into one
-Combine various separate parts like github , bitbucket etc
+Integrate all the bits and pieces into one - done
+Combine various separate parts like github , bitbucket etc - done
 List down all the variosu features and things we have tried and implemented
-Repo Cleanup
-Cleanup of all tech debt and hacky fixes
+Repo Cleanup - done
+Cleanup of all tech debt and hacky fixes - done
 Further list down the ways of improvement in each aspect
-Check the structure of each api call
+Check the structure of each api call - done
 List of things we have and how to implement them for a user 
 
 
@@ -417,32 +417,32 @@ Mapping the comments to inline code lines - done
 Extraction of pr diff - done 
 ----------
 June 25
-Tryong to fix bitbucket and integrate all parts together 
-Also draw tha overall new product and fix the models
+Tryong to fix bitbucket and integrate all parts together - done
+Also draw tha overall new product and fix the models 
 
 Line of action:
 
-Fix the bitbucket and complete the backend and isolate it
-Complete the frontend and appropirate authentication
-Complete the backend and frontend integration
+Fix the bitbucket and complete the backend and isolate it - done
+Complete the frontend and appropirate authentication - done
+Complete the backend and frontend integration - done
 
 First setup the bitbucket app with pass and user name - done
 then remove it and complete the whole server - done
-then move on to frontend authentication
-then come back to backend and frontend integration
+then move on to frontend authentication - done
+then come back to backend and frontend integration - done
 
 Bitbucket check for issue and feedback and codellama logic - done
 Also check for different cases like mutiple files combined commit and thin of other tests and cases that can porlly happen
-->Also check if bitbucket app works across mutiple repos
+->Also check if bitbucket app works across mutiple repos - done
 Check for the feedback mechanishm finetuning - LoRA + SFT need to work on this
 Check for impriving finetuned model
 Check for wasy to delpoy the model and the app
 
 Fix the jwt auth things - done
 Ask if other 2 features are need in bitbuket as in github - done 
-Finish Frontedn with proper en and Oauth to connec it with github and bitbucket
-Check how the logic works for installation aacross repository (may deviate from current logic)
-Integrate existin backend
+Finish Frontedn with proper en and Oauth to connec it with github and bitbucket - done
+Check how the logic works for installation aacross repository (may deviate from current logic) - done
+Integrate existin backend - done
 
 Check for wasy to deploy model (base codellama)
 
@@ -569,7 +569,7 @@ commom dict or along with redirect url but need to store them in frontend to che
 10.bitubcket work
 11. documentation and code cleaning
 
------
+-----------
 June 30
 Final Test
 https://horrible-theatre-merit-mathematics.trycloudflare.com
