@@ -21,7 +21,14 @@ export default function DashboardPage() {
     }
 
     try {
-      const response = await fetch(`http://localhost:8000/github/formatted-repos?installation_id=${installationId}`)
+      const token = localStorage.getItem('token') 
+      const response = await fetch(`http://localhost:8000/github/formatted-repos?installation_id=${installationId}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+    });
       const data = await response.json()
       return data
     } catch (error) {

@@ -561,6 +561,8 @@ commom dict or along with redirect url but need to store them in frontend to che
 7.add the approved field in admin page - done
 
 8.change those into popups rahter than redirect
+
+9.get installation id and store in db
 -----
 June 30
 Final Test

@@ -46,5 +46,6 @@ def login(payload: AuthRequest, db: Session = Depends(get_db)):
         "token": token,
         "name": user.name,
         "email": user.email,
-        "is_admin": user.is_admin
+        "is_admin": user.is_admin,
+        "github_installation_id": user.github_installation_id   
     }
