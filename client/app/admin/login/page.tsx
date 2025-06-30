@@ -38,7 +38,7 @@ export default function AdminLoginPage() {
           localStorage.setItem("isAdmin", "true");
           localStorage.setItem("token", data.token);
           localStorage.setItem("name", data.name);
-          localStorage.setItem("user_id", data.id)
+          localStorage.setItem("user_id", data.user_id)
           router.push("/admin");
         } else {
           setError("Access denied. Admin privileges required.");

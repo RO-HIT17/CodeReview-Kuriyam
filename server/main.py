@@ -11,19 +11,17 @@ from services.auth_service import create_user, get_user_by_email
 
 app = FastAPI(title="Code Review Platform")
 
-# Enable CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Update this to frontend URL in prod
+    allow_origins=["*"],  
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Create DB tables
 Base.metadata.create_all(bind=engine)
 
-# Hardcoded admin setup
+
 @app.on_event("startup")
 def create_admin():
     db = SessionLocal()
@@ -31,7 +29,6 @@ def create_admin():
         create_user(db, "admin","admin@codereviewai.com", "admin123", is_admin=True)
     db.close()
 
-# Include routers
 app.include_router(github_router, prefix="/github", tags=["GitHub"])
 app.include_router(feedback_router, tags=["Feedback"])
 app.include_router(bitbucket_router, prefix="/bitbucket", tags=["Bitbucket"])
