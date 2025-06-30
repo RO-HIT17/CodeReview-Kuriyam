@@ -10,13 +10,7 @@ from fastapi import Depends
 from services.auth_service import get_current_user
 from sqlalchemy.orm import Session
 from db.database import SessionLocal
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+from db.database import get_db
 
 router = APIRouter()
 
@@ -35,8 +29,6 @@ async def github_webhook(request: Request, x_hub_signature_256: str = Header(Non
     payload = await request.json()
     action = payload.get("action")
     event = payload.get("pull_request")
-    
-    
     
     print(f"Received GitHub webhook: action={action}")
     

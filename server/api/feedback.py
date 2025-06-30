@@ -1,16 +1,11 @@
 from fastapi import APIRouter, Query, Request
 from fastapi.responses import RedirectResponse, HTMLResponse
 from feedback.store import load_feedbacks, save_feedbacks
-from pydantic import BaseModel 
 from fastapi import Depends
 from services.auth_service import get_current_user
-router = APIRouter()
+from models.schemas import Feedback
 
-class Feedback(BaseModel):
-    pr: int
-    issue: str
-    timestamp: str
-    
+router = APIRouter()
 
 @router.get("/feedback")
 async def collect_feedback(
@@ -64,67 +59,3 @@ async def approve_feedback(payload: Feedback,user = Depends(get_current_user)):
             break
     save_feedbacks(feedbacks)
     return {"message": "Feedback rejected."}
-
-@router.get("/admin", response_class=HTMLResponse)
-async def admin_panel():
-    feedbacks = load_feedbacks()
-
-    html = """
-    <html>
-        <head>
-            <title>Feedback Admin Panel</title>
-            <style>
-                body { font-family: Arial; padding: 20px; }
-                table { border-collapse: collapse; width: 100%; }
-                th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-                th { background-color: #f2f2f2; }
-                .approved { color: green; font-weight: bold; }
-                .pending { color: red; font-weight: bold; }
-            </style>
-        </head>
-        <body>
-            <h2>🛠 Feedback Admin Panel</h2>
-            <table>
-                <tr>
-                    <th>Timestamp</th>
-                    <th>PR</th>
-                    <th>Issue</th>
-                    <th>Vote</th>
-                    <th>IP</th>
-                    <th>Platform</th>
-                    <th>Repo</th>
-                    <th>Redirect</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-    """
-
-    for fb in feedbacks:
-        status = "✅ Approved" if fb.get("approved") else "❌ Pending"
-        css_class = "approved" if fb.get("approved") else "pending"
-        approve_link = (
-            f"/approve-feedback?pr={fb['pr']}&issue={fb['issue']}&timestamp={fb['timestamp']}"
-            if not fb.get("approved") else "-"
-        )
-
-        html += f"""
-            <tr>
-                <td>{fb.get('timestamp', '-')}</td>
-                <td>{fb.get('pr', '-')}</td>
-                <td>{fb.get('issue', '-')}</td>
-                <td>{fb.get('vote', '-')}</td>
-                <td>{fb.get('ip', '-')}</td>
-                <td>{fb.get('platform', '-')}</td>
-                <td>{fb.get('repo', '-')}</td>
-                <td><a href="{fb.get('redirect', '#')}" target="_blank">🔗</a></td>
-                <td class="{css_class}">{status}</td>
-                <td>{f'<a href="{approve_link}">Approve</a>' if approve_link != '-' else '-'}</td>
-            </tr>
-        """
-
-    html += """
-            </table>
-        </body>
-    </html>
-    """
-    return HTMLResponse(content=html)
