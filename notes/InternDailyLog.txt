@@ -552,17 +552,23 @@ Frontend
 
 PENDING
 3.add other dashboard features( check integrated repos) - pending (maintain installations ids uniquely for each user and get the repos)
-commom dict or along with redirect url but need to store them in frontend to check whose user id is reuired like map eith user name and stuff  
-4.Add redirect links in the apps - and check other settings (use pop up and polling along wotj prod url)
-5.Check if apps are installted properly
+commom dict or along with redirect url but need to store them in frontend to check whose user id is reuired like map eith user name and stuff  -> done
 
-6.implement jwt  and hoc
+4.Add redirect links in the apps - and check other settings (use pop up and polling along wotj prod url) - done
+
+5.Check if apps are installted properly- yep done
+
+6.implement jwt  and hoc - done
 
 7.add the approved field in admin page - done
 
-8.change those into popups rahter than redirect
+8.change those into popups rahter than redirect - done 
 
-9.get installation id and store in db
+9.get installation id and store in db - done
+
+10.bitubcket work
+11. documentation and code cleaning
+
 -----
 June 30
 Final Test
