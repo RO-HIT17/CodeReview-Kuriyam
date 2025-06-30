@@ -7,6 +7,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, XCircle, Clock } from "lucide-react";
 import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuLink } from "@/components/ui/navigation-menu";
+import {withAuth} from "../hoc/withAuth";
 
 // Real API call to fetch feedback
 async function fetchFeedback() {
@@ -25,7 +26,7 @@ async function fetchFeedback() {
   }
 }
 
-export default function AdminPanel() {
+function AdminPanel() {
   const router = useRouter();
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -181,3 +182,5 @@ export default function AdminPanel() {
     </div>
   );
 }
+
+export default withAuth(AdminPanel);
