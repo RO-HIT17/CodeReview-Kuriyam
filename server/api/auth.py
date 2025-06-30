@@ -5,20 +5,10 @@ from services.auth_service import get_user_by_email, create_user
 from utils.hash import verify_password
 from utils.email_validator import is_valid_email
 from utils.jwt_handler import create_access_token
+from models.schemas import AuthRequest
+from db.database import get_db
+
 router = APIRouter()
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-from pydantic import BaseModel
-
-class AuthRequest(BaseModel):
-    name: str = None  
-    email: str
-    password: str
 
 @router.post("/register")
 def register(payload: AuthRequest, db: Session = Depends(get_db)):

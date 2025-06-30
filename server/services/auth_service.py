@@ -4,8 +4,8 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from fastapi import Depends, Request
 from utils.jwt_handler import decode_access_token
-from db.database import SessionLocal
 from db.models import User
+from db.database import get_db
 
 def get_user_by_email(db: Session, email: str):
     return db.query(models.User).filter(models.User.email == email).first()
@@ -22,14 +22,6 @@ def create_user(db: Session, name : str,email: str, password: str, is_admin=Fals
     db.commit()
     db.refresh(user)
     return user
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 def get_current_user(request: Request, db: Session = Depends(get_db)) -> User:
     auth_header = request.headers.get("Authorization")

@@ -81,9 +81,6 @@ def match_comments_to_lines(diff_lines, suggestions, pr_number, owner, repo):
     return matched
 
 def build_review_prompt(added_lines: list[str]) -> str:
-    """
-    Builds a detailed prompt for reviewing added Python code lines in a file.
-    """
     diff_text = "\n".join(added_lines)
 
     return f"""

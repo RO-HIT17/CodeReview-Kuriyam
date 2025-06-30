@@ -1,6 +1,5 @@
 import time
 import jwt
-import os
 import httpx
 from core.config import GITHUB_APP_ID, GITHUB_PRIVATE_KEY_PATH  
 

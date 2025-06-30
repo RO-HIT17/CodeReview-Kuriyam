@@ -11,3 +11,14 @@ class TestRequest(BaseModel):
     repo_slug: str
     pr_id: int
     diff_url: str    
+    
+class AuthRequest(BaseModel):
+    name: str = None  
+    email: str
+    password: str
+
+class Feedback(BaseModel):
+    pr: int
+    issue: str
+    timestamp: str
+     

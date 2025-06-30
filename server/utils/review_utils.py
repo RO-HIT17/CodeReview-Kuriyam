@@ -24,9 +24,6 @@ def extract_diff_blocks(patch: str):
     return diff_blocks
 
 def build_review_prompt(added_lines: list[str]) -> str:
-    """
-    Builds a detailed prompt for reviewing added Python code lines in a file.
-    """
     diff_text = "\n".join(added_lines)
 
     return f"""
