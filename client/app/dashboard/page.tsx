@@ -4,47 +4,90 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Github, GitBranch, Plus, Settings, LogOut, ExternalLink } from "lucide-react"
 import Link from "next/link"
+import { useEffect, useState } from "react"
+import { useSearchParams } from "next/navigation"
 import type { Repository } from "@/lib/definitions"
-export default async function DashboardPage() {
-  
-  async function getIntegratedRepositories(userId: string): Promise<Repository[]> {
-    // In a real application, this would query your database
-    // For demo purposes, return mock data
-    return [
-      {
-        id: "1",
-        name: "my-awesome-app",
-        description: "A full-stack web application built with Next.js",
-        provider: "github",
-        private: false,
-        url: "https://github.com/user/my-awesome-app",
-        language: "TypeScript",
-        stars: 25,
-        forks: 8,
-      },
-      {
-        id: "2",
-        name: "secret-project",
-        description: "Private repository for internal tools",
-        provider: "bitbucket",
-        private: true,
-        url: "https://bitbucket.org/user/secret-project",
-        language: "Python",
-        stars: 0,
-        forks: 0,
-      },
-    ]
-  }
-  
 
-  const repositories = await getIntegratedRepositories("1")
+export default function DashboardPage() {
+  const searchParams = useSearchParams()
+  const [repositories, setRepositories] = useState<Repository[]>([])
+  const [loading, setLoading] = useState(true)
+
+  async function getIntegratedRepositories(): Promise<Repository[]> {
+    const installationId = localStorage.getItem('github_installation_id')
+    
+    if (!installationId) {
+      return []
+    }
+
+    try {
+      const response = await fetch(`http://localhost:8000/github/formatted-repos?installation_id=${installationId}`)
+      const data = await response.json()
+      return data
+    } catch (error) {
+      console.error('Error fetching repositories:', error)
+      return []
+    }
+  }
+
   const name = localStorage.getItem("name")
+
+  useEffect(() => {
+    // Extract installation_id from URL parameters
+    const installationId = searchParams.get('installation_id')
+    const code = searchParams.get('code')
+    
+    if (installationId) {
+      localStorage.setItem('github_installation_id', installationId)
+      console.log('GitHub installation ID stored:', installationId)
+      
+      // Optional: Clean up URL
+      const url = new URL(window.location.href)
+      url.searchParams.delete('installation_id')
+      url.searchParams.delete('code')
+      url.searchParams.delete('setup_action')
+      window.history.replaceState({}, document.title, url.pathname)
+    }
+
+    // Fetch repositories after installation_id is set
+    getIntegratedRepositories().then((repos) => {
+      setRepositories(repos)
+      setLoading(false)
+    })
+  }, [searchParams])
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("name");
+    localStorage.removeItem("user_id");
+    localStorage.removeItem("github_installation_id");
     // Redirect will happen via the Link
   };
+
+  const handleGitHubConnect = () => {
+    const githubUrl = "https://github.com/apps/KuriyamCodeReview/installations/new"
+    const popup = window.open(
+      githubUrl,
+      'github-install',
+      'width=600,height=700,scrollbars=yes,resizable=yes'
+    )
+    
+    // Optional: Listen for popup close or message
+    const checkClosed = setInterval(() => {
+      if (popup?.closed) {
+        clearInterval(checkClosed)
+        // Refresh repositories after installation
+        getIntegratedRepositories().then((repos) => {
+          setRepositories(repos)
+        })
+      }
+    }, 1000)
+  }
+
+  const handleBitbucketConnect = () => {
+    // For now, just show an alert or implement your bitbucket logic
+    alert("Bitbucket integration coming soon!")
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -82,20 +125,16 @@ export default async function DashboardPage() {
                 <CardDescription>Link your external repository accounts to manage them here</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <Link href="https://github.com/apps/KuriyamCodeReview/installations/new">
-                  <Button variant="outline" className="w-full justify-start">
-                    <Github className="h-4 w-4 mr-2" />
-                    Connect GitHub
-                    <ExternalLink className="h-4 w-4 ml-auto" />
-                  </Button>
-                </Link>
-                <Link href="https://bitbucket.org/site/addons/authorize?addon_key=code-review-bot">
-                  <Button variant="outline" className="w-full justify-start">
-                    <GitBranch className="h-4 w-4 mr-2" />
-                    Connect Bitbucket
-                    <ExternalLink className="h-4 w-4 ml-auto" />
-                  </Button>
-                </Link>
+                <Button variant="outline" className="w-full justify-start" onClick={handleGitHubConnect}>
+                  <Github className="h-4 w-4 mr-2" />
+                  Connect GitHub
+                  <ExternalLink className="h-4 w-4 ml-auto" />
+                </Button>
+                <Button variant="outline" className="w-full justify-start" onClick={handleBitbucketConnect}>
+                  <GitBranch className="h-4 w-4 mr-2" />
+                  Connect Bitbucket
+                  <ExternalLink className="h-4 w-4 ml-auto" />
+                </Button>
               </CardContent>
             </Card>
           </div>
@@ -112,7 +151,11 @@ export default async function DashboardPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {repositories.length > 0 ? (
+                {loading ? (
+                  <div className="text-center py-12">
+                    <p>Loading repositories...</p>
+                  </div>
+                ) : repositories.length > 0 ? (
                   <div className="space-y-4">
                     {repositories.map((repo) => (
                       <div key={repo.id} className="flex items-center justify-between p-4 border rounded-lg">
