@@ -7,8 +7,9 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import type { Repository } from "@/lib/definitions"
+import {withAuth} from "@/app/hoc/withAuth"
 
-export default function DashboardPage() {
+function DashboardPage() {
   const searchParams = useSearchParams()
   const [repositories, setRepositories] = useState<Repository[]>([])
   const [loading, setLoading] = useState(true)
@@ -208,3 +209,5 @@ export default function DashboardPage() {
     </div>
   )
 }
+
+export default withAuth(DashboardPage);
