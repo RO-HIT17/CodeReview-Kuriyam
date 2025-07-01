@@ -11,7 +11,7 @@ import {withAuth} from "../hoc/withAuth";
 
 async function fetchFeedback() {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/feedback-list`,{
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/feedback-list`,{
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -45,7 +45,7 @@ function AdminPanel() {
 
   const handleApprove = async (pr: number, issue: string, timestamp: string) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/approve-feedback`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/approve-feedback`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -72,7 +72,7 @@ function AdminPanel() {
 
   const handleReject = async (pr: number, issue: string, timestamp: string) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/reject-feedback`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/reject-feedback`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
