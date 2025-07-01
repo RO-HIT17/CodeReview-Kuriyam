@@ -159,23 +159,23 @@ function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-white via-gray-100 to-gray-200">
       {/* Header */}
-      <header className="bg-white border-b">
+      <header className="bg-white border-b border-teal-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-2">
-              <GitBranch className="h-6 w-6" />
-              <h1 className="text-xl font-semibold">Kuriyam - Code Reviewer</h1>
+            <div className="flex items-center gap-3">
+              <img src="/image.png" alt="Kuriyam Logo" className="h-9 w-9 object-contain" />
+              <h1 className="text-2xl font-bold text-teal-700">Kuriyam Code Review</h1>
             </div>
             <div className="flex items-center space-x-4">
               <span className="text-sm text-muted-foreground">Welcome, {name}</span>
-                <Link href="/">
+              <Link href="/">
                 <Button variant="outline" size="sm" onClick={handleLogout}>
                   <LogOut className="h-4 w-4 mr-2" />
                   Sign Out
                 </Button>
-                </Link>
+              </Link>
             </div>
           </div>
         </div>
@@ -185,7 +185,7 @@ function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Repository Integration */}
           <div className="lg:col-span-1">
-            <Card>
+            <Card className="bg-white border border-teal-200 shadow-[0_4px_24px_0_rgba(20,184,166,0.08)]">
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <Plus className="h-5 w-5" />
@@ -210,7 +210,7 @@ function DashboardPage() {
 
           {/* Integrated Repositories */}
           <div className="lg:col-span-2">
-            <Card>
+            <Card className="bg-white border border-teal-200 shadow-[0_4px_24px_0_rgba(20,184,166,0.08)]">
               <CardHeader>
                 <CardTitle>Your Repositories</CardTitle>
                 <CardDescription>

@@ -6,16 +6,19 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useState } from "react"
+import { useToast } from "@/hooks/use-toast"
+import { useRouter } from "next/navigation"
+import { User, Mail, Lock, Eye, EyeOff, UserPlus } from "lucide-react"
 
 export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const { toast } = useToast()
+  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsLoading(true)
-    setError(null)
 
     const formData = new FormData(e.currentTarget)
     const name = formData.get("name") as string
@@ -24,7 +27,7 @@ export default function RegisterPage() {
     const confirmPassword = formData.get("confirmPassword") as string
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match")
+      toast({ title: "Error", description: "Passwords do not match", variant: "destructive" })
       setIsLoading(false)
       return
     }
@@ -43,59 +46,84 @@ export default function RegisterPage() {
       })
 
       if (response.ok) {
-        setSuccess(true)
-        setError(null)
+        const loginResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+        if (loginResponse.ok) {
+          const data = await loginResponse.json();
+          localStorage.setItem('name', data.name);
+          localStorage.setItem('token', data.token);
+          localStorage.setItem("user_id", data.user_id);
+          localStorage.setItem("github_installation_id", data.github_installation_id);
+          toast({ title: "Success", description: "Account created and logged in!", variant: "default" });
+          router.push('/dashboard');
+        } else {
+          toast({ title: "Error", description: "Registration succeeded but login failed.", variant: "destructive" });
+        }
       } else {
         const errorData = await response.json()
-        setError(errorData.message || "Registration failed")
+        toast({ title: "Error", description: errorData.message || "Registration failed", variant: "destructive" });
       }
     } catch (error) {
-      setError("Network error. Please try again.")
+      toast({ title: "Error", description: "Network error. Please try again.", variant: "destructive" });
     } finally {
       setIsLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-white via-gray-100 to-gray-200 py-12 px-4 sm:px-6 lg:px-8">
+      <Card className="w-full max-w-md bg-white border border-teal-200 shadow-[0_4px_24px_0_rgba(20,184,166,0.08)]">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Create your account</CardTitle>
-          <CardDescription className="text-center">Sign up to start code-reviewing your repositories</CardDescription>
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <img src="/image.png" alt="Kuriyam Logo" className="h-9 w-9 object-contain" />
+            <CardTitle className="text-2xl font-bold text-teal-700">Kuriyam Code Review</CardTitle>
+          </div>
+          <CardDescription className="text-center">Create your account</CardDescription>
         </CardHeader>
         <CardContent>
-          {success ? (
-            <div className="text-center space-y-4">
-              <p className="text-green-600">Account created successfully!</p>
-              <Link href="/" className="text-primary hover:underline">
-                Go to sign in
-              </Link>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Full Name</Label>
+              <div className="relative">
+                <Input id="name" name="name" type="text" placeholder="John Doe" required className="pl-10" />
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              </div>
             </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
-                <Input id="name" name="name" type="text" placeholder="John Doe" required />
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <div className="relative">
+                <Input id="email" name="email" type="email" placeholder="john@example.com" required className="pl-10" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" name="email" type="email" placeholder="john@example.com" required />
+            </div>
+            <div className="space-y-2 relative">
+              <Label htmlFor="password">Password</Label>
+              <div className="relative">
+                <Input id="password" name="password" type={showPassword ? "text" : "password"} placeholder="Create a strong password" required className="pl-10 pr-10" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <button type="button" className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-teal-700 hover:underline" onClick={() => setShowPassword(v => !v)} tabIndex={-1}>
+                  {showPassword ? <EyeOff className="h-5 w-5 text-teal-700" /> : <Eye className="h-5 w-5 text-teal-700" />}
+                </button>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input id="password" name="password" type="password" placeholder="Create a strong password" required />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="confirm-password">Confirm Password</Label>
+              <div className="relative">
+                <Input id="confirm-password" name="confirmPassword" type={showPassword ? "text" : "password"} placeholder="Re-enter your password" required className="pl-10 pr-10" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <button type="button" className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-teal-700 hover:underline" onClick={() => setShowPassword(v => !v)} tabIndex={-1}>
+                  {showPassword ? <EyeOff className="h-5 w-5 text-teal-700" /> : <Eye className="h-5 w-5 text-teal-700" />}
+                </button>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="confirm-password">Confirm Password</Label>
-                <Input id="confirm-password" name="confirmPassword" type="password" placeholder="Re-enter your password" required />
-              </div>
-              {error && <p className="text-sm text-red-600">{error}</p>}
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Creating Account..." : "Create Account"}
-              </Button>
-            </form>
-          )}
-
+            </div>
+            <Button type="submit" className="w-full flex items-center justify-center gap-2" disabled={isLoading}>
+              <UserPlus className="h-5 w-5 text-teal-700" />
+              {isLoading ? "Creating Account..." : "Create Account"}
+            </Button>
+          </form>
           <div className="mt-6 text-center">
             <p className="text-sm text-muted-foreground">
               Already have an account?{" "}
